@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descargar LexIA · Asistente Jurídico para Móviles Android</title>
+    <meta name="description" content="Descarga el instalador oficial de LexIA para dispositivos Android. Asistente Jurídico Inteligente con motor FAISS Offline y 1,326 artículos de leyes mexicanas.">
+    
+    <!-- Tipografía Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Generador de Códigos QR Autónomo -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #0F3261;
+            --primary-dark: #081B38;
+            --primary-light: #1A5296;
+            --accent: #2563EB;
+            --accent-soft: rgba(37, 99, 235, 0.1);
+            --success: #059669;
+            --success-soft: #D1FAE5;
+            --surface: #0B1325;
+            --card-bg: rgba(18, 30, 56, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #FFFFFF;
+            --text-muted: #94A3B8;
+            --gradient: linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #60A5FA 100%);
+            --glow: 0 0 40px rgba(59, 130, 246, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--surface);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 70%, rgba(16, 185, 129, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(15, 50, 97, 0.2) 0%, transparent 60%);
+        }
+
+        /* HEADER */
+        header {
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(11, 19, 37, 0.85);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #0F3261, #2563EB);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .brand-text h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-mexico {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            text-transform: uppercase;
+        }
+
+        .brand-text p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 6px 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            font-weight: 600;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10B981;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 48px 24px;
+            flex: 1;
+        }
+
+        /* HERO CARD */
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 40px;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            padding: 48px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .hero-info h2 {
+            font-size: 38px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #CBD5E1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-info p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .stat-item h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #60A5FA;
+        }
+
+        .stat-item p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        /* BOTÓN DE DESCARGA */
+        .download-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+            color: #fff;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(37, 99, 235, 0.6);
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+        }
+
+        .file-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* QR BOX */
+        .qr-card {
+            background: rgba(11, 19, 37, 0.9);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.05);
+        }
+
+        .qr-wrapper {
+            background: #fff;
+            padding: 12px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-wrapper canvas {
+            display: block;
+            border-radius: 8px;
+        }
+
+        .qr-card h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .qr-card p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* PASOS DE INSTALACIÓN */
+        .section-title {
+            text-align: center;
+            margin: 56px 0 32px;
+        }
+
+        .section-title h3 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .section-title p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .step-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .step-num {
+            width: 36px;
+            height: 36px;
+            background: rgba(37, 99, 235, 0.2);
+            color: #60A5FA;
+            border: 1px solid rgba(37, 99, 235, 0.4);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
+        .step-card h5 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .step-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* GITHUB & NUBE BANNER */
+        .hosting-guide {
+            margin-top: 48px;
+            background: linear-gradient(135deg, rgba(15, 50, 97, 0.4) 0%, rgba(37, 99, 235, 0.2) 100%);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            border-radius: 20px;
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .hosting-text h4 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #93C5FD;
+        }
+
+        .hosting-text p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .code-box {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #34D399;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: inline-block;
+            margin-top: 6px;
+        }
+
+        /* FOOTER */
+        footer {
+            margin-top: auto;
+            padding: 32px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--card-border);
+            background: rgba(11, 19, 37, 0.95);
+        }
+
+        @media (max-width: 860px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 32px 24px;
+                gap: 32px;
+            }
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+            .hosting-guide {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA SUPERIOR -->
+    <header>
+        <a href="#" class="brand">
+            <div class="brand-icon">⚖️</div>
+            <div class="brand-text">
+                <h1>LexIA <span class="badge-mexico">México</span></h1>
+                <p>Asistente Jurídico Inteligente · Android</p>
+            </div>
+        </a>
+
+        <div class="header-status">
+            <span class="pulse-dot"></span>
+            <span>Versión 1.0.0 Vigente</span>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- HERO SECTION PRINCIPAL -->
+        <div class="hero">
+            <div class="hero-info">
+                <h2>Lleva el Derecho Mexicano y la IA en tu Bolsillo</h2>
+                <p>
+                    Descarga directa e instantánea del instalador oficial (APK) de LexIA. 
+                    Optimizado con motor FAISS Offline y sincronizado con el Diario Oficial de la Federación.
+                </p>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h3>1,326</h3>
+                        <p>Artículos DOF</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>FAISS</h3>
+                        <p>RAG 100% Offline</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>19.6 MB</h3>
+                        <p>Peso Ultra Ligero</p>
+                    </div>
+                </div>
+
+                <div class="download-actions">
+                    <a href="lexia-latest.apk" download="lexia-latest.apk" class="btn-download" id="downloadBtn">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Descargar APK Directo para Android
+                    </a>
+                    <span class="file-meta">Compatible con Android 8.0 Oreo hasta Android 14+ · Sin publicidad</span>
+                </div>
+            </div>
+
+            <!-- TARJETA QR DE ESCANEO -->
+            <div class="qr-card">
+                <div class="qr-wrapper">
+                    <canvas id="qrCanvas"></canvas>
+                </div>
+                <h4>Escanea con tu Celular</h4>
+                <p>Apunta con la cámara de tu móvil para descargar el APK en 2 segundos sin cables.</p>
+            </div>
+        </div>
+
+        <!-- GUÍA DE INSTALACIÓN PASO A PASO -->
+        <div class="section-title">
+            <h3>¿Cómo instalar el archivo APK en tu celular?</h3>
+            <p>Guía rápida de 3 pasos para instalar la aplicación en dispositivos Samsung, Xiaomi, Motorola y otros.</p>
+        </div>
+
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h5>Descargar el Instalador</h5>
+                <p>Presiona el botón de descarga o escanea el código QR. Si el navegador pregunta: <em>"¿Descargar este archivo potencialmente dañino?"</em>, elige <strong>"Descargar de todos modos"</strong> (alerta estándar de Android para apps fuera de Play Store).</p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h5>Permitir Orígenes Desconocidos</h5>
+                <p>Abre el archivo descargado desde las notificaciones o la carpeta <em>Descargas</em>. Si aparece el aviso de seguridad, pulsa <strong>"Ajustes"</strong> y activa la casilla <strong>"Permitir desde esta fuente"</strong>.</p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h5>Instalar y Abrir LexIA</h5>
+                <p>Presiona <strong>"Instalar"</strong>. Una vez completado, pulsa <strong>"Abrir"</strong>. La aplicación te llevará directamente al Catálogo de Leyes e iniciará en modo autónomo.</p>
+            </div>
+        </div>
+
+        <!-- HOSTING CON GITHUB PAGES Y RELEASES -->
+        <div class="hosting-guide">
+            <div class="hosting-text">
+                <h4>🚀 Publicación Global Gratuita con GitHub</h4>
+                <p>
+                    Para tener este enlace público en todo el mundo (ej. <code>https://tu-usuario.github.io/lexia/</code>):<br>
+                    1. Sube este archivo <code>index.html</code> a tu repositorio de GitHub.<br>
+                    2. En la sección <strong>Releases</strong> de GitHub, sube <code>lexia-latest.apk</code> para obtener un enlace de descarga CDN ultrarrápido y global.
+                </p>
+                <div class="code-box">git remote add origin https://github.com/TU_USUARIO/lexia.git</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 LexIA · Asistente Jurídico Inteligente para el Derecho Mexicano. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- GENERACIÓN DINÁMICA DEL CÓDIGO QR -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Genera la URL completa de descarga apuntando al archivo APK en el mismo directorio
+            const downloadUrl = new URL('lexia-latest.apk', window.location.href).href;
+
+            const canvas = document.getElementById('qrCanvas');
+            QRCode.toCanvas(canvas, downloadUrl, {
+                width: 180,
+                margin: 1,
+                color: {
+                    dark: '#081B38',
+                    light: '#FFFFFF'
+                }
+            }, function (error) {
+                if (error) console.error("Error generando QR:", error);
+            });
+        });
+    </script>
+</body>
+</html>

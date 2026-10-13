@@ -1,0 +1,547 @@
+﻿<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_tab" name="shell-type"/>
+<title>Historial y memoria persistente · LexIA</title>
+<meta content="Historial de consultas y memoria persistente de sesiones." name="description"/>
+
+<link href="../shared/lexia.css" rel="stylesheet"/>
+<script src="../shared/vendor/tailwindcss.js"></script>
+<script src="../shared/tailwind.config.js"></script>
+</head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="flex items-center justify-between px-margin py-space-xs text-on-surface-variant font-label-sm text-label-sm"><span class="font-label-md text-label-md font-semibold text-on-surface">09:41</span><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span><span class="font-label-sm text-label-sm">5G</span><span class="material-symbols-outlined text-[14px]">wifi</span><span class="material-symbols-outlined text-[16px]">battery_full</span></div></div><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="LexIA Brand Emblem" class="h-8 w-auto object-contain" src="../shared/assets/brand-emblem.png"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-title-lg text-title-lg text-primary tracking-tight font-bold">LexIA</span><div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-success-500/10 text-success-800 text-[10px] font-semibold tracking-wide uppercase"><span class="material-symbols-outlined text-[11px] text-success-600">auto_awesome</span><span>IA Premium Activa</span></div></div><span class="font-label-md text-label-md text-on-surface-variant truncate">Historial</span></div></div><div class="flex items-center gap-space-sm flex-shrink-0"><button aria-label="Perfil de usuario" class="min-h-[44px] min-w-[44px] flex items-center justify-center p-0.5 rounded-full transition-opacity hover:opacity-80"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="../shared/assets/avatar.jpg"/></button></div></div></header><main class="flex flex-col relative w-full pt-24 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full pb-8">
+<!-- Toast Notification Dynamic Container -->
+<div class="fixed top-20 left-4 right-4 z-50 transform -translate-y-24 opacity-0 transition-all duration-300 pointer-events-none flex items-center justify-between p-space-md rounded-xl bg-primary text-on-primary shadow-xl" id="toast-notify">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-[20px] text-primary-fixed">info</span>
+<span class="font-body-sm text-body-sm truncate text-on-primary" id="toast-text">Acción completada con éxito</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-primary-fixed-dim">check_circle</span>
+</div>
+<!-- Telemetry & Synced Storage Metric Card -->
+<section class="px-margin mb-space-md">
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 bg-primary-fixed/30 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-start justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="flex h-2.5 w-2.5 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-success-600"></span>
+</span>
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">PostgreSQL & MongoDB Atlas Cloud</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-success-50 text-success-800 font-semibold tracking-wide">ACTIVO</span>
+</div>
+<div class="grid grid-cols-2 gap-space-sm mt-space-xs pt-space-xs">
+<div class="bg-surface-container-low rounded-lg p-space-sm">
+<div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
+<span class="material-symbols-outlined text-[15px] text-primary">inventory_2</span>
+<span class="font-label-sm text-label-sm font-semibold">Consultas</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-on-surface font-bold">14</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Sesiones archivadas</p>
+</div>
+<div class="bg-surface-container-low rounded-lg p-space-sm">
+<div class="flex items-center gap-1.5 text-on-surface-variant mb-1">
+<span class="material-symbols-outlined text-[15px] text-primary">sync_saved_locally</span>
+<span class="font-label-sm text-label-sm font-semibold">Memoria RAG</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">98%</span>
+<span class="font-label-sm text-label-sm text-success-700 font-semibold">Óptima</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-1.5 mt-1 overflow-hidden">
+<div class="bg-primary-container h-1.5 rounded-full" style="width: 98%"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Filter & Search Controls -->
+<section class="px-margin mb-space-md">
+<div class="flex flex-col gap-space-sm">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-10 py-2.5 bg-surface-container-lowest rounded-xl font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/60 shadow-sm focus:outline-none" id="search-input" placeholder="Buscar tesis, código (ej. CPEUM, LFT, CNPP)..." type="text"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface hidden" id="clear-search">
+<span class="material-symbols-outlined text-[16px]">cancel</span>
+</button>
+</div>
+<!-- Quick Chip Filter Track -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1 no-scrollbar text-nowrap">
+<button class="filter-chip active flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md transition-colors shadow-sm" data-filter="all">
+<span class="material-symbols-outlined text-[14px]">all_inclusive</span>
+<span>Todas (14)</span>
+</button>
+<button class="filter-chip flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors shadow-sm" data-filter="recent">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>Recientes</span>
+</button>
+<button class="filter-chip flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors shadow-sm" data-filter="cpeum">
+<span class="material-symbols-outlined text-[14px]">gavel</span>
+<span>Constitucional</span>
+</button>
+<button class="filter-chip flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors shadow-sm" data-filter="laboral">
+<span class="material-symbols-outlined text-[14px]">work</span>
+<span>Laboral (LFT)</span>
+</button>
+<button class="filter-chip flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors shadow-sm" data-filter="penal">
+<span class="material-symbols-outlined text-[14px]">balance</span>
+<span>Penal (CNPP)</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Legal Sessions List -->
+<section class="px-margin flex flex-col gap-space-sm mb-space-lg" id="session-cards-wrapper">
+<div class="flex items-center justify-between mb-0.5">
+<span class="font-title-md text-title-md text-on-surface font-semibold">Sesiones de Consulta</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Memoria Vectorial Activa</span>
+</div>
+<!-- Session 1: Active Session -->
+<article class="session-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden transition-all duration-200" data-category="cpeum recent" data-title="Análisis de Flagrancia y Art. 16 CPEUM">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary"></div>
+<div class="flex items-start justify-between gap-space-sm mb-space-xs">
+<div class="flex flex-wrap items-center gap-1.5">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-100 text-success-800 font-label-sm text-label-sm font-bold tracking-wide uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-success-600 animate-pulse"></span>
+            En curso
+          </span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold">CPEUM Art. 16</span>
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed/30 text-on-tertiary-fixed font-label-sm text-label-sm font-mono">sim: 0.941</span>
+</div>
+<button aria-label="Opciones de sesión" class="menu-trigger-btn p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface font-bold mb-space-xs">
+        Análisis de Flagrancia y Art. 16 CPEUM
+      </h3>
+<div class="flex items-center gap-space-md text-on-surface-variant font-body-sm text-body-sm mb-space-md">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>Hace 10 min</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">forum</span>
+<span>6 mensajes</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">database</span>
+<span>PostgreSQL</span>
+</div>
+</div>
+<!-- Action Panel Buttons -->
+<div class="flex items-center gap-space-xs pt-space-xs">
+<button class="continue-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg font-semibold shadow-sm hover:opacity-95 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+<span>Continuar Chat</span>
+</button>
+<button class="export-pdf-btn flex items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" title="Exportar a PDF profesional">
+<span class="material-symbols-outlined text-[18px] text-error">picture_as_pdf</span>
+</button>
+<button class="export-docx-btn flex items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" title="Exportar a Word (.docx)">
+<span class="material-symbols-outlined text-[18px] text-primary-container">description</span>
+</button>
+<button class="delete-btn flex items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface-variant hover:bg-error-container hover:text-error transition-colors" title="Borrar historial de esta sesión">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</article>
+<!-- Session 2: Labor Law Session -->
+<article class="session-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden transition-all duration-200" data-category="laboral recent" data-title="Cálculo de Indemnización por Despido Injustificado (LFT Art. 48 y 50)">
+<div class="flex items-start justify-between gap-space-sm mb-space-xs">
+<div class="flex flex-wrap items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold">LFT Art. 48, 50</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">Archivado</span>
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed/30 text-on-tertiary-fixed font-label-sm text-label-sm font-mono">sim: 0.887</span>
+</div>
+<button aria-label="Opciones de sesión" class="menu-trigger-btn p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface font-bold mb-space-xs">
+        Cálculo de Indemnización por Despido Injustificado (LFT Art. 48 y 50)
+      </h3>
+<div class="flex items-center gap-space-md text-on-surface-variant font-body-sm text-body-sm mb-space-md">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<span>Ayer</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">forum</span>
+<span>12 mensajes</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-success-600">cloud_done</span>
+<span>MongoDB Atlas</span>
+</div>
+</div>
+<!-- Action Panel Buttons -->
+<div class="flex items-center gap-space-xs pt-space-xs">
+<button class="continue-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-surface-container-high text-on-surface font-label-lg text-label-lg font-semibold hover:bg-secondary-container hover:text-on-secondary-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span>Cargar Memoria</span>
+</button>
+<button class="export-pdf-btn flex items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" title="Exportar a PDF profesional">
+<span class="material-symbols-outlined text-[18px] text-error">picture_as_pdf</span>
+</button>
+<button class="export-docx-btn flex items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" title="Exportar a Word (.docx)">
+<span class="material-symbols-outlined text-[18px] text-primary-container">description</span>
+</button>
+<button class="delete-btn flex items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface-variant hover:bg-error-container hover:text-error transition-colors" title="Borrar historial">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</article>
+<!-- Session 3: Criminal Procedure -->
+<article class="session-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden transition-all duration-200" data-category="penal" data-title="Procedimiento Abreviado en CNPP">
+<div class="flex items-start justify-between gap-space-sm mb-space-xs">
+<div class="flex flex-wrap items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold">CNPP Art. 201</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">Archivado</span>
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed/30 text-on-tertiary-fixed font-label-sm text-label-sm font-mono">sim: 0.912</span>
+</div>
+<button aria-label="Opciones de sesión" class="menu-trigger-btn p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface font-bold mb-space-xs">
+        Procedimiento Abreviado en CNPP
+      </h3>
+<div class="flex items-center gap-space-md text-on-surface-variant font-body-sm text-body-sm mb-space-md">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+<span>15 Octubre</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">forum</span>
+<span>8 mensajes</span>
+</div>
+</div>
+<!-- Action Panel Buttons -->
+<div class="flex items-center gap-space-xs pt-space-xs">
+<button class="continue-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-surface-container-high text-on-surface font-label-lg text-label-lg font-semibold hover:bg-secondary-container hover:text-on-secondary-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span>Cargar Memoria</span>
+</button>
+<button class="export-pdf-btn flex items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" title="Exportar a PDF profesional">
+<span class="material-symbols-outlined text-[18px] text-error">picture_as_pdf</span>
+</button>
+<button class="export-docx-btn flex items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" title="Exportar a Word (.docx)">
+<span class="material-symbols-outlined text-[18px] text-primary-container">description</span>
+</button>
+<button class="delete-btn flex items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface-variant hover:bg-error-container hover:text-error transition-colors" title="Borrar historial">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</article>
+<!-- Session 4: Civil Code -->
+<article class="session-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden transition-all duration-200" data-category="civil" data-title="Responsabilidad Civil Extracontractual en CCF">
+<div class="flex items-start justify-between gap-space-sm mb-space-xs">
+<div class="flex flex-wrap items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold">CCF Art. 1910</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">Archivado</span>
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed/30 text-on-tertiary-fixed font-label-sm text-label-sm font-mono">sim: 0.865</span>
+</div>
+<button aria-label="Opciones de sesión" class="menu-trigger-btn p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface font-bold mb-space-xs">
+        Responsabilidad Civil Extracontractual en CCF
+      </h3>
+<div class="flex items-center gap-space-md text-on-surface-variant font-body-sm text-body-sm mb-space-md">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+<span>10 Octubre</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">forum</span>
+<span>15 mensajes</span>
+</div>
+</div>
+<!-- Action Panel Buttons -->
+<div class="flex items-center gap-space-xs pt-space-xs">
+<button class="continue-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-surface-container-high text-on-surface font-label-lg text-label-lg font-semibold hover:bg-secondary-container hover:text-on-secondary-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span>Cargar Memoria</span>
+</button>
+<button class="export-pdf-btn flex items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" title="Exportar a PDF profesional">
+<span class="material-symbols-outlined text-[18px] text-error">picture_as_pdf</span>
+</button>
+<button class="export-docx-btn flex items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors" title="Exportar a Word (.docx)">
+<span class="material-symbols-outlined text-[18px] text-primary-container">description</span>
+</button>
+<button class="delete-btn flex items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface-variant hover:bg-error-container hover:text-error transition-colors" title="Borrar historial">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</article>
+<!-- Visual Empty State Filter Placeholder -->
+<div class="hidden flex-col items-center justify-center p-space-xl bg-surface-container-lowest rounded-xl text-center" id="no-results-state">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant mb-space-sm">
+<span class="material-symbols-outlined text-[24px]">search_off</span>
+</div>
+<p class="font-title-md text-title-md text-on-surface font-semibold mb-1">Sin coincidencias normativas</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Prueba con términos como CPEUM, LFT, CNPP o fechas específicas.</p>
+</div>
+</section>
+<!-- Advanced Memory Configuration & Global Management -->
+<section class="px-margin mb-space-xl">
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center gap-2 mb-space-md">
+<span class="material-symbols-outlined text-primary text-[20px]">psychology</span>
+<h2 class="font-title-md text-title-md text-on-surface font-bold">Opciones Avanzadas de Memoria RAG</h2>
+</div>
+<!-- Persistent Memory Toggle -->
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low mb-space-md">
+<div class="flex flex-col pr-space-sm">
+<span class="font-body-md text-body-md text-on-surface font-semibold">Conservar memoria contextual</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant leading-tight mt-0.5">Mejora la precisión semántica cruzando antecedentes entre consultas sin re-vectorizar.</span>
+</div>
+<button aria-checked="true" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full bg-primary transition-colors duration-200 ease-in-out focus:outline-none" id="toggle-memory" role="switch">
+<span class="translate-x-6 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-container-lowest shadow ring-0 transition duration-200 ease-in-out mt-0.5 ml-0.5" id="toggle-circle"></span>
+</button>
+</div>
+<!-- Global Actions -->
+<div class="flex flex-col gap-space-xs">
+<button class="w-full flex items-center justify-center gap-2 py-3 px-space-md rounded-lg bg-surface-container-high text-on-surface font-label-lg text-label-lg font-semibold hover:bg-secondary-container hover:text-on-secondary-container transition-colors" id="btn-download-dossier">
+<span class="material-symbols-outlined text-[18px]">folder_zip</span>
+<span>Descargar expediente jurídico completo en PDF</span>
+</button>
+<button class="w-full flex items-center justify-center gap-2 py-3 px-space-md rounded-lg bg-error-container/40 text-error font-label-lg text-label-lg font-semibold hover:bg-error-container transition-colors" id="btn-purge-all">
+<span class="material-symbols-outlined text-[18px]">delete_sweep</span>
+<span>Limpiar toda la memoria de la cuenta</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Delete Modal Confirmation Sheet -->
+<div class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-margin transition-opacity duration-200 opacity-0 pointer-events-none" id="delete-modal">
+<div class="w-full max-w-sm bg-surface-container-lowest rounded-xl p-space-lg shadow-xl flex flex-col gap-space-md transform translate-y-4 transition-transform duration-200">
+<div class="flex items-center gap-space-sm text-error">
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-error flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-on-surface font-bold">¿Borrar historial de sesión?</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Se eliminarán los embeddings y tokens en caché.</p>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface" id="delete-modal-msg">
+        Esta acción es permanente y no se podrá recuperar el contexto RAG de esta consulta.
+      </p>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 py-2.5 rounded-lg bg-surface-container text-on-surface font-label-lg text-label-lg font-semibold hover:bg-surface-container-high transition-colors" id="modal-cancel-btn">
+          Cancelar
+        </button>
+<button class="flex-1 py-2.5 rounded-lg bg-error text-on-error font-label-lg text-label-lg font-semibold shadow hover:opacity-90 transition-opacity" id="modal-confirm-btn">
+          Eliminar
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // State variables
+  let sessionToDelete = null;
+  let isPurgeAllMode = false;
+  let memorySwitchState = true;
+
+  // DOM Elements
+  const toast = document.getElementById('toast-notify');
+  const toastText = document.getElementById('toast-text');
+  const deleteModal = document.getElementById('delete-modal');
+  const modalCancelBtn = document.getElementById('modal-cancel-btn');
+  const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+  const deleteModalMsg = document.getElementById('delete-modal-msg');
+  const toggleBtn = document.getElementById('toggle-memory');
+  const toggleCircle = document.getElementById('toggle-circle');
+  const searchInput = document.getElementById('search-input');
+  const clearSearchBtn = document.getElementById('clear-search');
+  const filterChips = document.querySelectorAll('.filter-chip');
+  const sessionCards = document.querySelectorAll('.session-card');
+  const noResultsState = document.getElementById('no-results-state');
+
+  function showToast(msg) {
+    if (!toast || !toastText) return;
+    toastText.textContent = msg;
+    toast.classList.remove('opacity-0', '-translate-y-24', 'pointer-events-none');
+    toast.classList.add('opacity-100', 'translate-y-0');
+    setTimeout(() => {
+      toast.classList.add('opacity-0', '-translate-y-24', 'pointer-events-none');
+      toast.classList.remove('opacity-100', 'translate-y-0');
+    }, 2800);
+  }
+
+  function openModal(title, isPurge = false, elementRef = null) {
+    isPurgeAllMode = isPurge;
+    sessionToDelete = elementRef;
+    if (isPurge) {
+      deleteModalMsg.textContent = "Se vaciarán todas las 14 colecciones en MongoDB y vectores almacenados. No podrá recuperarse.";
+    } else {
+      deleteModalMsg.textContent = `Se removerá permanentemente la sesión "${title}" y su grafo de recuperación asociado.`;
+    }
+    deleteModal.classList.remove('opacity-0', 'pointer-events-none');
+    deleteModal.classList.add('opacity-100');
+    deleteModal.querySelector('div').classList.remove('translate-y-4');
+    deleteModal.querySelector('div').classList.add('translate-y-0');
+  }
+
+  function closeModal() {
+    deleteModal.classList.remove('opacity-100');
+    deleteModal.classList.add('opacity-0', 'pointer-events-none');
+    deleteModal.querySelector('div').classList.remove('translate-y-0');
+    deleteModal.querySelector('div').classList.add('translate-y-4');
+    sessionToDelete = null;
+    isPurgeAllMode = false;
+  }
+
+  // Bind Actions
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.session-card');
+      const title = card ? card.getAttribute('data-title') : 'Sesión';
+      openModal(title, false, card);
+    });
+  });
+
+  document.querySelectorAll('.continue-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.session-card');
+      const title = card ? card.getAttribute('data-title') : 'Sesión';
+      showToast(`Contexto precargado: ${title}`);
+    });
+  });
+
+  document.querySelectorAll('.export-pdf-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showToast('Generando dictamen PDF con sellado digital...');
+    });
+  });
+
+  document.querySelectorAll('.export-docx-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showToast('Exportando sumario legal a .docx editable...');
+    });
+  });
+
+  document.querySelectorAll('.menu-trigger-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showToast('Opciones de vectorización y telemetría');
+    });
+  });
+
+  modalCancelBtn.addEventListener('click', closeModal);
+
+  modalConfirmBtn.addEventListener('click', () => {
+    if (isPurgeAllMode) {
+      sessionCards.forEach(c => c.remove());
+      noResultsState.classList.remove('hidden');
+      noResultsState.classList.add('flex');
+      showToast('Memoria completa depurada exitosamente');
+    } else if (sessionToDelete) {
+      sessionToDelete.classList.add('opacity-0', 'scale-95');
+      setTimeout(() => {
+        sessionToDelete.remove();
+        showToast('Sesión eliminada de PostgreSQL');
+      }, 200);
+    }
+    closeModal();
+  });
+
+  // Toggle persistent memory
+  toggleBtn.addEventListener('click', () => {
+    memorySwitchState = !memorySwitchState;
+    if (memorySwitchState) {
+      toggleBtn.classList.remove('bg-surface-container-highest');
+      toggleBtn.classList.add('bg-primary');
+      toggleCircle.classList.remove('translate-x-0');
+      toggleCircle.classList.add('translate-x-6');
+      toggleBtn.setAttribute('aria-checked', 'true');
+      showToast('Memoria RAG persistente activada');
+    } else {
+      toggleBtn.classList.remove('bg-primary');
+      toggleBtn.classList.add('bg-surface-container-highest');
+      toggleCircle.classList.remove('translate-x-6');
+      toggleCircle.classList.add('translate-x-0');
+      toggleBtn.setAttribute('aria-checked', 'false');
+      showToast('Memoria RAG aislada por sesión');
+    }
+  });
+
+  // Global bottom triggers
+  document.getElementById('btn-download-dossier').addEventListener('click', () => {
+    showToast('Compilando expediente en PDF consolidado...');
+  });
+
+  document.getElementById('btn-purge-all').addEventListener('click', () => {
+    openModal('Todas las sesiones', true, null);
+  });
+
+  // Filter and search logic
+  function applyFilters() {
+    const query = searchInput.value.toLowerCase().trim();
+    const activeChip = document.querySelector('.filter-chip.active');
+    const filterValue = activeChip ? activeChip.getAttribute('data-filter') : 'all';
+
+    let visibleCount = 0;
+
+    sessionCards.forEach(card => {
+      const cardTitle = (card.getAttribute('data-title') || '').toLowerCase();
+      const cardCategory = (card.getAttribute('data-category') || '').toLowerCase();
+      
+      const matchesSearch = query === '' || cardTitle.includes(query) || cardCategory.includes(query);
+      const matchesFilter = filterValue === 'all' || cardCategory.includes(filterValue);
+
+      if (matchesSearch && matchesFilter) {
+        card.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
+    if (visibleCount === 0) {
+      noResultsState.classList.remove('hidden');
+      noResultsState.classList.add('flex');
+    } else {
+      noResultsState.classList.add('hidden');
+      noResultsState.classList.remove('flex');
+    }
+  }
+
+  searchInput.addEventListener('input', () => {
+    if (searchInput.value.length > 0) {
+      clearSearchBtn.classList.remove('hidden');
+    } else {
+      clearSearchBtn.classList.add('hidden');
+    }
+    applyFilters();
+  });
+
+  clearSearchBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearSearchBtn.classList.add('hidden');
+    applyFilters();
+  });
+
+  filterChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      filterChips.forEach(c => {
+        c.classList.remove('active', 'bg-primary', 'text-on-primary');
+        c.classList.add('bg-surface-container-lowest', 'text-on-surface-variant');
+      });
+      chip.classList.add('active', 'bg-primary', 'text-on-primary');
+      chip.classList.remove('bg-surface-container-lowest', 'text-on-surface-variant');
+      applyFilters();
+    });
+  });
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-bold"><div class="h-20 px-space-xs flex items-center justify-around"><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="catalogo" href="../catalogo_de_codigos_y_leyes/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">menu_book</span></div><span class="font-label-md text-label-md tracking-tight">Catálogo</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="chat-rag" href="../chat_rag_contextual/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">smart_toy</span></div><span class="font-label-md text-label-md tracking-tight">Chat RAG</span></a><a aria-current="page" class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 transition-colors text-primary font-bold" data-path="historial" href="../historial_y_memoria_persistente/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">history</span></div><span class="font-label-md text-label-md tracking-tight">Historial</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="perfil" href="../autenticacion_y_licencia_ia/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">verified_user</span></div><span class="font-label-md text-label-md tracking-tight">Perfil</span></a></div></nav></body></html>

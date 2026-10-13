@@ -1,0 +1,399 @@
+﻿<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_tab" name="shell-type"/>
+<title>Catálogo de códigos y leyes · LexIA</title>
+<meta content="Explora el catálogo de códigos y leyes mexicanas vigentes indexadas por LexIA." name="description"/>
+
+<link href="../shared/lexia.css" rel="stylesheet"/>
+<script src="../shared/vendor/tailwindcss.js"></script>
+<script src="../shared/tailwind.config.js"></script>
+</head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="flex items-center justify-between px-margin py-space-xs text-on-surface-variant font-label-sm text-label-sm"><span class="font-label-md text-label-md font-semibold text-on-surface">09:41</span><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span><span class="font-label-sm text-label-sm">5G</span><span class="material-symbols-outlined text-[14px]">wifi</span><span class="material-symbols-outlined text-[16px]">battery_full</span></div></div><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="LexIA Brand Emblem" class="h-8 w-auto object-contain" src="../shared/assets/brand-emblem.png"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-title-lg text-title-lg text-primary tracking-tight font-bold">LexIA</span><div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-success-500/10 text-success-800 text-[10px] font-semibold tracking-wide uppercase"><span class="material-symbols-outlined text-[11px] text-success-600">auto_awesome</span><span>IA Premium Activa</span></div></div><span class="font-label-md text-label-md text-on-surface-variant truncate">Catálogo</span></div></div><div class="flex items-center gap-space-sm flex-shrink-0"><button aria-label="Perfil de usuario" class="min-h-[44px] min-w-[44px] flex items-center justify-center p-0.5 rounded-full transition-opacity hover:opacity-80"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="../shared/assets/avatar.jpg"/></button></div></div></header><main class="flex flex-col relative w-full pt-24 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full px-margin pb-space-xl gap-space-lg">
+<!-- Status / Welcome Banner Card -->
+<section class="bg-surface-container-low rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-32 h-32 bg-primary-container/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Repositorio Normativo Mexicano</span>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-lowest shadow-sm">
+<span class="w-2 h-2 rounded-full bg-success-600 animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-primary font-bold">FAISS Vector Store Conectado</span>
+</div>
+</div>
+<div class="flex flex-col">
+<h1 class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">Catálogo de Leyes Federales</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+        Acceso semántico de ultra baja latencia con respaldo constitucional y jurisprudencial SCJN.
+      </p>
+</div>
+<!-- Quick Stats Metric Pills -->
+<div class="grid grid-cols-3 gap-space-xs pt-space-xs">
+<div class="bg-surface-container-lowest rounded-lg p-2 flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Leyes Activas</span>
+<span class="font-title-md text-title-md text-primary font-bold">4 Corpus</span>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-2 flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Vectores FAISS</span>
+<span class="font-title-md text-title-md text-primary font-bold">10.8k</span>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-2 flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Latencia RAG</span>
+<span class="font-title-md text-title-md text-success-700 font-bold">< 18ms</span>
+</div>
+</div>
+</section>
+<!-- Semantic Search & Filter Bar -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<div class="flex-1 flex items-center bg-surface-container-lowest rounded-lg px-space-md py-2.5 shadow-sm min-w-0">
+<span class="material-symbols-outlined text-secondary mr-2 flex-shrink-0">search</span>
+<input class="w-full bg-transparent outline-none font-body-md text-body-md text-on-surface placeholder:text-outline-variant placeholder:font-body-sm" id="semantic-query-input" placeholder="Buscar tema, artículo o jurisprudencia (ej. amparo directo)..." type="text"/>
+<button class="hidden text-outline-variant hover:text-on-surface flex-shrink-0 ml-1" id="clear-search-btn">
+<span class="material-symbols-outlined text-[18px]">cancel</span>
+</button>
+</div>
+<button aria-label="Abrir filtros de búsqueda" class="h-12 w-12 rounded-lg bg-surface-container-lowest shadow-sm flex items-center justify-center text-primary hover:bg-secondary-container transition-colors flex-shrink-0">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+<!-- Filter Chips Horizontal Scroller -->
+<div class="flex items-center gap-2 overflow-x-auto pb-1 pt-0.5 no-scrollbar -mx-margin px-margin">
+<button class="filter-chip px-3 py-1.5 rounded-full font-label-md text-label-md bg-primary text-on-primary whitespace-nowrap shadow-sm font-semibold transition-all" data-category="all">
+        Todos (4)
+      </button>
+<button class="filter-chip px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container-lowest text-on-surface-variant whitespace-nowrap shadow-sm hover:bg-surface-container transition-all" data-category="constitucional">
+        Constitucional
+      </button>
+<button class="filter-chip px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container-lowest text-on-surface-variant whitespace-nowrap shadow-sm hover:bg-surface-container transition-all" data-category="penal">
+        Penal
+      </button>
+<button class="filter-chip px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container-lowest text-on-surface-variant whitespace-nowrap shadow-sm hover:bg-surface-container transition-all" data-category="civil">
+        Civil y Familiar
+      </button>
+<button class="filter-chip px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container-lowest text-on-surface-variant whitespace-nowrap shadow-sm hover:bg-surface-container transition-all" data-category="laboral">
+        Laboral
+      </button>
+<button class="filter-chip px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container-lowest text-on-surface-variant whitespace-nowrap shadow-sm hover:bg-surface-container transition-all" data-category="mercantil">
+        Mercantil
+      </button>
+</div>
+</section>
+<!-- Legal Catalog List -->
+<section class="flex flex-col gap-space-md" id="catalog-list">
+<!-- Card 1: CPEUM -->
+<article class="law-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md transition-all relative overflow-hidden" data-category="constitucional">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">account_balance</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-bold leading-tight">
+              Constitución Política (CPEUM)
+            </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Estados Unidos Mexicanos</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-success-50 text-success-800 font-bold whitespace-nowrap uppercase">
+          Vigente DOF 2024
+        </span>
+</div>
+<!-- Embedding / FAISS Metadata Box -->
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">neurology</span>
+<span class="font-label-md text-label-md text-primary font-semibold">FAISS Vector Store</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-100 text-success-800 font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-success-600"></span>
+            RAG Listo
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          136 Artículos • 2,450 chunks vectorizados con DistilBERT Legal-ES.
+        </p>
+<div class="flex items-center gap-2 pt-0.5">
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container px-1.5 py-0.5 rounded">Dimensión: 768</span>
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container px-1.5 py-0.5 rounded">IndexFlatIP</span>
+<span class="font-label-sm text-label-sm text-success-800 font-mono">sim: 0.942</span>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-space-xs pt-1">
+<button class="flex-1 min-h-[44px] rounded-lg bg-primary text-on-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-1.5 shadow-sm active:opacity-90 transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+          Consultar con IA
+        </button>
+<button class="px-3 min-h-[44px] rounded-lg bg-surface-container-high text-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-1 active:bg-surface-container">
+<span class="material-symbols-outlined text-[18px]">menu_book</span>
+<span>Ver Artículos</span>
+</button>
+</div>
+</article>
+<!-- Card 2: CNPP -->
+<article class="law-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md transition-all relative overflow-hidden" data-category="penal">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">gavel</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-bold leading-tight">
+              Código Nac. de Procedimientos Penales (CNPP)
+            </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Procedimiento Acusatorio</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-secondary-container text-on-secondary-fixed-variant font-bold whitespace-nowrap">
+          Penal Acusatorio
+        </span>
+</div>
+<!-- Embedding / FAISS Metadata Box -->
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">database</span>
+<span class="font-label-md text-label-md text-primary font-semibold">FAISS Vector Store</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-100 text-success-800 font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-success-600"></span>
+            RAG Listo
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          502 Artículos • 4,120 chunks indexados (Etapas de Juicio Oral).
+        </p>
+<div class="flex items-center gap-2 pt-0.5">
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container px-1.5 py-0.5 rounded">Dimensión: 768</span>
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container px-1.5 py-0.5 rounded">IndexIVFFlat</span>
+<span class="font-label-sm text-label-sm text-success-800 font-mono">sim: 0.918</span>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-space-xs pt-1">
+<button class="flex-1 min-h-[44px] rounded-lg bg-primary text-on-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-1.5 shadow-sm active:opacity-90 transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+          Consultar con IA
+        </button>
+<button class="px-3 min-h-[44px] rounded-lg bg-surface-container-high text-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-1 active:bg-surface-container">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+<span>Índice</span>
+</button>
+</div>
+</article>
+<!-- Card 3: LFT -->
+<article class="law-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md transition-all relative overflow-hidden" data-category="laboral">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">work_history</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-bold leading-tight">
+              Ley Federal del Trabajo (LFT)
+            </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Relaciones Laborales y Seguridad</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-high text-primary font-bold whitespace-nowrap">
+          Laboral
+        </span>
+</div>
+<!-- Embedding / FAISS Metadata Box -->
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">grain</span>
+<span class="font-label-md text-label-md text-primary font-semibold">FAISS Vector Store</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-100 text-success-800 font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-success-600"></span>
+            RAG Listo
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          1,010 Artículos • 1,890 chunks normativos y tablas salariales.
+        </p>
+<div class="flex items-center gap-2 pt-0.5">
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container px-1.5 py-0.5 rounded">Reformas 2024</span>
+<span class="font-label-sm text-label-sm text-success-800 font-mono">sim: 0.895</span>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-space-xs pt-1">
+<button class="flex-1 min-h-[44px] rounded-lg bg-primary text-on-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-1.5 shadow-sm active:opacity-90 transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+          Consultar con IA
+        </button>
+<button class="px-3 min-h-[44px] rounded-lg bg-surface-container-high text-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-1 active:bg-surface-container">
+<span class="material-symbols-outlined text-[18px]">menu_book</span>
+<span>Ver</span>
+</button>
+</div>
+</article>
+<!-- Card 4: CCF -->
+<article class="law-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md transition-all relative overflow-hidden" data-category="civil">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">home_work</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-bold leading-tight">
+              Código Civil Federal (CCF)
+            </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Obligaciones, Personas y Bienes</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-high text-secondary font-bold whitespace-nowrap">
+          Civil
+        </span>
+</div>
+<!-- Embedding / FAISS Metadata Box -->
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">sync</span>
+<span class="font-label-md text-label-md text-primary font-semibold">FAISS Vector Store</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-100 text-success-800 font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-success-600"></span>
+            Sincronizado
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          3,044 Chunks vectorizados • Libros I al IV procesados íntegramente.
+        </p>
+<div class="flex items-center gap-2 pt-0.5">
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container px-1.5 py-0.5 rounded">Dimensión: 768</span>
+<span class="font-label-sm text-label-sm text-success-800 font-mono">sim: 0.908</span>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-space-xs pt-1">
+<button class="flex-1 min-h-[44px] rounded-lg bg-primary text-on-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-1.5 shadow-sm active:opacity-90 transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+          Consultar con IA
+        </button>
+<button class="px-3 min-h-[44px] rounded-lg bg-surface-container-high text-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-1 active:bg-surface-container">
+<span class="material-symbols-outlined text-[18px]">menu_book</span>
+<span>Ver</span>
+</button>
+</div>
+</article>
+</section>
+<!-- Empty state container for filtered searches -->
+<div class="hidden flex-col items-center justify-center p-space-xl text-center bg-surface-container-lowest rounded-xl" id="empty-state">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-secondary mb-2">
+<span class="material-symbols-outlined text-[28px]">search_off</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface font-semibold">Sin coincidencias semánticas</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs mt-1">
+      Intente buscar por término general como "amparo", "despido injustificado" o "contrato civil".
+    </p>
+<button class="mt-space-sm px-4 py-1.5 rounded-lg bg-surface-container-high text-primary font-label-md text-label-md font-semibold" id="reset-filter-btn">
+      Restablecer Filtros
+    </button>
+</div>
+<!-- Bottom Privacy & Security Guarantee Banner -->
+<footer class="bg-surface-container-low rounded-xl p-space-md flex items-start gap-space-sm shadow-sm">
+<div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">security</span>
+</div>
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md text-on-surface font-bold">Base Vectorial Segura</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container-highest text-primary font-bold">ON-DEVICE</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        Base vectorial local y segura: FAISS Open-Source optimizado para latencia cero y privacidad garantizada. Ninguna consulta procesada viaja a servidores de terceros para entrenamiento de modelos comerciales.
+      </p>
+</div>
+</footer>
+</div>
+<script>
+  (function initCatalogInteractions() {
+    const filterChips = document.querySelectorAll('.filter-chip');
+    const lawCards = document.querySelectorAll('.law-card');
+    const searchInput = document.getElementById('semantic-query-input');
+    const clearSearchBtn = document.getElementById('clear-search-btn');
+    const emptyState = document.getElementById('empty-state');
+    const resetFilterBtn = document.getElementById('reset-filter-btn');
+
+    let currentCategory = 'all';
+
+    function applyFilters() {
+      const query = (searchInput.value || '').toLowerCase().trim();
+      let visibleCount = 0;
+
+      lawCards.forEach(card => {
+        const category = card.getAttribute('data-category');
+        const textContent = card.innerText.toLowerCase();
+
+        const matchesCategory = (currentCategory === 'all' || category === currentCategory);
+        const matchesQuery = (query === '' || textContent.includes(query));
+
+        if (matchesCategory && matchesQuery) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+      } else {
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+      }
+
+      if (query.length > 0) {
+        clearSearchBtn.classList.remove('hidden');
+      } else {
+        clearSearchBtn.classList.add('hidden');
+      }
+    }
+
+    filterChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        filterChips.forEach(c => {
+          c.classList.remove('bg-primary', 'text-on-primary', 'font-semibold');
+          c.classList.add('bg-surface-container-lowest', 'text-on-surface-variant');
+        });
+
+        chip.classList.remove('bg-surface-container-lowest', 'text-on-surface-variant');
+        chip.classList.add('bg-primary', 'text-on-primary', 'font-semibold');
+
+        currentCategory = chip.getAttribute('data-category');
+        applyFilters();
+      });
+    });
+
+    searchInput.addEventListener('input', applyFilters);
+
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      applyFilters();
+      searchInput.focus();
+    });
+
+    resetFilterBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      currentCategory = 'all';
+      filterChips.forEach(c => {
+        if (c.getAttribute('data-category') === 'all') {
+          c.classList.remove('bg-surface-container-lowest', 'text-on-surface-variant');
+          c.classList.add('bg-primary', 'text-on-primary', 'font-semibold');
+        } else {
+          c.classList.remove('bg-primary', 'text-on-primary', 'font-semibold');
+          c.classList.add('bg-surface-container-lowest', 'text-on-surface-variant');
+        }
+      });
+      applyFilters();
+    });
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-bold"><div class="h-20 px-space-xs flex items-center justify-around"><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="catalogo" href="../catalogo_de_codigos_y_leyes/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">menu_book</span></div><span class="font-label-md text-label-md tracking-tight">Catálogo</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="chat-rag" href="../chat_rag_contextual/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">smart_toy</span></div><span class="font-label-md text-label-md tracking-tight">Chat RAG</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="historial" href="../historial_y_memoria_persistente/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">history</span></div><span class="font-label-md text-label-md tracking-tight">Historial</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="perfil" href="../autenticacion_y_licencia_ia/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">verified_user</span></div><span class="font-label-md text-label-md tracking-tight">Perfil</span></a></div></nav></body></html>

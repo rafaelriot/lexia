@@ -1,0 +1,483 @@
+﻿<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_tab" name="shell-type"/>
+<title>Detalle de artículo · Chunks FAISS · LexIA</title>
+<meta content="Detalle de un artículo con sus fragmentos vectoriales y similitud semántica." name="description"/>
+
+<link href="../shared/lexia.css" rel="stylesheet"/>
+<script src="../shared/vendor/tailwindcss.js"></script>
+<script src="../shared/tailwind.config.js"></script>
+</head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="flex items-center justify-between px-margin py-space-xs text-on-surface-variant font-label-sm text-label-sm"><span class="font-label-md text-label-md font-semibold text-on-surface">09:41</span><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span><span class="font-label-sm text-label-sm">5G</span><span class="material-symbols-outlined text-[14px]">wifi</span><span class="material-symbols-outlined text-[16px]">battery_full</span></div></div><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="LexIA Brand Emblem" class="h-8 w-auto object-contain" src="../shared/assets/brand-emblem.png"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-title-lg text-title-lg text-primary tracking-tight font-bold">LexIA</span><div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-success-500/10 text-success-800 text-[10px] font-semibold tracking-wide uppercase"><span class="material-symbols-outlined text-[11px] text-success-600">auto_awesome</span><span>IA Premium Activa</span></div></div><span class="font-label-md text-label-md text-on-surface-variant truncate">Catálogo</span></div></div><div class="flex items-center gap-space-sm flex-shrink-0"><button aria-label="Perfil de usuario" class="min-h-[44px] min-w-[44px] flex items-center justify-center p-0.5 rounded-full transition-opacity hover:opacity-80"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="../shared/assets/avatar.jpg"/></button></div></div></header><main class="flex flex-col relative w-full pt-24 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Banner Contextual y Breadcrumb Superior -->
+<section class="px-margin pt-space-xs pb-space-sm flex flex-col gap-space-xs">
+<div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-on-surface-variant font-label-md text-label-md">
+<span class="inline-flex items-center gap-1 font-semibold text-primary">
+<span class="material-symbols-outlined text-[15px]">account_balance</span>
+        CPEUM
+      </span>
+<span class="material-symbols-outlined text-[13px] text-outline">chevron_right</span>
+<span class="whitespace-nowrap">Título Primero</span>
+<span class="material-symbols-outlined text-[13px] text-outline">chevron_right</span>
+<span class="whitespace-nowrap text-on-surface font-medium truncate">Capítulo I: DH y Garantías</span>
+</div>
+<!-- Título Principal y Acciones Rápidas -->
+<div class="flex items-start justify-between gap-space-sm mt-1">
+<div class="flex flex-col gap-1 min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-bold tracking-tight">
+            Artículo 16
+          </h1>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-500/15 text-success-800 font-label-sm text-label-sm font-bold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-success-600 animate-pulse"></span>
+            Vigente
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-outline">history_edu</span>
+          Última reforma DOF: 28 de mayo de 2021
+        </p>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button aria-label="Copiar texto oficial" class="w-10 h-10 rounded-xl bg-surface-container hover:bg-surface-container-high text-primary flex items-center justify-center transition-all active:scale-95 shadow-sm" id="copy-article-btn">
+<span class="material-symbols-outlined text-[20px]">content_copy</span>
+</button>
+<button aria-label="Compartir artículo" class="w-10 h-10 rounded-xl bg-surface-container hover:bg-surface-container-high text-primary flex items-center justify-center transition-all active:scale-95 shadow-sm" id="share-article-btn">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Tarjeta Hero de Texto Oficial con Herramientas de Lectura -->
+<section class="px-margin py-space-xs">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-md flex flex-col gap-space-md">
+<!-- Toolbar de Lectura / Accesibilidad Jurídica -->
+<div class="flex items-center justify-between gap-2 pb-space-xs bg-surface-container-low px-3 py-2 rounded-lg">
+<div class="flex items-center gap-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider mr-1">Fuente:</span>
+<button class="w-7 h-7 rounded-md bg-surface-container-lowest text-on-surface flex items-center justify-center font-label-md text-label-md font-bold shadow-sm active:bg-surface-container" id="btn-font-decrease">A-</button>
+<button class="w-7 h-7 rounded-md bg-surface-container-lowest text-on-surface flex items-center justify-center font-label-md text-label-md font-bold shadow-sm active:bg-surface-container" id="btn-font-increase">A+</button>
+</div>
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-primary-container text-on-primary font-label-md text-label-md font-semibold transition-all shadow-sm active:opacity-90" id="btn-tts">
+<span class="material-symbols-outlined text-[15px]" id="tts-icon">volume_up</span>
+<span id="tts-label">Audio Legal</span>
+</button>
+<a class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-surface-container text-primary font-label-md text-label-md font-semibold hover:bg-surface-container-high transition-colors" href="https://www.dof.gob.mx" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+            DOF Oficial
+          </a>
+</div>
+</div>
+<!-- Extracto e Integridad del Texto Normativo -->
+<div class="flex flex-col gap-space-sm text-on-surface transition-all duration-200" id="statute-content">
+<p class="font-body-lg text-body-lg leading-relaxed text-justify font-medium">
+<span class="text-primary font-bold">Nadie puede ser molestado</span> en su persona, familia, domicilio, papeles o posesiones, sino en virtud de <span class="bg-ai-100/70 text-on-surface px-1 rounded">mandamiento escrito de la autoridad competente</span>, que funde y motive la causa legal del procedimiento. En los juicios y procedimientos seguidos en forma de juicio en los que se establezca como regla la oralidad, bastará con que quede constancia de ellos en cualquier medio que dé certeza de su contenido y del cumplimiento de lo previsto en este párrafo.
+        </p>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify">
+          Toda persona tiene derecho a la protección de sus datos personales, al acceso, rectificación y cancelación de los mismos, así como a manifestar su oposición, en los términos que fije la ley, la cual establecerá los supuestos de excepción a los principios que rijan el tratamiento de datos, por razones de seguridad nacional, disposiciones de orden público, seguridad y salud públicas o para proteger los derechos de terceros.
+        </p>
+<!-- Bloque colapsable / expandable del resto de párrafos para optimizar altura -->
+<div class="hidden flex-col gap-space-sm" id="remaining-paragraphs">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify">
+            No podrá librarse orden de aprehensión sino por la autoridad judicial y sin que preceda denuncia o querella de un hecho que la ley señale como delito, sancionado con pena privativa de libertad y obren datos que establezcan que se ha cometido ese hecho y que exista la probabilidad de que el indiciado lo cometió o participó en su comisión.
+          </p>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-justify">
+            Cualquier persona puede detener al indiciado en el momento en que esté cometiendo un delito o inmediatamente después de haberlo cometido, poniéndolo sin demora a disposición de la autoridad civil más cercana y ésta con la misma prontitud, a la del Ministerio Público. Existirá un registro inmediato de la detención.
+          </p>
+</div>
+<button class="inline-flex items-center justify-center gap-1 text-primary font-label-lg text-label-lg font-bold py-1 mt-1 hover:underline" id="toggle-paragraphs-btn">
+<span id="toggle-text">Mostrar los 16 párrafos completos</span>
+<span class="material-symbols-outlined text-[16px]" id="toggle-icon">expand_more</span>
+</button>
+</div>
+<!-- Quick Chips de Materia y Principios Clave -->
+<div class="flex items-center gap-1.5 flex-wrap pt-2">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">#Legalidad</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">#InviolabilidadDomicilio</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">#Flagrancia</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">#MandamientoEscrito</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">#ProteccionDatos</span>
+</div>
+</div>
+</section>
+<!-- Banner de Acciones Directas con IA (RAG Trigger) -->
+<section class="px-margin py-space-sm">
+<div class="bg-gradient-to-r from-primary via-primary-container to-surface-tint p-4 rounded-xl text-on-primary shadow-sm flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-ai-300">smart_toy</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md font-bold leading-tight">Asistente RAG Contextual</h2>
+<p class="font-label-sm text-label-sm text-on-primary-container">Contexto activo: CPEUM Art. 16 (Íntegro + 5 Chunks)</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-success-400/20 text-success-200 font-label-sm text-label-sm font-bold uppercase tracking-wider">Grounding Activo</span>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-1">
+<button class="flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-surface-container-lowest text-primary font-label-md text-label-md font-bold transition-all hover:bg-surface-bright active:scale-98 shadow-sm">
+<span class="material-symbols-outlined text-[17px] text-primary">chat</span>
+<span>Preguntar en Chat</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-white/10 text-on-primary font-label-md text-label-md font-semibold backdrop-blur-sm transition-all hover:bg-white/20 active:scale-98">
+<span class="material-symbols-outlined text-[17px] text-ai-300">summarize</span>
+<span>Ficha Técnica</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 text-on-primary font-label-md text-label-md font-semibold backdrop-blur-sm transition-all hover:bg-white/20 active:scale-98">
+<span class="material-symbols-outlined text-[17px] text-sky-200">record_voice_over</span>
+<span>Explicar a Cliente</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 text-on-primary font-label-md text-label-md font-semibold backdrop-blur-sm transition-all hover:bg-white/20 active:scale-98">
+<span class="material-symbols-outlined text-[17px] text-ai-200">gavel</span>
+<span>Tesis SCJN (142)</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Sección Técnica de Indexación FAISS y Chunks RAG -->
+<section class="px-margin py-space-sm flex flex-col gap-space-sm">
+<!-- Encabezado de Vector Store y Telemetría Semántica -->
+<div class="bg-surface-container rounded-xl p-3 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">account_tree</span>
+<span class="font-title-md text-title-md font-bold text-on-surface">Indexación FAISS y RAG Chunks</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-highest text-primary font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+          5 Chunks Activos
+        </span>
+</div>
+<!-- Barra de Metadatos del Modelo de Embeddings -->
+<div class="grid grid-cols-3 gap-2 pt-1 font-label-sm text-label-sm">
+<div class="bg-surface-container-lowest px-2 py-1.5 rounded-lg flex flex-col">
+<span class="text-on-surface-variant font-medium">Index FAISS</span>
+<span class="font-bold text-on-surface font-mono">IndexFlatIP</span>
+</div>
+<div class="bg-surface-container-lowest px-2 py-1.5 rounded-lg flex flex-col">
+<span class="text-on-surface-variant font-medium">Dimensión</span>
+<span class="font-bold text-on-surface font-mono">768-D</span>
+</div>
+<div class="bg-surface-container-lowest px-2 py-1.5 rounded-lg flex flex-col">
+<span class="text-on-surface-variant font-medium">Encoder</span>
+<span class="font-bold text-on-surface truncate font-mono">DistilBERT-LE</span>
+</div>
+</div>
+</div>
+<!-- Lista de Chunks Vectorizados -->
+<div class="flex flex-col gap-space-sm">
+<!-- Chunk 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col gap-2.5">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-ai-600"></div>
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm font-mono font-bold">#CPEUM-16-01</span>
+<span class="font-label-md text-label-md font-bold text-primary truncate">Párrafo 1°: Legalidad y Fundamentación</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Segmento base de control constitucional formal</span>
+</div>
+<div class="shrink-0 flex flex-col items-end">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded bg-ai-500/10 text-ai-800 font-label-sm text-label-sm font-bold font-mono">
+              cos: 0.962
+            </span>
+<span class="text-[10px] text-on-surface-variant mt-0.5">142 tokens</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg font-body-sm text-body-sm text-on-surface leading-snug">
+          "Nadie puede ser molestado en su persona, familia, domicilio, papeles o posesiones, sino en virtud de mandamiento escrito de la autoridad competente, que funde y motive la causa legal del procedimiento..."
+        </div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center text-[10px] font-semibold text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">Garantía individual</span>
+<span class="inline-flex items-center text-[10px] font-semibold text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">Formalidad</span>
+</div>
+<button class="inline-flex items-center gap-1 text-primary font-label-md text-label-md font-bold hover:underline">
+<span class="material-symbols-outlined text-[15px]">psychology</span>
+            Consultar chunk
+          </button>
+</div>
+</div>
+<!-- Chunk 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col gap-2.5">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-ai-600"></div>
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm font-mono font-bold">#CPEUM-16-05</span>
+<span class="font-label-md text-label-md font-bold text-primary truncate">Párrafo 5°: Flagrancia Estricta</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Régimen excepcional de privación preventiva</span>
+</div>
+<div class="shrink-0 flex flex-col items-end">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded bg-ai-500/10 text-ai-800 font-label-sm text-label-sm font-bold font-mono">
+              cos: 0.941
+            </span>
+<span class="text-[10px] text-on-surface-variant mt-0.5">118 tokens</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg font-body-sm text-body-sm text-on-surface leading-snug">
+          "Cualquier persona puede detener al indiciado en el momento en que esté cometiendo un delito o inmediatamente después de haberlo cometido, poniéndolo sin demora a disposición de la autoridad civil..."
+        </div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center text-[10px] font-semibold text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">Detención inmediata</span>
+<span class="inline-flex items-center text-[10px] font-semibold text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">Puesta a disposición</span>
+</div>
+<button class="inline-flex items-center gap-1 text-primary font-label-md text-label-md font-bold hover:underline">
+<span class="material-symbols-outlined text-[15px]">psychology</span>
+            Consultar chunk
+          </button>
+</div>
+</div>
+<!-- Chunk 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col gap-2.5">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-ai-600"></div>
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm font-mono font-bold">#CPEUM-16-06</span>
+<span class="font-label-md text-label-md font-bold text-primary truncate">Párrafo 6°: Caso Urgente Ministerial</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Facultad de retención por delito grave y sustracción</span>
+</div>
+<div class="shrink-0 flex flex-col items-end">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded bg-ai-500/10 text-ai-800 font-label-sm text-label-sm font-bold font-mono">
+              cos: 0.915
+            </span>
+<span class="text-[10px] text-on-surface-variant mt-0.5">165 tokens</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg font-body-sm text-body-sm text-on-surface leading-snug">
+          "Sólo en casos urgentes, cuando se trate de delito grave así calificado por la ley y ante el riesgo fundado de que el indiciado pueda sustraerse a la acción de la justicia, el Ministerio Público podrá ordenar su detención..."
+        </div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center text-[10px] font-semibold text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">Riesgo procesal</span>
+<span class="inline-flex items-center text-[10px] font-semibold text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">Delito calificado</span>
+</div>
+<button class="inline-flex items-center gap-1 text-primary font-label-md text-label-md font-bold hover:underline">
+<span class="material-symbols-outlined text-[15px]">psychology</span>
+            Consultar chunk
+          </button>
+</div>
+</div>
+<!-- Chunk 4 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden flex flex-col gap-2.5">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-ai-600"></div>
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm font-mono font-bold">#CPEUM-16-11</span>
+<span class="font-label-md text-label-md font-bold text-primary truncate">Párrafo 11°: Órdenes de Cateo Judicial</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Inviolabilidad de domicilio y acta circunstanciada</span>
+</div>
+<div class="shrink-0 flex flex-col items-end">
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded bg-ai-500/10 text-ai-800 font-label-sm text-label-sm font-bold font-mono">
+              cos: 0.887
+            </span>
+<span class="text-[10px] text-on-surface-variant mt-0.5">180 tokens</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg font-body-sm text-body-sm text-on-surface leading-snug">
+          "En toda orden de cateo, que sólo la autoridad judicial podrá expedir, a solicitud del Ministerio Público, se expresará el lugar que ha de inspeccionarse, la persona o personas que hayan de aprehenderse..."
+        </div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center text-[10px] font-semibold text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">Control judicial</span>
+<span class="inline-flex items-center text-[10px] font-semibold text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">Dos testigos</span>
+</div>
+<button class="inline-flex items-center gap-1 text-primary font-label-md text-label-md font-bold hover:underline">
+<span class="material-symbols-outlined text-[15px]">psychology</span>
+            Consultar chunk
+          </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Concordancias Normativas y Referencias Cruzadas Semánticas -->
+<section class="px-margin py-space-sm flex flex-col gap-space-sm mb-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">hub</span>
+<h3 class="font-title-md text-title-md font-bold text-on-surface">Afinidad Vectorial Cruzada</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Top afinidades</span>
+</div>
+<div class="grid grid-cols-1 gap-2.5">
+<!-- Referencia 1 -->
+<div class="bg-surface-container-lowest p-3 rounded-xl shadow-sm flex items-center justify-between gap-3 transition-colors hover:bg-surface-bright">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-lg bg-surface-container text-primary flex items-center justify-center font-label-md text-label-md font-bold shrink-0">
+            CPEUM
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md font-bold text-on-surface truncate">Artículo 14 Constitucional</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Principio de Legalidad, Irretroactividad y Debido Proceso</span>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<span class="px-2 py-0.5 rounded bg-success-500/10 text-success-800 font-label-sm text-label-sm font-bold font-mono">98% match</span>
+<span class="material-symbols-outlined text-[18px] text-outline">chevron_right</span>
+</div>
+</div>
+<!-- Referencia 2 -->
+<div class="bg-surface-container-lowest p-3 rounded-xl shadow-sm flex items-center justify-between gap-3 transition-colors hover:bg-surface-bright">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-md text-label-md font-bold shrink-0">
+            CNPP
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md font-bold text-on-surface truncate">Artículo 146 CNPP</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Supuestos taxativos de Flagrancia y Cuasiflagrancia</span>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<span class="px-2 py-0.5 rounded bg-success-500/10 text-success-800 font-label-sm text-label-sm font-bold font-mono">94% match</span>
+<span class="material-symbols-outlined text-[18px] text-outline">chevron_right</span>
+</div>
+</div>
+<!-- Referencia 3 -->
+<div class="bg-surface-container-lowest p-3 rounded-xl shadow-sm flex items-center justify-between gap-3 transition-colors hover:bg-surface-bright">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-md text-label-md font-bold shrink-0">
+            CNPP
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md font-bold text-on-surface truncate">Artículo 150 CNPP</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Orden de Detención por Caso Urgente emitida por MP</span>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<span class="px-2 py-0.5 rounded bg-ai-500/10 text-ai-800 font-label-sm text-label-sm font-bold font-mono">91% match</span>
+<span class="material-symbols-outlined text-[18px] text-outline">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Notificación Toast Dinámica para Copiado / Acciones -->
+<div class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-on-surface text-surface px-4 py-2 rounded-full font-label-md text-label-md shadow-xl flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none z-50" id="toast-feedback">
+<span class="material-symbols-outlined text-[16px] text-success-400">check_circle</span>
+<span id="toast-text">Acción completada</span>
+</div>
+</div>
+<script>
+  (function() {
+    // 1. Manejo del colapso/expansión de párrafos
+    const toggleBtn = document.getElementById('toggle-paragraphs-btn');
+    const remainingParas = document.getElementById('remaining-paragraphs');
+    const toggleText = document.getElementById('toggle-text');
+    const toggleIcon = document.getElementById('toggle-icon');
+
+    if (toggleBtn && remainingParas) {
+      let isExpanded = false;
+      toggleBtn.addEventListener('click', function() {
+        isExpanded = !isExpanded;
+        if (isExpanded) {
+          remainingParas.classList.remove('hidden');
+          remainingParas.classList.add('flex');
+          toggleText.textContent = 'Ver menos párrafos';
+          toggleIcon.textContent = 'expand_less';
+        } else {
+          remainingParas.classList.add('hidden');
+          remainingParas.classList.remove('flex');
+          toggleText.textContent = 'Mostrar los 16 párrafos completos';
+          toggleIcon.textContent = 'expand_more';
+        }
+      });
+    }
+
+    // 2. Control de Tamaño de Fuente
+    const btnFontInc = document.getElementById('btn-font-increase');
+    const btnFontDec = document.getElementById('btn-font-decrease');
+    const statuteBox = document.getElementById('statute-content');
+    let currentScale = 1;
+
+    if (btnFontInc && btnFontDec && statuteBox) {
+      btnFontInc.addEventListener('click', function() {
+        if (currentScale < 1.25) {
+          currentScale += 0.08;
+          statuteBox.style.transformOrigin = 'top left';
+          statuteBox.style.fontSize = `${currentScale * 100}%`;
+          showToast('Tamaño de texto incrementado');
+        }
+      });
+      btnFontDec.addEventListener('click', function() {
+        if (currentScale > 0.85) {
+          currentScale -= 0.08;
+          statuteBox.style.transformOrigin = 'top left';
+          statuteBox.style.fontSize = `${currentScale * 100}%`;
+          showToast('Tamaño de texto reducido');
+        }
+      });
+    }
+
+    // 3. Audio TTS Simulado
+    const btnTts = document.getElementById('btn-tts');
+    const ttsIcon = document.getElementById('tts-icon');
+    const ttsLabel = document.getElementById('tts-label');
+    let isPlaying = false;
+
+    if (btnTts) {
+      btnTts.addEventListener('click', function() {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+          ttsIcon.textContent = 'pause';
+          ttsLabel.textContent = 'Pausar';
+          btnTts.classList.add('bg-ai-600');
+          showToast('Reproduciendo audio jurídico oficial...');
+        } else {
+          ttsIcon.textContent = 'volume_up';
+          ttsLabel.textContent = 'Audio Legal';
+          btnTts.classList.remove('bg-ai-600');
+          showToast('Audio pausado');
+        }
+      });
+    }
+
+    // 4. Copiar y Compartir con Toast Feedback
+    const toast = document.getElementById('toast-feedback');
+    const toastLabel = document.getElementById('toast-text');
+    let toastTimeout;
+
+    function showToast(message) {
+      if (!toast) return;
+      toastLabel.textContent = message;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      toast.classList.add('opacity-100');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(function() {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 2200);
+    }
+
+    const copyBtn = document.getElementById('copy-article-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function() {
+        navigator.clipboard?.writeText('Artículo 16 CPEUM: Nadie puede ser molestado en su persona, familia, domicilio, papeles o posesiones...');
+        showToast('Artículo 16 copiado al portapapeles');
+      });
+    }
+
+    const shareBtn = document.getElementById('share-article-btn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', function() {
+        if (navigator.share) {
+          navigator.share({
+            title: 'Artículo 16 CPEUM - LexIA',
+            text: 'Consulta el Artículo 16 Constitucional con indexación RAG y FAISS en LexIA.',
+            url: window.location.href
+          }).catch(function() {});
+        } else {
+          showToast('Enlace legal generado para compartir');
+        }
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-bold"><div class="h-20 px-space-xs flex items-center justify-around"><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="catalogo" href="../catalogo_de_codigos_y_leyes/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">menu_book</span></div><span class="font-label-md text-label-md tracking-tight">Catálogo</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="chat-rag" href="../chat_rag_contextual/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">smart_toy</span></div><span class="font-label-md text-label-md tracking-tight">Chat RAG</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="historial" href="../historial_y_memoria_persistente/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">history</span></div><span class="font-label-md text-label-md tracking-tight">Historial</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="perfil" href="../autenticacion_y_licencia_ia/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">verified_user</span></div><span class="font-label-md text-label-md tracking-tight">Perfil</span></a></div></nav></body></html>

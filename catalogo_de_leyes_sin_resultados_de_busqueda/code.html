@@ -1,0 +1,235 @@
+﻿<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_tab" name="shell-type"/>
+<title>Catálogo de leyes · Sin resultados · LexIA</title>
+<meta content="Estado vacío del catálogo cuando la búsqueda no devuelve resultados." name="description"/>
+
+<link href="../shared/lexia.css" rel="stylesheet"/>
+<script src="../shared/vendor/tailwindcss.js"></script>
+<script src="../shared/tailwind.config.js"></script>
+</head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="flex items-center justify-between px-margin py-space-xs text-on-surface-variant font-label-sm text-label-sm"><span class="font-label-md text-label-md font-semibold text-on-surface">09:41</span><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span><span class="font-label-sm text-label-sm">5G</span><span class="material-symbols-outlined text-[14px]">wifi</span><span class="material-symbols-outlined text-[16px]">battery_full</span></div></div><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="LexIA Brand Emblem" class="h-8 w-auto object-contain" src="../shared/assets/brand-emblem.png"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-title-lg text-title-lg text-primary tracking-tight font-bold">LexIA</span><div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-success-500/10 text-success-800 text-[10px] font-semibold tracking-wide uppercase"><span class="material-symbols-outlined text-[11px] text-success-600">auto_awesome</span><span>IA Premium Activa</span></div></div><span class="font-label-md text-label-md text-on-surface-variant truncate">Catálogo</span></div></div><div class="flex items-center gap-space-sm flex-shrink-0"><button aria-label="Perfil de usuario" class="min-h-[44px] min-w-[44px] flex items-center justify-center p-0.5 rounded-full transition-opacity hover:opacity-80"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="../shared/assets/avatar.jpg"/></button></div></div></header><main class="flex flex-col relative w-full pt-24 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full px-margin pb-space-xl">
+<!-- Search & Filter Controls -->
+<section class="flex flex-col gap-space-sm mb-space-md">
+<!-- Active Search Bar -->
+<div class="flex items-center w-full bg-surface-container-lowest rounded-xl shadow-sm px-space-md py-space-sm gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[22px] flex-shrink-0">search</span>
+<div class="flex flex-col flex-1 min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-bold uppercase tracking-wider">Búsqueda Normativa</span>
+<input aria-label="Término de búsqueda jurídica" class="bg-transparent border-0 p-0 font-body-md text-body-md text-on-surface font-semibold focus:outline-none w-full truncate" id="search-input" type="text" value="derecho espacial intergaláctico"/>
+</div>
+<button aria-label="Borrar búsqueda" class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors flex-shrink-0 text-on-surface-variant" id="clear-search-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Filter Chips Horizontales -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-1">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-on-primary font-label-md text-label-md whitespace-nowrap shadow-sm">
+<span class="material-symbols-outlined text-[14px]">tune</span>
+<span>Todos (0)</span>
+</button>
+<button class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container transition-colors shadow-sm">
+<span>Constitucional</span>
+</button>
+<button class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container transition-colors shadow-sm">
+<span>Penal</span>
+</button>
+<button class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container transition-colors shadow-sm">
+<span>Civil &amp; Mercantil</span>
+</button>
+<button class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container transition-colors shadow-sm">
+<span>Laboral</span>
+</button>
+</div>
+</section>
+<!-- Empty State Hero Card -->
+<section class="flex flex-col items-center text-center bg-surface-container-lowest rounded-xl p-space-lg shadow-sm mb-space-lg relative overflow-hidden">
+<!-- Ambient subtle background glow -->
+<div class="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-surface-container-high/60 blur-2xl pointer-events-none"></div>
+<div class="absolute -bottom-10 -left-10 w-36 h-36 rounded-full bg-secondary-container/40 blur-xl pointer-events-none"></div>
+<!-- Vector Graphic Illustration (Empty Law State) -->
+<div class="relative w-28 h-28 mb-space-md flex items-center justify-center">
+<!-- Outer soft pulsing ring -->
+<div class="absolute inset-0 rounded-full bg-surface-container-low animate-pulse"></div>
+<!-- Law Balance & Vector Magnifier Composition SVG -->
+<svg class="relative w-24 h-24" fill="none" viewbox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+<!-- Document / Code Base -->
+<rect class="fill-surface-container" height="52" rx="4" width="40" x="22" y="24"></rect>
+<rect class="fill-on-primary-container" height="4" rx="2" width="28" x="28" y="32"></rect>
+<rect class="fill-secondary-container" height="3" rx="1.5" width="20" x="28" y="40"></rect>
+<rect class="fill-secondary-container" height="3" rx="1.5" width="24" x="28" y="47"></rect>
+<rect class="fill-secondary-container" height="3" rx="1.5" width="16" x="28" y="54"></rect>
+<!-- Subtle Judicial Scales inside the document -->
+<path class="stroke-secondary" d="M42 61V70M36 64H48M34 67L36 64L38 67C38 67 36 68 34 67ZM44 67L46 64L48 67C48 67 46 68 44 67Z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
+<!-- Vector Nodes / Disconnected FAISS chunks -->
+<circle class="fill-secondary-fixed-dim" cx="20" cy="22" r="3"></circle>
+<circle class="fill-outline-variant" cx="68" cy="26" opacity="0.6" r="2.5"></circle>
+<line class="stroke-secondary-fixed-dim" stroke-dasharray="2 2" stroke-width="1.2" x1="23" x2="32" y1="23" y2="28"></line>
+<!-- Magnifying Glass with Question Anchor -->
+<circle class="fill-surface stroke-primary" cx="56" cy="46" r="19" stroke-width="3"></circle>
+<circle class="fill-surface-container-low" cx="56" cy="46" r="14"></circle>
+<path class="stroke-primary" d="M70 60L82 72" stroke-linecap="round" stroke-width="4"></path>
+<!-- Glowing Query Glyph -->
+<text class="fill-primary-container" font-family="Inter, sans-serif" font-size="16" font-weight="700" text-anchor="middle" x="56" y="52">?</text>
+<!-- Vector spark -->
+<path class="fill-on-tertiary-container" d="M68 34L70 38L74 40L70 42L68 46L66 42L62 40L66 38L68 34Z"></path>
+</svg>
+</div>
+<!-- Empty State Content -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label-md text-label-md font-bold mb-space-xs">
+<span class="material-symbols-outlined text-[13px]">search_off</span>
+<span>0 Coincidencias Exactas</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight mb-space-xs">
+      Sin resultados normativos
+    </h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm mb-space-md">
+      No hay ordenamientos federales ni locales indexados en el almacén vectorial FAISS que coincidan con 
+      <span class="font-semibold text-primary">"derecho espacial intergaláctico"</span>.
+    </p>
+<div class="flex flex-col w-full gap-space-xs">
+<button class="w-full h-12 flex items-center justify-center gap-space-xs rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-label-lg transition-colors" id="reset-filter-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+<span>Limpiar búsqueda y ver todo el catálogo</span>
+</button>
+<button class="w-full h-10 flex items-center justify-center gap-space-xs rounded-lg bg-transparent hover:bg-surface-container-low text-secondary font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">post_add</span>
+<span>Solicitar indexación de este ordenamiento</span>
+</button>
+</div>
+</section>
+<!-- AI Semantic Retrieval Card (Key Feature) -->
+<section class="flex flex-col bg-surface-container-lowest rounded-xl p-space-md shadow-sm mb-space-lg relative overflow-hidden">
+<!-- Amber ground indicator strip for RAG grounding -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-tertiary-container"></div>
+<div class="pl-space-xs">
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-1.5">
+<div class="w-6 h-6 rounded-md bg-tertiary-fixed flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[16px]">smart_toy</span>
+</div>
+<span class="font-title-md text-title-md text-on-surface">Búsqueda Semántica con IA</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-bold tracking-wider uppercase">
+          RAG Activo
+        </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md leading-relaxed">
+        ¿No recuerdas el nombre formal de la ley? Describe los hechos, conceptos o instituciones jurídicas (ej. <em class="text-on-surface font-medium not-italic">"prisión preventiva oficiosa"</em> o <em class="text-on-surface font-medium not-italic">"despido injustificado en periodo de prueba"</em>) y la IA recuperará los fragmentos normativos más afines en FAISS.
+      </p>
+<!-- Embeddings Score Info Banner -->
+<div class="flex items-center gap-space-sm bg-surface-container-low rounded-lg p-space-sm mb-space-md">
+<span class="material-symbols-outlined text-surface-tint text-[20px] flex-shrink-0">hub</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-semibold truncate">Indexación vectorial por Chunks</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Análisis de similitud coseno sobre 142,000+ artículos federales</span>
+</div>
+</div>
+<!-- Main CTA Button -->
+<a class="w-full h-12 flex items-center justify-center gap-space-sm rounded-lg bg-primary-container hover:bg-primary text-on-primary font-title-md text-title-md shadow-sm transition-all active:scale-[0.99]" data-path="chat-rag" href="../chat_rag_contextual/code.html">
+<span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+<span>Consultar al Asistente IA RAG</span>
+</a>
+</div>
+</section>
+<!-- Frequent Statutory Searches Section -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<h3 class="font-title-md text-title-md text-on-surface">Sugerencias de búsqueda jurídica</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Códigos frecuentes</span>
+</div>
+<!-- Suggested Statutory Items Grid -->
+<div class="grid grid-cols-1 gap-space-xs">
+<!-- Item 1: CPEUM -->
+<button class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-lowest hover:bg-surface-container transition-colors shadow-sm text-left group" onclick="document.getElementById('search-input').value = 'Constitución Política de los Estados Unidos Mexicanos';" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">gavel</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md text-on-surface truncate group-hover:text-primary transition-colors">Constitución Política (CPEUM)</span>
+<span class="inline-flex px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-surface-container text-on-surface-variant">Vigente</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Última reforma DOF: 08 mayo 2024 • 136 Artículos</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[20px] ml-2 flex-shrink-0 group-hover:text-primary transition-colors">arrow_forward</span>
+</button>
+<!-- Item 2: CNPP -->
+<button class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-lowest hover:bg-surface-container transition-colors shadow-sm text-left group" onclick="document.getElementById('search-input').value = 'Código Nacional de Procedimientos Penales';" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">menu_book</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md text-on-surface truncate group-hover:text-primary transition-colors">Código Nacional (CNPP)</span>
+<span class="inline-flex px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-surface-container text-on-surface-variant">Federal</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Procedimiento penal acusatorio • Sistema adversarial</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[20px] ml-2 flex-shrink-0 group-hover:text-primary transition-colors">arrow_forward</span>
+</button>
+<!-- Item 3: Ley de Amparo -->
+<button class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-lowest hover:bg-surface-container transition-colors shadow-sm text-left group" onclick="document.getElementById('search-input').value = 'Ley de Amparo';" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">balance</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md text-on-surface truncate group-hover:text-primary transition-colors">Ley de Amparo</span>
+<span class="inline-flex px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-surface-container text-on-surface-variant">Reglamentaria</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Reglamentaria de los Artículos 103 y 107 Constitucionales</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[20px] ml-2 flex-shrink-0 group-hover:text-primary transition-colors">arrow_forward</span>
+</button>
+<!-- Item 4: Código Penal Federal -->
+<button class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-lowest hover:bg-surface-container transition-colors shadow-sm text-left group" onclick="document.getElementById('search-input').value = 'Código Penal Federal';" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">shield</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md text-on-surface truncate group-hover:text-primary transition-colors">Código Penal Federal</span>
+<span class="inline-flex px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-surface-container text-on-surface-variant">Penal</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Delitos del orden federal y conexos</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[20px] ml-2 flex-shrink-0 group-hover:text-primary transition-colors">arrow_forward</span>
+</button>
+</div>
+</section>
+</div>
+<script>
+  (function initEmptyStateBehavior() {
+    const input = document.getElementById('search-input');
+    const clearBtn = document.getElementById('clear-search-btn');
+    const resetBtn = document.getElementById('reset-filter-btn');
+
+    if (clearBtn && input) {
+      clearBtn.addEventListener('click', () => {
+        input.value = '';
+        input.focus();
+      });
+    }
+
+    if (resetBtn && input) {
+      resetBtn.addEventListener('click', () => {
+        input.value = '';
+        input.focus();
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-bold"><div class="h-20 px-space-xs flex items-center justify-around"><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="catalogo" href="../catalogo_de_codigos_y_leyes/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">menu_book</span></div><span class="font-label-md text-label-md tracking-tight">Catálogo</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="chat-rag" href="../chat_rag_contextual/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">smart_toy</span></div><span class="font-label-md text-label-md tracking-tight">Chat RAG</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="historial" href="../historial_y_memoria_persistente/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">history</span></div><span class="font-label-md text-label-md tracking-tight">Historial</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="perfil" href="../autenticacion_y_licencia_ia/code.html"><div class="flex items-center justify-center w-12 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">verified_user</span></div><span class="font-label-md text-label-md tracking-tight">Perfil</span></a></div></nav></body></html>

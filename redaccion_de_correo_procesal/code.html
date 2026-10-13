@@ -1,0 +1,303 @@
+﻿<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_stack" name="shell-type"/>
+<title>Redacción de correo procesal · LexIA</title>
+<meta content="Redacción asistida de correo procesal con el dictamen adjunto." name="description"/>
+
+<link href="../shared/lexia.css" rel="stylesheet"/>
+<script src="../shared/vendor/tailwindcss.js"></script>
+<script src="../shared/tailwind.config.js"></script>
+</head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-md flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs min-w-0 flex-1"><button aria-label="Regresar a ficha técnica" class="w-11 h-11 flex items-center justify-center text-on-surface rounded-lg hover:bg-surface-container-high transition-colors" onclick="history.back()" type="button"><span class="material-symbols-outlined text-title-lg">arrow_back</span></button><div class="flex flex-col min-w-0 pr-space-xs"><span class="font-title-md text-title-md text-on-surface truncate">Dictamen Art16 Cpeum.Pdf</span><span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-space-xs"><span class="w-1.5 h-1.5 rounded-full bg-primary-container inline-block"></span>Pág 1 de 3</span></div></div><div class="flex items-center gap-space-xs"><button aria-label="Buscar en documento" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface rounded-lg hover:bg-surface-container-high transition-colors" type="button"><span class="material-symbols-outlined text-title-lg">search</span></button><button aria-label="Imprimir o compartir" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface rounded-lg hover:bg-surface-container-high transition-colors" type="button"><span class="material-symbols-outlined text-title-lg">share</span></button><button aria-label="Opciones adicionales" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface rounded-lg hover:bg-surface-container-high transition-colors" type="button"><span class="material-symbols-outlined text-title-lg">more_vert</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-space-xs shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-28 bg-surface min-h-screen"><div class="flex flex-col w-full pb-10">
+<!-- Top Bar / Action Header -->
+<div class="bg-surface-container-lowest px-space-md py-space-sm shadow-sm flex items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container shrink-0"></span>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">Compositor Procesal Oficial</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">LexIA Judicial Mail • Protocolo PJF</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs shrink-0">
+<button class="px-space-sm py-1.5 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors" type="button">
+        Borrador
+      </button>
+<button class="px-space-md py-2 rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center gap-1.5 shadow-sm active:scale-95 transition-all" id="send-primary-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span>Enviar</span>
+</button>
+</div>
+</div>
+<!-- Security Protocol & Identity Ribbon -->
+<div class="bg-surface-container-low px-space-md py-2.5 flex items-center justify-between gap-space-sm">
+<div class="flex items-center gap-2 min-w-0">
+<div class="w-6 h-6 rounded-full bg-primary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary-fixed text-[14px]">verified_user</span>
+</div>
+<div class="flex items-center gap-1.5 min-w-0 text-on-surface-variant font-label-md text-label-md truncate">
+<span class="font-semibold text-on-surface truncate">lic.mherrera@lexmex.mx</span>
+<span class="text-outline-variant">•</span>
+<span class="text-on-secondary-container truncate">e.Firma FIREL Activa</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0 bg-surface-container-lowest px-2 py-0.5 rounded-full shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-primary-container font-semibold">RFC 3161 OK</span>
+</div>
+</div>
+<div class="px-space-md py-space-sm flex flex-col gap-space-md">
+<!-- Envelope Metadata Section -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<!-- Recipient (Para) -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold tracking-wider">PARA (ÓRGANO JURISDICCIONAL)</span>
+<button class="font-label-sm text-label-sm text-primary-container hover:underline" id="toggle-cc-btn" type="button">
+            + CC / CCO
+          </button>
+</div>
+<div class="bg-surface-container-low rounded-lg p-2 flex flex-wrap items-center gap-1.5">
+<div class="bg-surface-container-lowest text-on-surface px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1.5 max-w-full">
+<span class="material-symbols-outlined text-primary-container text-[16px]">account_balance</span>
+<span class="font-label-md text-label-md font-semibold truncate">juzgado2.distrito.cdmx@cjf.gob.mx</span>
+<span class="bg-secondary-container text-on-secondary-container px-1 rounded font-label-sm text-label-sm">PJF</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline px-1">Término Ordinario</span>
+</div>
+</div>
+<!-- CC Section (Collapsible/Visible) -->
+<div class="flex flex-col gap-1.5 pt-1" id="cc-container">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold tracking-wider">CON COPIA (COTEJO Y ARCHIVO)</span>
+<div class="bg-surface-container-low rounded-lg p-2 flex flex-wrap items-center gap-1.5">
+<div class="bg-surface-container-lowest text-on-surface px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">folder_special</span>
+<span class="font-label-md text-label-md truncate">archivo.despacho@lexmex.mx</span>
+</div>
+<div class="bg-surface-container-lowest text-on-surface px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">verified</span>
+<span class="font-label-md text-label-md truncate">fe-publica@notaria144cdmx.org</span>
+</div>
+</div>
+</div>
+<!-- Subject (Asunto) -->
+<div class="flex flex-col gap-1.5 pt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold tracking-wider">ASUNTO PROCESAL ESTRUCTURADO</span>
+<div class="bg-surface-container-low rounded-lg px-space-sm py-2">
+<p class="font-label-md text-label-md text-on-surface font-semibold leading-relaxed">
+            [DICTAMEN TÉCNICO PERICIAL] Folio FT-CPEUM-16-2025-089A • C. Juez de Distrito en Materia Penal • Amparo SCJN-AR-452/2024
+          </p>
+</div>
+</div>
+</div>
+<!-- LexIA RAG & Template Selector -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary-container text-[18px]">auto_awesome</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Plantilla Forense Inteligente</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary-container bg-surface-container px-2 py-0.5 rounded-full font-semibold">
+          RAG Fundamentado
+        </span>
+</div>
+<!-- Template Chips Carousel -->
+<div class="flex items-center gap-2 overflow-x-auto pb-1">
+<button class="shrink-0 px-3 py-1.5 rounded-full bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-sm flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[15px]">gavel</span>
+<span>Escrito de Término / Promoción</span>
+</button>
+<button class="shrink-0 px-3 py-1.5 rounded-full bg-surface-container-lowest text-on-surface-variant hover:text-on-surface font-label-md text-label-md shadow-sm flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[15px]">summarize</span>
+<span>Resumen Ejecutivo Cliente</span>
+</button>
+<button class="shrink-0 px-3 py-1.5 rounded-full bg-surface-container-lowest text-on-surface-variant hover:text-on-surface font-label-md text-label-md shadow-sm flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[15px]">history_edu</span>
+<span>Envío Notarial / Pericial</span>
+</button>
+</div>
+</div>
+<!-- Certified Document Attachment Card -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm min-w-0">
+<div class="w-12 h-12 rounded-xl bg-error-container/40 flex items-center justify-center shrink-0 text-error">
+<span class="material-symbols-outlined text-[28px]">picture_as_pdf</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md text-on-surface truncate">Dictamen Art16 Cpeum.Pdf</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">1.84 MB • 3 fojas • SHA-256 Verificado</span>
+<span class="font-label-sm text-label-sm text-outline">Hash: 8f4a7c...3b9e21 (Integridad OK)</span>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button aria-label="Vista previa del PDF" class="w-9 h-9 rounded-lg bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Trust & Certification Tags -->
+<div class="flex flex-wrap items-center gap-1.5 pt-1">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-primary-container text-[13px]">lock</span>
+          Firma Criptográfica SHA-256
+        </span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-primary-container text-[13px]">qr_code_2</span>
+          QR Cotejo Art. 210-A CFPC
+        </span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-primary-container text-[13px]">timer</span>
+          Sello de Tiempo RFC 3161
+        </span>
+</div>
+</div>
+<!-- Editor Toolbar & Rich Context Area -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm flex flex-col overflow-hidden">
+<!-- Formatting Sub-toolbar -->
+<div class="bg-surface-container-low px-space-md py-2 flex items-center justify-between gap-1 overflow-x-auto">
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg bg-surface-container text-on-surface flex items-center justify-center font-bold text-[13px] hover:bg-surface-container-high" type="button">B</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container text-on-surface flex items-center justify-center italic font-serif text-[14px] hover:bg-surface-container-high" type="button">I</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container text-on-surface flex items-center justify-center underline text-[13px] hover:bg-surface-container-high" type="button">U</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container text-on-surface flex items-center justify-center hover:bg-surface-container-high" type="button">
+<span class="material-symbols-outlined text-[16px]">format_list_bulleted</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container text-on-surface flex items-center justify-center hover:bg-surface-container-high" type="button">
+<span class="material-symbols-outlined text-[16px]">format_quote</span>
+</button>
+</div>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 rounded-lg bg-surface-container text-primary-container hover:bg-surface-container-high font-label-sm text-label-sm flex items-center gap-1" id="ai-rephrase-btn" type="button">
+<span class="material-symbols-outlined text-[15px]">neurology</span>
+<span>Ajustar Tono</span>
+</button>
+</div>
+</div>
+<!-- Formal Body Canvas (Rich Document Layout) -->
+<div class="p-space-md flex flex-col gap-space-md font-body-md text-body-md text-on-surface leading-relaxed">
+<!-- Rubro / Autoridad -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-0.5">
+<p class="font-title-md text-title-md text-on-surface font-bold uppercase tracking-wide">
+            AL C. JUEZ DE DISTRITO EN MATERIA PENAL EN TURNO EN LA CIUDAD DE MÉXICO
+          </p>
+<p class="font-label-lg text-label-lg text-on-surface-variant font-semibold">
+            PRESENTE.-
+          </p>
+</div>
+<!-- Personería y Hechos -->
+<p class="text-on-surface text-justify">
+          Por medio del presente correo procesal e institucional con plena validez electrónica, en seguimiento a los autos relativos al juicio de amparo citado al rubro, el suscrito <strong class="font-semibold text-primary">Lic. Mauricio Herrera</strong>, en mi carácter de autorizado legal de la parte quejosa en los términos más amplios del Artículo 12 de la Ley de Amparo, remito formalmente para su debida constancia y agregación al sumario el presente:
+        </p>
+<!-- Document Citation Box -->
+<div class="bg-surface-container-low rounded-lg p-space-md flex flex-col gap-1.5">
+<span class="font-label-sm text-label-sm text-primary-container font-bold tracking-wider">DOCUMENTO ADJUNTO MATERIA DE LA PROMOCIÓN:</span>
+<p class="font-title-md text-title-md text-on-surface font-semibold leading-snug">
+            DICTAMEN TÉCNICO PERICIAL EN MATERIA CONSTITUCIONAL RESPECTO DEL PRINCIPIO DE LEGALIDAD Y EXCEPCIONES TAXATIVAS (ARTÍCULO 16 CPEUM).
+          </p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Consta de tres (3) páginas con análisis de taxatividad, doctrina jurisprudencial obligatoria y correlación de precedentes de la SCJN.
+          </p>
+</div>
+<!-- Validez Probatoria -->
+<p class="text-on-surface text-justify">
+          Dicho documento cuenta con firma criptográfica verificable bajo estándar <strong>SHA-256</strong>, sello de tiempo <strong>RFC 3161</strong> y código QR de cotejo fehaciente, de estricta conformidad con el Artículo 210-A del Código Federal de Procedimientos Civiles de aplicación supletoria, y el Acuerdo General Conjunto 1/2013 de la Suprema Corte de Justicia de la Nación y del Consejo de la Judicatura Federal.
+        </p>
+<!-- Petitorio Procesal -->
+<div class="bg-surface-container rounded-lg p-space-sm">
+<p class="font-label-md text-label-md text-primary-container font-bold uppercase mb-1">PETITORIO ÚNICO</p>
+<p class="font-body-sm text-body-sm text-on-surface">
+            ÚNICO.- Tener por recibido en tiempo y forma procesal el dictamen pericial adjunto, acordando de conformidad su agregación a los autos para los efectos legales conducentes a que haya lugar.
+          </p>
+</div>
+<!-- Firma Institucional -->
+<div class="pt-2 flex flex-col gap-1">
+<p class="font-body-md text-body-md text-on-surface italic">"Protesto lo necesario."</p>
+<div class="flex items-center gap-space-sm pt-2">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary-fixed text-[20px]">person_check</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface font-semibold">Lic. Mauricio Herrera</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Cédula Profesional DGN-8492014-LX • Especialista Constitucional</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">LexMex Bufete Penal &amp; Constitucional S.C.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Audit & Legal Certainty Notice -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-primary-container text-[20px] shrink-0 mt-0.5">policy</span>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Acuse Electrónico Inmediato (SISE / CJF)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Al transmitir este correo, LexIA registrará el acuse de entrega certificado conforme a la Ley de Firma Electrónica Avanzada y vinculará la cadena digital al expediente local.
+        </p>
+</div>
+</div>
+<!-- Final Submission Action Card -->
+<div class="pt-2 flex flex-col gap-2">
+<button class="w-full py-3.5 px-space-md bg-primary-container text-on-primary rounded-xl font-title-md text-title-md flex items-center justify-center gap-2 shadow-md active:scale-[0.98] transition-all" id="main-submit-act" type="button">
+<span class="material-symbols-outlined text-[20px]">forward_to_inbox</span>
+<span>Enviar Escrito con Acuse Digital</span>
+</button>
+<p class="text-center font-label-sm text-label-sm text-outline">
+        Genera folio único de trazabilidad forense y registro en bitácora de litigio.
+      </p>
+</div>
+</div>
+<!-- Notification Toast for Delight (Hidden by Default) -->
+<div class="fixed top-20 left-4 right-4 z-50 transform -translate-y-16 opacity-0 transition-all duration-300 pointer-events-none" id="status-toast">
+<div class="bg-primary text-on-primary p-3 rounded-xl shadow-lg flex items-center gap-2.5">
+<span class="material-symbols-outlined text-on-primary text-[20px]">mark_email_read</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md font-bold">Correo Procesal Despachado</span>
+<span class="font-label-sm text-label-sm text-primary-fixed truncate">Folio Acuse: LEX-CJF-2025-994821-OK</span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Simple micro-interactions for interactive preview delight
+  const sendPrimaryBtn = document.getElementById('send-primary-btn');
+  const mainSubmitAct = document.getElementById('main-submit-act');
+  const toast = document.getElementById('status-toast');
+  const toggleCcBtn = document.getElementById('toggle-cc-btn');
+  const ccContainer = document.getElementById('cc-container');
+  const aiRephraseBtn = document.getElementById('ai-rephrase-btn');
+
+  function triggerSendFeedback() {
+    toast.classList.remove('-translate-y-16', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+    setTimeout(() => {
+      toast.classList.remove('translate-y-0', 'opacity-100');
+      toast.classList.add('-translate-y-16', 'opacity-0');
+    }, 3800);
+  }
+
+  if (sendPrimaryBtn) sendPrimaryBtn.addEventListener('click', triggerSendFeedback);
+  if (mainSubmitAct) mainSubmitAct.addEventListener('click', triggerSendFeedback);
+
+  if (toggleCcBtn && ccContainer) {
+    toggleCcBtn.addEventListener('click', () => {
+      ccContainer.classList.toggle('hidden');
+    });
+  }
+
+  if (aiRephraseBtn) {
+    aiRephraseBtn.addEventListener('click', () => {
+      const originalText = aiRephraseBtn.innerHTML;
+      aiRephraseBtn.innerHTML = '<span class="material-symbols-outlined text-[15px] animate-spin">refresh</span> Optimizando...';
+      setTimeout(() => {
+        aiRephraseBtn.innerHTML = '<span class="material-symbols-outlined text-[15px]">check</span> Tono Forense Aplicado';
+        setTimeout(() => {
+          aiRephraseBtn.innerHTML = originalText;
+        }, 2200);
+      }, 900);
+    });
+  }
+</script></main><aside class="fixed bottom-0 w-full z-50 pb-safe pointer-events-none"><div class="max-w-md mx-auto px-space-md pb-space-md flex justify-center"><div class="pointer-events-auto bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(15,32,66,0.12)] rounded-full px-space-md py-space-xs flex items-center gap-space-xs"><button aria-label="Reducir zoom" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface rounded-full hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-title-lg">zoom_out</span></button><button aria-label="Aumentar zoom" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface rounded-full hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-title-lg">zoom_in</span></button><div class="w-px h-5 bg-outline-variant/40 mx-space-xs"></div><button aria-label="Ajustar al ancho de pantalla" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface rounded-full hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-title-lg">fit_screen</span></button><button aria-label="Modo de anotación y lectura asistida" class="w-11 h-11 flex items-center justify-center text-primary-container bg-surface-container hover:bg-surface-container-high rounded-full transition-colors" type="button"><span class="material-symbols-outlined text-title-lg">edit_note</span></button><div class="w-px h-5 bg-outline-variant/40 mx-space-xs"></div><button aria-label="Descargar documento PDF original" class="w-11 h-11 flex items-center justify-center text-on-surface hover:text-primary rounded-full hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-title-lg">download</span></button></div></div></aside></body></html>

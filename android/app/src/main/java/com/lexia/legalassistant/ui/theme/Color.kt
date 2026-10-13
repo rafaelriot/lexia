@@ -1,0 +1,76 @@
+package com.lexia.legalassistant.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+// LexIA Sovereign Institutional Color Tokens (from DESIGN.md)
+val LexiaPrimary = Color(0xFF00236F)
+val LexiaOnPrimary = Color(0xFFFFFFFF)
+val LexiaPrimaryContainer = Color(0xFF1E3A8A)
+val LexiaOnPrimaryContainer = Color(0xFF90A8FF)
+val LexiaPrimaryFixed = Color(0xFFDCE1FF)
+val LexiaPrimaryFixedDim = Color(0xFFB6C4FF)
+val LexiaOnPrimaryFixed = Color(0xFF00164E)
+val LexiaOnPrimaryFixedVariant = Color(0xFF264191)
+
+val LexiaSecondary = Color(0xFF4F5E83)
+val LexiaOnSecondary = Color(0xFFFFFFFF)
+val LexiaSecondaryContainer = Color(0xFFC4D4FF)
+val LexiaOnSecondaryContainer = Color(0xFF4C5B80)
+val LexiaSecondaryFixed = Color(0xFFD9E2FF)
+val LexiaSecondaryFixedDim = Color(0xFFB6C6F1)
+val LexiaOnSecondaryFixed = Color(0xFF081A3C)
+val LexiaOnSecondaryFixedVariant = Color(0xFF37466A)
+
+// Tertiary / Intelligence Gold
+val LexiaTertiary = Color(0xFF442100)
+val LexiaOnTertiary = Color(0xFFFFFFFF)
+val LexiaTertiaryContainer = Color(0xFF653400)
+val LexiaOnTertiaryContainer = Color(0xFFFC922B)
+val LexiaTertiaryFixed = Color(0xFFFFDCC3)
+val LexiaTertiaryFixedDim = Color(0xFFFFB77D)
+val LexiaOnTertiaryFixed = Color(0xFF2F1500)
+val LexiaOnTertiaryFixedVariant = Color(0xFF6E3900)
+
+// Normative Validation (Vigente)
+val LexiaSuccess50 = Color(0xFFECFDF5)
+val LexiaSuccess100 = Color(0xFFD1FAE5)
+val LexiaSuccess200 = Color(0xFFA7F3D0)
+val LexiaSuccess400 = Color(0xFF34D399)
+val LexiaSuccess500 = Color(0xFF10B981)
+val LexiaSuccess600 = Color(0xFF059669)
+val LexiaSuccess700 = Color(0xFF047857)
+val LexiaSuccess800 = Color(0xFF065F46)
+
+// AI Vector & RAG Highlights
+val LexiaAi100 = Color(0xFFFEF3C7)
+val LexiaAi200 = Color(0xFFFDE68A)
+val LexiaAi300 = Color(0xFFFCD34D)
+val LexiaAi500 = Color(0xFFF59E0B)
+val LexiaAi600 = Color(0xFFD97706)
+val LexiaAi800 = Color(0xFF92400E)
+
+// Neutral Surfaces & Boundaries
+val LexiaBackground = Color(0xFFF8F9FF)
+val LexiaOnBackground = Color(0xFF0B1C30)
+val LexiaSurface = Color(0xFFF8F9FF)
+val LexiaSurfaceDim = Color(0xFFCBDBF5)
+val LexiaSurfaceBright = Color(0xFFF8F9FF)
+val LexiaSurfaceContainerLowest = Color(0xFFFFFFFF)
+val LexiaSurfaceContainerLow = Color(0xFFEFF4FF)
+val LexiaSurfaceContainer = Color(0xFFE5EEFF)
+val LexiaSurfaceContainerHigh = Color(0xFFDCE9FF)
+val LexiaSurfaceContainerHighest = Color(0xFFD3E4FE)
+val LexiaSurfaceVariant = Color(0xFFD3E4FE)
+val LexiaOnSurface = Color(0xFF0B1C30)
+val LexiaOnSurfaceVariant = Color(0xFF444651)
+val LexiaInverseSurface = Color(0xFF213145)
+val LexiaInverseOnSurface = Color(0xFFEAF1FF)
+val LexiaOutline = Color(0xFF757682)
+val LexiaOutlineVariant = Color(0xFFC5C5D3)
+val LexiaSurfaceTint = Color(0xFF4059AA)
+
+// Error
+val LexiaError = Color(0xFFBA1A1A)
+val LexiaOnError = Color(0xFFFFFFFF)
+val LexiaErrorContainer = Color(0xFFFFDAD6)
+val LexiaOnErrorContainer = Color(0xFF93000A)

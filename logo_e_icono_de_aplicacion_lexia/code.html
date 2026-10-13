@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="lexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="50%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="aiCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#1d4ed8" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Outer App Icon Base -->
+  <rect width="512" height="512" rx="112" fill="url(#lexGrad)"/>
+  
+  <!-- Subtle Grid / Neural Background pattern -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-opacity="0.25" stroke-dasharray="6 6"/>
+  <circle cx="256" cy="256" r="140" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.2"/>
+  
+  <!-- Central Shield / Legal Crest -->
+  <path d="M256 90 L380 145 V260 C380 340 256 410 256 410 C256 410 132 340 132 260 V145 Z" fill="#0f172a" fill-opacity="0.75" stroke="url(#goldGrad)" stroke-width="4" filter="url(#glow)"/>
+
+  <!-- Open Law Book Base -->
+  <path d="M180 330 C210 320 240 326 256 338 C272 326 302 320 332 330 V240 C302 230 272 236 256 248 C240 236 210 230 180 240 Z" fill="#ffffff" fill-opacity="0.95"/>
+  <path d="M256 248 V338" stroke="#cbd5e1" stroke-width="2.5"/>
+
+  <!-- Scales of Justice + AI Nodes -->
+  <!-- Central Pillar -->
+  <path d="M256 150 V260" stroke="url(#goldGrad)" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="256" cy="146" r="8" fill="url(#goldGrad)"/>
+  <circle cx="256" cy="146" r="3" fill="#ffffff"/>
+
+  <!-- Balance Beam -->
+  <path d="M190 180 C220 172 292 172 322 180" fill="none" stroke="url(#goldGrad)" stroke-width="4.5" stroke-linecap="round"/>
+
+  <!-- Left Scale Pan & Strings -->
+  <line x1="190" y1="180" x2="170" y2="218" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="190" y1="180" x2="210" y2="218" stroke="#94a3b8" stroke-width="2"/>
+  <path d="M164 218 C164 230 216 230 216 218 Z" fill="url(#goldGrad)"/>
+
+  <!-- Right Scale Pan & Strings -->
+  <line x1="322" y1="180" x2="302" y2="218" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="322" y1="180" x2="342" y2="218" stroke="#94a3b8" stroke-width="2"/>
+  <path d="M296 218 C296 230 348 230 348 218 Z" fill="url(#goldGrad)"/>
+
+  <!-- AI Neural Circuit Nodes & Spark -->
+  <!-- Sparks / RAG vector indicators -->
+  <path d="M256 112 L260 124 L272 128 L260 132 L256 144 L252 132 L240 128 L252 124 Z" fill="url(#aiCyan)"/>
+  
+  <circle cx="150" cy="190" r="4.5" fill="#38bdf8"/>
+  <circle cx="362" cy="190" r="4.5" fill="#38bdf8"/>
+  <circle cx="205" cy="135" r="3.5" fill="#38bdf8" opacity="0.8"/>
+  <circle cx="307" cy="135" r="3.5" fill="#38bdf8" opacity="0.8"/>
+
+  <line x1="150" y1="190" x2="175" y2="182" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.6"/>
+  <line x1="362" y1="190" x2="337" y2="182" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.6"/>
+  <line x1="205" y1="135" x2="246" y2="142" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.6"/>
+  <line x1="307" y1="135" x2="266" y2="142" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.6"/>
+
+  <!-- Brand Typography -->
+  <text x="256" y="445" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="4">LEX<tspan fill="#38bdf8">IA</tspan></text>
+  <text x="256" y="472" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#94a3b8" text-anchor="middle" letter-spacing="3">ASISTENTE JURÍDICO IA</text>
+</svg>
