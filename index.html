@@ -1,816 +1,550 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full bg-[#f8f9ff]">
+<html lang="es">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LexIA — Portal de Prototipos & Asistente Legal con IA</title>
-  <meta name="description" content="Navegador interactivo y galería de prototipos de LexIA, asistente legal con IA para el ordenamiento jurídico mexicano."/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descargar LexIA · Asistente Jurídico para Móviles Android</title>
+    <meta name="description" content="Descarga el instalador oficial de LexIA para dispositivos Android. Asistente Jurídico Inteligente con motor FAISS Offline y 1,326 artículos de leyes mexicanas.">
+    
+    <!-- Tipografía Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Generador de Códigos QR Autónomo -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
-  <script src="shared/vendor/tailwindcss.js"></script>
-  <script src="shared/tailwind.config.js"></script>
-  <link rel="stylesheet" href="shared/lexia.css"/>
-
-  <style>
-    /* Custom styling for gallery showcase */
-    .device-shadow {
-      box-shadow: 0 25px 60px -15px rgba(0, 35, 111, 0.25), 0 0 0 1px rgba(197, 197, 211, 0.4);
-    }
-    .card-hover {
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 32px -8px rgba(0, 35, 111, 0.12), 0 0 0 1px rgba(0, 35, 111, 0.15);
-    }
-    .screen-thumb-container {
-      aspect-ratio: 9 / 19.5;
-      background: radial-gradient(circle at 50% 20%, #eff4ff 0%, #dce9ff 100%);
-    }
-  </style>
-</head>
-
-<body class="min-h-screen bg-surface font-body-md text-on-surface antialiased flex flex-col">
-  <!-- Top Global Announcement & Environment Bar -->
-  <aside class="bg-primary text-on-primary border-b border-primary-container px-4 py-2 text-xs">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-500/20 text-success-200 font-semibold uppercase tracking-wider text-[10px]">
-          <span class="w-1.5 h-1.5 rounded-full bg-success-400 animate-pulse"></span>
-          Sistema Sincronizado
-        </span>
-        <span class="text-on-primary-container">Tokens M3 centralizados (61 variables) · Arquitectura RAG FAISS & DistilBERT</span>
-      </div>
-      <div class="flex items-center gap-3 text-on-primary-container text-[11px]">
-        <span>CPEUM DOF Vigente</span>
-        <span>•</span>
-        <a href="lexia_design_system/DESIGN.md" class="underline hover:text-white transition-colors">DESIGN.md</a>
-        <span>•</span>
-        <a href="shared/tailwind.config.js" class="underline hover:text-white transition-colors">tailwind.config.js</a>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Main Navigation Header -->
-  <header class="bg-surface/90 backdrop-blur-md sticky top-0 z-40 border-b border-outline-variant/60 shadow-[0_2px_8px_rgba(11,28,48,0.03)]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-      <!-- Brand & Title -->
-      <div class="flex items-center gap-3 min-w-0">
-        <img src="shared/lexia-logo.svg" alt="LexIA Logo" class="w-11 h-11 rounded-xl shadow-sm ring-1 ring-outline-variant shrink-0"/>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-headline-sm text-primary tracking-tight font-bold">LexIA</h1>
-            <span class="px-2 py-0.5 text-[11px] font-bold rounded-md bg-primary-container text-on-primary tracking-wide uppercase">Legal AI</span>
-          </div>
-          <p class="text-xs text-on-surface-variant truncate">Portal de Prototipos de Interfaz & Navegador de Pantallas</p>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="flex items-center gap-2 shrink-0">
-        <button id="toggleDeviceSimulatorBtn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-medium text-xs transition-all shadow-sm">
-          <span class="material-symbols-outlined text-[18px]">phone_iphone</span>
-          <span class="hidden sm:inline">Simulador Móvil</span>
-        </button>
-        <a href="lexia_design_system/DESIGN.md" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container text-on-surface text-xs font-medium transition-colors">
-          <span class="material-symbols-outlined text-[18px] text-secondary">palette</span>
-          <span class="hidden md:inline">Design System</span>
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- Hero & Overview Section -->
-  <section class="bg-gradient-to-b from-surface-container-low to-surface border-b border-outline-variant/40 py-8 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div class="lg:col-span-8">
-          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-ai-100 text-ai-800 text-xs font-semibold mb-3">
-            <span class="material-symbols-outlined text-[16px] text-ai-600">auto_awesome</span>
-            Prototipos Stitch · Interfaz Móvil Android Material 3
-          </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-on-surface tracking-tight mb-2">
-            Suite Integral de Pantallas de Asistente Legal
-          </h2>
-          <p class="text-sm sm:text-base text-on-surface-variant max-w-2xl leading-relaxed mb-5">
-            Explora de manera interactiva el flujo completo de la aplicación LexIA: autenticación con licencia judicial, catálogo legal con filtros por materia, chat contextual con citas RAG verificadas sobre el Art. 16 de la CPEUM, visor de dictámenes periciales y utilidades procesales.
-          </p>
-
-          <!-- Key Stats Counters -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 border-t border-outline-variant/50 max-w-3xl">
-            <div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/60 shadow-xs">
-              <span class="text-xs text-secondary font-medium">Pantallas Maquetadas</span>
-              <p class="text-xl font-bold text-primary mt-0.5">12 Vistas</p>
-            </div>
-            <div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/60 shadow-xs">
-              <span class="text-xs text-secondary font-medium">Diseño & Tokens</span>
-              <p class="text-xl font-bold text-primary mt-0.5">61 Tokens</p>
-            </div>
-            <div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/60 shadow-xs">
-              <span class="text-xs text-secondary font-medium">Pipeline RAG</span>
-              <p class="text-xl font-bold text-ai-600 mt-0.5">FAISS / k=5</p>
-            </div>
-            <div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/60 shadow-xs">
-              <span class="text-xs text-secondary font-medium">Validación Normativa</span>
-              <p class="text-xl font-bold text-success-600 mt-0.5">DOF 2025</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Architecture Quick Card -->
-        <div class="lg:col-span-4 bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/80 shadow-sm">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-[16px]">folder_special</span>
-              Estructura Compartida
-            </span>
-            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-success-50 text-success-800 font-semibold">100% Homogéneo</span>
-          </div>
-          <ul class="space-y-2.5 text-xs text-on-surface-variant">
-            <li class="flex items-start gap-2">
-              <span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">css</span>
-              <span><strong>shared/lexia.css:</strong> Estilos base, reset y variables seguras móviles unificadas.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">javascript</span>
-              <span><strong>shared/tailwind.config.js:</strong> Definición única de paleta Material 3, success y ai.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">navigation</span>
-              <span><strong>Navegación interconectada:</strong> Bottom bar interactiva enlazada entre pantallas.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">verified</span>
-              <span><strong>Nomenclatura limpia:</strong> Rutas canónicas sin caracteres corruptos ni puntos conflictivos.</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">android</span>
-              <span><strong>App Android Nativa:</strong> Proyecto Kotlin Jetpack Compose en <code>android/</code> con temas M3 y Navigation.</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Filter & Search Controls Bar -->
-  <section class="sticky top-20 z-30 bg-surface/95 backdrop-blur-md border-b border-outline-variant/70 py-4 px-4 sm:px-6 lg:px-8 shadow-xs">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-      <!-- Category Tabs -->
-      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0" id="filterTabs">
-        <button data-filter="all" class="filter-tab active px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-primary text-on-primary transition-colors whitespace-nowrap">
-          Todas (12)
-        </button>
-        <button data-filter="catalogo" class="filter-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors whitespace-nowrap">
-          Catálogo & Códigos (3)
-        </button>
-        <button data-filter="rag" class="filter-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors whitespace-nowrap">
-          Chat RAG & Análisis (3)
-        </button>
-        <button data-filter="dictamen" class="filter-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors whitespace-nowrap">
-          Dictámenes & Forense (4)
-        </button>
-        <button data-filter="acceso" class="filter-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors whitespace-nowrap">
-          Acceso & Identidad (2)
-        </button>
-      </div>
-
-      <!-- Search Input -->
-      <div class="relative w-full md:w-72 shrink-0">
-        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
-        <input id="searchInput" type="text" placeholder="Buscar por nombre o palabra clave..." class="w-full pl-9 pr-8 py-1.5 text-xs rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"/>
-        <button id="clearSearchBtn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface">
-          <span class="material-symbols-outlined text-[16px]">close</span>
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Screens Gallery Grid -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
-    <div id="screensGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      
-      <!-- CARD 1: Chat RAG Contextual -->
-      <article data-category="rag" data-keywords="chat rag faiss cpeum articulo 16 detencion flagrancia consulta inteligencia artificial" class="screen-card bg-surface-container-lowest rounded-2xl border border-outline-variant/70 overflow-hidden flex flex-col card-hover">
-        <div class="relative screen-thumb-container overflow-hidden group">
-          <img src="chat_rag_contextual/screen.png" alt="Captura Chat RAG Contextual" class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy"/>
-          <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
-            <button onclick="openInSimulator('chat_rag_contextual/code.html', 'Chat RAG Contextual')" class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-semibold text-xs shadow-md hover:bg-white transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">visibility</span> Simular
-            </button>
-            <a href="chat_rag_contextual/code.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-semibold text-xs shadow-md hover:bg-primary-container transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">open_in_new</span> Abrir
-            </a>
-          </div>
-          <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md text-[10px] font-bold bg-primary text-on-primary shadow-xs uppercase tracking-wider">Principal</span>
-        </div>
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-1.5 text-[11px] text-ai-800 font-semibold mb-1">
-              <span class="material-symbols-outlined text-[14px] text-ai-600">smart_toy</span>
-              RAG Pipeline FAISS
-            </div>
-            <h3 class="font-title-md text-on-surface font-bold text-sm mb-1 leading-snug">Chat RAG Contextual</h3>
-            <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-              Consulta sobre detención arbitraria y garantías del Art. 16 CPEUM con tarjetas de citas normativas y similitud 0.942.
-            </p>
-          </div>
-          <div class="pt-3 mt-3 border-t border-outline-variant/40 flex items-center justify-between text-xs">
-            <span class="font-mono text-[10px] text-secondary">mobile_tab</span>
-            <div class="flex items-center gap-2">
-              <a href="chat_rag_contextual/screen.png" target="_blank" class="text-secondary hover:text-primary" title="Ver captura original">
-                <span class="material-symbols-outlined text-[16px]">image</span>
-              </a>
-              <a href="chat_rag_contextual/code.html" class="font-semibold text-primary hover:underline flex items-center gap-0.5">
-                Ver pantalla <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- CARD 2: Detalle de Artículo & Chunks FAISS -->
-      <article data-category="rag" data-keywords="detalle articulo chunks faiss embeddings similitud distancia vectores cpeum parrafo" class="screen-card bg-surface-container-lowest rounded-2xl border border-outline-variant/70 overflow-hidden flex flex-col card-hover">
-        <div class="relative screen-thumb-container overflow-hidden group">
-          <img src="detalle_de_articulo_chunks_faiss/screen.png" alt="Captura Detalle de Artículo" class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy"/>
-          <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
-            <button onclick="openInSimulator('detalle_de_articulo_chunks_faiss/code.html', 'Detalle de Artículo & Chunks FAISS')" class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-semibold text-xs shadow-md hover:bg-white transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">visibility</span> Simular
-            </button>
-            <a href="detalle_de_articulo_chunks_faiss/code.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-semibold text-xs shadow-md hover:bg-primary-container transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">open_in_new</span> Abrir
-            </a>
-          </div>
-        </div>
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-1.5 text-[11px] text-ai-800 font-semibold mb-1">
-              <span class="material-symbols-outlined text-[14px] text-ai-600">hub</span>
-              Vector Inspector
-            </div>
-            <h3 class="font-title-md text-on-surface font-bold text-sm mb-1 leading-snug">Detalle de Artículo · Chunks FAISS</h3>
-            <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-              Desglose de fragmentación semántica de la ley, mostrando embeddings, similitudes de coseno y trazabilidad pericial.
-            </p>
-          </div>
-          <div class="pt-3 mt-3 border-t border-outline-variant/40 flex items-center justify-between text-xs">
-            <span class="font-mono text-[10px] text-secondary">mobile_tab</span>
-            <div class="flex items-center gap-2">
-              <a href="detalle_de_articulo_chunks_faiss/screen.png" target="_blank" class="text-secondary hover:text-primary" title="Ver captura original">
-                <span class="material-symbols-outlined text-[16px]">image</span>
-              </a>
-              <a href="detalle_de_articulo_chunks_faiss/code.html" class="font-semibold text-primary hover:underline flex items-center gap-0.5">
-                Ver pantalla <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- CARD 3: Catálogo de Códigos y Leyes -->
-      <article data-category="catalogo" data-keywords="catalogo codigos leyes federal estatal cpeum dof buscador materias" class="screen-card bg-surface-container-lowest rounded-2xl border border-outline-variant/70 overflow-hidden flex flex-col card-hover">
-        <div class="relative screen-thumb-container overflow-hidden group">
-          <img src="catalogo_de_codigos_y_leyes/screen.png" alt="Captura Catálogo de Códigos" class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy"/>
-          <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
-            <button onclick="openInSimulator('catalogo_de_codigos_y_leyes/code.html', 'Catálogo de Códigos y Leyes')" class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-semibold text-xs shadow-md hover:bg-white transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">visibility</span> Simular
-            </button>
-            <a href="catalogo_de_codigos_y_leyes/code.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-semibold text-xs shadow-md hover:bg-primary-container transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">open_in_new</span> Abrir
-            </a>
-          </div>
-        </div>
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-1.5 text-[11px] text-success-800 font-semibold mb-1">
-              <span class="material-symbols-outlined text-[14px] text-success-600">menu_book</span>
-              Corpus Legal Vigente
-            </div>
-            <h3 class="font-title-md text-on-surface font-bold text-sm mb-1 leading-snug">Catálogo de Códigos y Leyes</h3>
-            <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-              Explorador de leyes federales y estatales indexadas con badges de validez DOF y barra de filtrado rápido.
-            </p>
-          </div>
-          <div class="pt-3 mt-3 border-t border-outline-variant/40 flex items-center justify-between text-xs">
-            <span class="font-mono text-[10px] text-secondary">mobile_tab</span>
-            <div class="flex items-center gap-2">
-              <a href="catalogo_de_codigos_y_leyes/screen.png" target="_blank" class="text-secondary hover:text-primary" title="Ver captura original">
-                <span class="material-symbols-outlined text-[16px]">image</span>
-              </a>
-              <a href="catalogo_de_codigos_y_leyes/code.html" class="font-semibold text-primary hover:underline flex items-center gap-0.5">
-                Ver pantalla <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- CARD 4: Filtro Penal Aplicado -->
-      <article data-category="catalogo" data-keywords="filtro penal aplicado catalogo codigo penal federal cnpp amparo" class="screen-card bg-surface-container-lowest rounded-2xl border border-outline-variant/70 overflow-hidden flex flex-col card-hover">
-        <div class="relative screen-thumb-container overflow-hidden group">
-          <img src="catalogo_de_leyes_filtro_penal_aplicado/screen.png" alt="Captura Filtro Penal Aplicado" class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy"/>
-          <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
-            <button onclick="openInSimulator('catalogo_de_leyes_filtro_penal_aplicado/code.html', 'Filtro Penal Aplicado')" class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-semibold text-xs shadow-md hover:bg-white transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">visibility</span> Simular
-            </button>
-            <a href="catalogo_de_leyes_filtro_penal_aplicado/code.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-semibold text-xs shadow-md hover:bg-primary-container transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">open_in_new</span> Abrir
-            </a>
-          </div>
-        </div>
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-1.5 text-[11px] text-primary font-semibold mb-1">
-              <span class="material-symbols-outlined text-[14px]">filter_alt</span>
-              Materia Especializada
-            </div>
-            <h3 class="font-title-md text-on-surface font-bold text-sm mb-1 leading-snug">Filtro Penal Aplicado</h3>
-            <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-              Vista del catálogo con chip activo en materia penal, mostrando Código Penal Federal, CNPP y Ley de Amparo.
-            </p>
-          </div>
-          <div class="pt-3 mt-3 border-t border-outline-variant/40 flex items-center justify-between text-xs">
-            <span class="font-mono text-[10px] text-secondary">mobile_tab</span>
-            <div class="flex items-center gap-2">
-              <a href="catalogo_de_leyes_filtro_penal_aplicado/screen.png" target="_blank" class="text-secondary hover:text-primary" title="Ver captura original">
-                <span class="material-symbols-outlined text-[16px]">image</span>
-              </a>
-              <a href="catalogo_de_leyes_filtro_penal_aplicado/code.html" class="font-semibold text-primary hover:underline flex items-center gap-0.5">
-                Ver pantalla <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- CARD 5: Sin Resultados de Búsqueda -->
-      <article data-category="catalogo" data-keywords="sin resultados busqueda empty state balanza lupa spark sugerencias" class="screen-card bg-surface-container-lowest rounded-2xl border border-outline-variant/70 overflow-hidden flex flex-col card-hover">
-        <div class="relative screen-thumb-container overflow-hidden group">
-          <img src="catalogo_de_leyes_sin_resultados_de_busqueda/screen.png" alt="Captura Sin Resultados" class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy"/>
-          <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
-            <button onclick="openInSimulator('catalogo_de_leyes_sin_resultados_de_busqueda/code.html', 'Sin Resultados de Búsqueda')" class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-semibold text-xs shadow-md hover:bg-white transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">visibility</span> Simular
-            </button>
-            <a href="catalogo_de_leyes_sin_resultados_de_busqueda/code.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-semibold text-xs shadow-md hover:bg-primary-container transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">open_in_new</span> Abrir
-            </a>
-          </div>
-        </div>
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-1.5 text-[11px] text-secondary font-semibold mb-1">
-              <span class="material-symbols-outlined text-[14px]">search_off</span>
-              Empty State Resiliente
-            </div>
-            <h3 class="font-title-md text-on-surface font-bold text-sm mb-1 leading-snug">Sin Resultados de Búsqueda</h3>
-            <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-              Ilustración vectorial dinámica basada en tokens LexIA con botón de fallback hacia el asistente conversacional.
-            </p>
-          </div>
-          <div class="pt-3 mt-3 border-t border-outline-variant/40 flex items-center justify-between text-xs">
-            <span class="font-mono text-[10px] text-secondary">mobile_tab</span>
-            <div class="flex items-center gap-2">
-              <a href="catalogo_de_leyes_sin_resultados_de_busqueda/screen.png" target="_blank" class="text-secondary hover:text-primary" title="Ver captura original">
-                <span class="material-symbols-outlined text-[16px]">image</span>
-              </a>
-              <a href="catalogo_de_leyes_sin_resultados_de_busqueda/code.html" class="font-semibold text-primary hover:underline flex items-center gap-0.5">
-                Ver pantalla <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- CARD 6: Historial y Memoria Persistente -->
-      <article data-category="rag" data-keywords="historial memoria persistente sesiones consultas previas sincronizacion vector store" class="screen-card bg-surface-container-lowest rounded-2xl border border-outline-variant/70 overflow-hidden flex flex-col card-hover">
-        <div class="relative screen-thumb-container overflow-hidden group">
-          <img src="historial_y_memoria_persistente/screen.png" alt="Captura Historial y Memoria" class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy"/>
-          <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
-            <button onclick="openInSimulator('historial_y_memoria_persistente/code.html', 'Historial & Memoria Persistente')" class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-semibold text-xs shadow-md hover:bg-white transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">visibility</span> Simular
-            </button>
-            <a href="historial_y_memoria_persistente/code.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-semibold text-xs shadow-md hover:bg-primary-container transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">open_in_new</span> Abrir
-            </a>
-          </div>
-        </div>
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-1.5 text-[11px] text-primary font-semibold mb-1">
-              <span class="material-symbols-outlined text-[14px]">history</span>
-              Persistencia de Contexto
-            </div>
-            <h3 class="font-title-md text-on-surface font-bold text-sm mb-1 leading-snug">Historial y Memoria</h3>
-            <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-              Línea de tiempo de sesiones de investigación con tags de correlación jurisprudencial y número de chunks cargados.
-            </p>
-          </div>
-          <div class="pt-3 mt-3 border-t border-outline-variant/40 flex items-center justify-between text-xs">
-            <span class="font-mono text-[10px] text-secondary">mobile_tab</span>
-            <div class="flex items-center gap-2">
-              <a href="historial_y_memoria_persistente/screen.png" target="_blank" class="text-secondary hover:text-primary" title="Ver captura original">
-                <span class="material-symbols-outlined text-[16px]">image</span>
-              </a>
-              <a href="historial_y_memoria_persistente/code.html" class="font-semibold text-primary hover:underline flex items-center gap-0.5">
-                Ver pantalla <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- CARD 7: Visor PDF Dictamen Art. 16 CPEUM -->
-      <article data-category="dictamen" data-keywords="visor pdf dictamen articulo 16 cpeum firma forense qr verificacion hash" class="screen-card bg-surface-container-lowest rounded-2xl border border-outline-variant/70 overflow-hidden flex flex-col card-hover">
-        <div class="relative screen-thumb-container overflow-hidden group">
-          <img src="visor_pdf_dictamen_art16_cpeum/screen.png" alt="Captura Visor PDF Dictamen" class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy"/>
-          <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
-            <button onclick="openInSimulator('visor_pdf_dictamen_art16_cpeum/code.html', 'Visor PDF Dictamen Art. 16 CPEUM')" class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-semibold text-xs shadow-md hover:bg-white transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">visibility</span> Simular
-            </button>
-            <a href="visor_pdf_dictamen_art16_cpeum/code.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-semibold text-xs shadow-md hover:bg-primary-container transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">open_in_new</span> Abrir
-            </a>
-          </div>
-        </div>
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-1.5 text-[11px] text-primary font-semibold mb-1">
-              <span class="material-symbols-outlined text-[14px]">picture_as_pdf</span>
-              Dictamen Pericial
-            </div>
-            <h3 class="font-title-md text-on-surface font-bold text-sm mb-1 leading-snug">Visor PDF Dictamen Art. 16</h3>
-            <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-              Renderizado del documento pericial con código QR de verificación criptográfica y sello institucional LexIA.
-            </p>
-          </div>
-          <div class="pt-3 mt-3 border-t border-outline-variant/40 flex items-center justify-between text-xs">
-            <span class="font-mono text-[10px] text-secondary">mobile_stack</span>
-            <div class="flex items-center gap-2">
-              <a href="visor_pdf_dictamen_art16_cpeum/screen.png" target="_blank" class="text-secondary hover:text-primary" title="Ver captura original">
-                <span class="material-symbols-outlined text-[16px]">image</span>
-              </a>
-              <a href="visor_pdf_dictamen_art16_cpeum/code.html" class="font-semibold text-primary hover:underline flex items-center gap-0.5">
-                Ver pantalla <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- CARD 8: Ficha Técnica Jurídica PDF -->
-      <article data-category="dictamen" data-keywords="ficha tecnica juridica pdf metadatos tesis jurisprudencia scjn dof amparo" class="screen-card bg-surface-container-lowest rounded-2xl border border-outline-variant/70 overflow-hidden flex flex-col card-hover">
-        <div class="relative screen-thumb-container overflow-hidden group">
-          <img src="ficha_tecnica_juridica_pdf/screen.png" alt="Captura Ficha Técnica" class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy"/>
-          <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
-            <button onclick="openInSimulator('ficha_tecnica_juridica_pdf/code.html', 'Ficha Técnica Jurídica PDF')" class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-semibold text-xs shadow-md hover:bg-white transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">visibility</span> Simular
-            </button>
-            <a href="ficha_tecnica_juridica_pdf/code.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-semibold text-xs shadow-md hover:bg-primary-container transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">open_in_new</span> Abrir
-            </a>
-          </div>
-        </div>
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-1.5 text-[11px] text-primary font-semibold mb-1">
-              <span class="material-symbols-outlined text-[14px]">description</span>
-              Ficha Resumen
-            </div>
-            <h3 class="font-title-md text-on-surface font-bold text-sm mb-1 leading-snug">Ficha Técnica Jurídica</h3>
-            <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-              Estructura formal con metadatos procesales, fecha de reforma, votos particulares y tesis de jurisprudencia SCJN.
-            </p>
-          </div>
-          <div class="pt-3 mt-3 border-t border-outline-variant/40 flex items-center justify-between text-xs">
-            <span class="font-mono text-[10px] text-secondary">mobile_tab</span>
-            <div class="flex items-center gap-2">
-              <a href="ficha_tecnica_juridica_pdf/screen.png" target="_blank" class="text-secondary hover:text-primary" title="Ver captura original">
-                <span class="material-symbols-outlined text-[16px]">image</span>
-              </a>
-              <a href="ficha_tecnica_juridica_pdf/code.html" class="font-semibold text-primary hover:underline flex items-center gap-0.5">
-                Ver pantalla <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- CARD 9: Compartir Dictamen WhatsApp y Correo -->
-      <article data-category="dictamen" data-keywords="compartir dictamen whatsapp correo exportar share bottom sheet link descarga" class="screen-card bg-surface-container-lowest rounded-2xl border border-outline-variant/70 overflow-hidden flex flex-col card-hover">
-        <div class="relative screen-thumb-container overflow-hidden group">
-          <img src="compartir_dictamen_pdf_whatsapp_y_correo/screen.png" alt="Captura Compartir Dictamen" class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy"/>
-          <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
-            <button onclick="openInSimulator('compartir_dictamen_pdf_whatsapp_y_correo/code.html', 'Compartir Dictamen')" class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-semibold text-xs shadow-md hover:bg-white transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">visibility</span> Simular
-            </button>
-            <a href="compartir_dictamen_pdf_whatsapp_y_correo/code.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-semibold text-xs shadow-md hover:bg-primary-container transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">open_in_new</span> Abrir
-            </a>
-          </div>
-        </div>
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-1.5 text-[11px] text-primary font-semibold mb-1">
-              <span class="material-symbols-outlined text-[14px]">share</span>
-              Distribución Segura
-            </div>
-            <h3 class="font-title-md text-on-surface font-bold text-sm mb-1 leading-snug">Compartir Dictamen PDF</h3>
-            <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-              Modal de exportación rápida hacia WhatsApp con resumen ejecutivo preformateado y enlace protegido cifrado.
-            </p>
-          </div>
-          <div class="pt-3 mt-3 border-t border-outline-variant/40 flex items-center justify-between text-xs">
-            <span class="font-mono text-[10px] text-secondary">mobile_stack</span>
-            <div class="flex items-center gap-2">
-              <a href="compartir_dictamen_pdf_whatsapp_y_correo/screen.png" target="_blank" class="text-secondary hover:text-primary" title="Ver captura original">
-                <span class="material-symbols-outlined text-[16px]">image</span>
-              </a>
-              <a href="compartir_dictamen_pdf_whatsapp_y_correo/code.html" class="font-semibold text-primary hover:underline flex items-center gap-0.5">
-                Ver pantalla <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- CARD 10: Redacción de Correo Procesal -->
-      <article data-category="dictamen" data-keywords="redaccion correo procesal tribunal juez ministerio publico plantilla asistente" class="screen-card bg-surface-container-lowest rounded-2xl border border-outline-variant/70 overflow-hidden flex flex-col card-hover">
-        <div class="relative screen-thumb-container overflow-hidden group">
-          <img src="redaccion_de_correo_procesal/screen.png" alt="Captura Redacción Correo Procesal" class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy"/>
-          <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
-            <button onclick="openInSimulator('redaccion_de_correo_procesal/code.html', 'Redacción de Correo Procesal')" class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-semibold text-xs shadow-md hover:bg-white transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">visibility</span> Simular
-            </button>
-            <a href="redaccion_de_correo_procesal/code.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-semibold text-xs shadow-md hover:bg-primary-container transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">open_in_new</span> Abrir
-            </a>
-          </div>
-        </div>
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-1.5 text-[11px] text-primary font-semibold mb-1">
-              <span class="material-symbols-outlined text-[14px]">mail</span>
-              Comunicación Procesal
-            </div>
-            <h3 class="font-title-md text-on-surface font-bold text-sm mb-1 leading-snug">Redacción de Correo</h3>
-            <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-              Editor asistido con tono formal para notificaciones a juzgados, clientes o contrapartes procesales con dictamen adjunto.
-            </p>
-          </div>
-          <div class="pt-3 mt-3 border-t border-outline-variant/40 flex items-center justify-between text-xs">
-            <span class="font-mono text-[10px] text-secondary">mobile_stack</span>
-            <div class="flex items-center gap-2">
-              <a href="redaccion_de_correo_procesal/screen.png" target="_blank" class="text-secondary hover:text-primary" title="Ver captura original">
-                <span class="material-symbols-outlined text-[16px]">image</span>
-              </a>
-              <a href="redaccion_de_correo_procesal/code.html" class="font-semibold text-primary hover:underline flex items-center gap-0.5">
-                Ver pantalla <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- CARD 11: Autenticación y Licencia IA -->
-      <article data-category="acceso" data-keywords="autenticacion licencia ia login sesion cedula profesional colegio abogados" class="screen-card bg-surface-container-lowest rounded-2xl border border-outline-variant/70 overflow-hidden flex flex-col card-hover">
-        <div class="relative screen-thumb-container overflow-hidden group">
-          <img src="autenticacion_y_licencia_ia/screen.png" alt="Captura Autenticación y Licencia" class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy"/>
-          <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
-            <button onclick="openInSimulator('autenticacion_y_licencia_ia/code.html', 'Autenticación & Licencia IA')" class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-semibold text-xs shadow-md hover:bg-white transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">visibility</span> Simular
-            </button>
-            <a href="autenticacion_y_licencia_ia/code.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-semibold text-xs shadow-md hover:bg-primary-container transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">open_in_new</span> Abrir
-            </a>
-          </div>
-        </div>
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-1.5 text-[11px] text-primary font-semibold mb-1">
-              <span class="material-symbols-outlined text-[14px]">lock</span>
-              Seguridad & Acceso
-            </div>
-            <h3 class="font-title-md text-on-surface font-bold text-sm mb-1 leading-snug">Autenticación y Licencia</h3>
-            <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-              Login profesional, validación de cédula y activación de credenciales premium de inteligencia artificial jurídica.
-            </p>
-          </div>
-          <div class="pt-3 mt-3 border-t border-outline-variant/40 flex items-center justify-between text-xs">
-            <span class="font-mono text-[10px] text-secondary">mobile_blank</span>
-            <div class="flex items-center gap-2">
-              <a href="autenticacion_y_licencia_ia/screen.png" target="_blank" class="text-secondary hover:text-primary" title="Ver captura original">
-                <span class="material-symbols-outlined text-[16px]">image</span>
-              </a>
-              <a href="autenticacion_y_licencia_ia/code.html" class="font-semibold text-primary hover:underline flex items-center gap-0.5">
-                Ver pantalla <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- CARD 12: Logo e Ícono de Aplicación LexIA -->
-      <article data-category="acceso" data-keywords="logo icono aplicacion marca identidad vector escudo balanza libro" class="screen-card bg-surface-container-lowest rounded-2xl border border-outline-variant/70 overflow-hidden flex flex-col card-hover">
-        <div class="relative screen-thumb-container overflow-hidden group flex items-center justify-center p-6 bg-gradient-to-br from-primary via-primary-container to-secondary">
-          <img src="shared/lexia-logo.svg" alt="Isotipo Oficial LexIA" class="w-32 h-32 object-contain filter drop-shadow-xl transition-transform duration-300 group-hover:scale-105" loading="lazy"/>
-          <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
-            <a href="logo_e_icono_de_aplicacion_lexia/code.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-semibold text-xs shadow-md hover:bg-white transition-all flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">open_in_new</span> Ver SVG
-            </a>
-          </div>
-        </div>
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-1.5 text-[11px] text-ai-800 font-semibold mb-1">
-              <span class="material-symbols-outlined text-[14px] text-ai-600">verified</span>
-              Identidad de Marca
-            </div>
-            <h3 class="font-title-md text-on-surface font-bold text-sm mb-1 leading-snug">Logo e Ícono LexIA</h3>
-            <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-              Emblema heráldico vectorizado combinando balanza de justicia, libro abierto de leyes y red neuronal RAG.
-            </p>
-          </div>
-          <div class="pt-3 mt-3 border-t border-outline-variant/40 flex items-center justify-between text-xs">
-            <span class="font-mono text-[10px] text-secondary">svg_asset</span>
-            <div class="flex items-center gap-2">
-              <a href="logo_e_icono_de_aplicacion_lexia/screen.png" target="_blank" class="text-secondary hover:text-primary" title="Ver captura original">
-                <span class="material-symbols-outlined text-[16px]">image</span>
-              </a>
-              <a href="logo_e_icono_de_aplicacion_lexia/code.html" class="font-semibold text-primary hover:underline flex items-center gap-0.5">
-                Ver vector <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </article>
-
-    </div>
-
-    <!-- Empty search feedback -->
-    <div id="noResultsState" class="hidden py-16 text-center">
-      <div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mx-auto mb-3 text-secondary">
-        <span class="material-symbols-outlined text-[32px]">search_off</span>
-      </div>
-      <h3 class="text-base font-bold text-on-surface mb-1">No se encontraron pantallas</h3>
-      <p class="text-xs text-on-surface-variant max-w-sm mx-auto">
-        Intenta con otro término de búsqueda o selecciona la categoría "Todas".
-      </p>
-    </div>
-  </main>
-
-  <!-- Interactive Mobile Device Simulator Drawer / Modal -->
-  <div id="simulatorModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-surface-container-lowest rounded-3xl w-full max-w-md max-h-[95vh] flex flex-col shadow-2xl border border-outline-variant overflow-hidden animate-in fade-in zoom-in duration-200">
-      <!-- Simulator Header -->
-      <div class="px-4 py-3 bg-surface-container-low border-b border-outline-variant flex items-center justify-between">
-        <div class="flex items-center gap-2 min-w-0">
-          <span class="w-2.5 h-2.5 rounded-full bg-success-500"></span>
-          <span id="simulatorScreenTitle" class="font-semibold text-xs text-on-surface truncate">Simulador Móvil</span>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <a id="simulatorExternalLink" href="#" target="_blank" class="p-1 rounded-md text-secondary hover:text-primary hover:bg-surface-container transition-colors" title="Abrir en pestaña completa">
-            <span class="material-symbols-outlined text-[18px]">open_in_new</span>
-          </a>
-          <button id="closeSimulatorBtn" class="p-1 rounded-md text-secondary hover:text-error hover:bg-surface-container transition-colors">
-            <span class="material-symbols-outlined text-[18px]">close</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Device Viewport Container -->
-      <div class="p-4 bg-surface-container flex justify-center items-center overflow-auto flex-1">
-        <div class="relative w-[375px] h-[750px] bg-black rounded-[48px] p-3 shadow-2xl ring-4 ring-neutral-800 shrink-0">
-          <!-- Dynamic Island / Speaker notch -->
-          <div class="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-4 bg-black rounded-full z-30"></div>
-          <!-- Device frame screen -->
-          <div class="w-full h-full bg-surface rounded-[38px] overflow-hidden relative">
-            <iframe id="simulatorIframe" src="chat_rag_contextual/code.html" class="w-full h-full border-0 select-none"></iframe>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="bg-surface-container-low border-t border-outline-variant/60 py-6 px-4 sm:px-6 lg:px-8 mt-auto text-xs text-on-surface-variant">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <img src="shared/lexia-logo.svg" alt="LexIA" class="w-6 h-6 rounded-md"/>
-        <span class="font-semibold text-on-surface">LexIA</span>
-        <span>—</span>
-        <span>Suite de Asistencia Jurídica & RAG para Derecho Constitucional Mexicano</span>
-      </div>
-      <div class="flex items-center gap-4">
-        <a href="lexia_design_system/DESIGN.md" class="hover:text-primary hover:underline">Sistema de Diseño</a>
-        <span>•</span>
-        <a href="shared/tailwind.config.js" class="hover:text-primary hover:underline">Configuración Tailwind</a>
-        <span>•</span>
-        <a href="shared/lexia.css" class="hover:text-primary hover:underline">CSS Compartido</a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Interactive Client-side Script -->
-  <script>
-    // Tab filtering logic
-    const filterTabs = document.querySelectorAll('.filter-tab');
-    const screenCards = document.querySelectorAll('.screen-card');
-    const searchInput = document.getElementById('searchInput');
-    const clearSearchBtn = document.getElementById('clearSearchBtn');
-    const noResultsState = document.getElementById('noResultsState');
-
-    let currentFilter = 'all';
-
-    function applyFilters() {
-      const query = searchInput.value.toLowerCase().trim();
-      let visibleCount = 0;
-
-      screenCards.forEach(card => {
-        const category = card.getAttribute('data-category');
-        const keywords = card.getAttribute('data-keywords') || '';
-        const title = card.querySelector('h3').textContent.toLowerCase();
-        const desc = card.querySelector('p').textContent.toLowerCase();
-
-        const matchesCategory = (currentFilter === 'all') || (category === currentFilter);
-        const matchesQuery = !query || title.includes(query) || desc.includes(query) || keywords.includes(query);
-
-        if (matchesCategory && matchesQuery) {
-          card.classList.remove('hidden');
-          visibleCount++;
-        } else {
-          card.classList.add('hidden');
+    <style>
+        :root {
+            --primary: #0F3261;
+            --primary-dark: #081B38;
+            --primary-light: #1A5296;
+            --accent: #2563EB;
+            --accent-soft: rgba(37, 99, 235, 0.1);
+            --success: #059669;
+            --success-soft: #D1FAE5;
+            --surface: #0B1325;
+            --card-bg: rgba(18, 30, 56, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #FFFFFF;
+            --text-muted: #94A3B8;
+            --gradient: linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #60A5FA 100%);
+            --glow: 0 0 40px rgba(59, 130, 246, 0.25);
         }
-      });
 
-      if (visibleCount === 0) {
-        noResultsState.classList.remove('hidden');
-      } else {
-        noResultsState.classList.add('hidden');
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
 
-      if (query.length > 0) {
-        clearSearchBtn.classList.remove('hidden');
-      } else {
-        clearSearchBtn.classList.add('hidden');
-      }
-    }
+        body {
+            background-color: var(--surface);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 70%, rgba(16, 185, 129, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(15, 50, 97, 0.2) 0%, transparent 60%);
+        }
 
-    filterTabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        filterTabs.forEach(t => {
-          t.classList.remove('active', 'bg-primary', 'text-on-primary');
-          t.classList.add('bg-surface-container', 'text-on-surface');
+        /* HEADER */
+        header {
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(11, 19, 37, 0.85);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #0F3261, #2563EB);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .brand-text h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-mexico {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            text-transform: uppercase;
+        }
+
+        .brand-text p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 6px 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            font-weight: 600;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10B981;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 48px 24px;
+            flex: 1;
+        }
+
+        /* HERO CARD */
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 40px;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            padding: 48px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .hero-info h2 {
+            font-size: 38px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #CBD5E1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-info p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .stat-item h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #60A5FA;
+        }
+
+        .stat-item p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        /* BOTÓN DE DESCARGA */
+        .download-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+            color: #fff;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(37, 99, 235, 0.6);
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+        }
+
+        .file-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* QR BOX */
+        .qr-card {
+            background: rgba(11, 19, 37, 0.9);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.05);
+        }
+
+        .qr-wrapper {
+            background: #fff;
+            padding: 12px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-wrapper canvas {
+            display: block;
+            border-radius: 8px;
+        }
+
+        .qr-card h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .qr-card p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* PASOS DE INSTALACIÓN */
+        .section-title {
+            text-align: center;
+            margin: 56px 0 32px;
+        }
+
+        .section-title h3 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .section-title p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .step-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .step-num {
+            width: 36px;
+            height: 36px;
+            background: rgba(37, 99, 235, 0.2);
+            color: #60A5FA;
+            border: 1px solid rgba(37, 99, 235, 0.4);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
+        .step-card h5 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .step-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* GITHUB & NUBE BANNER */
+        .hosting-guide {
+            margin-top: 48px;
+            background: linear-gradient(135deg, rgba(15, 50, 97, 0.4) 0%, rgba(37, 99, 235, 0.2) 100%);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            border-radius: 20px;
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .hosting-text h4 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #93C5FD;
+        }
+
+        .hosting-text p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .code-box {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #34D399;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: inline-block;
+            margin-top: 6px;
+        }
+
+        /* FOOTER */
+        footer {
+            margin-top: auto;
+            padding: 32px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--card-border);
+            background: rgba(11, 19, 37, 0.95);
+        }
+
+        @media (max-width: 860px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 32px 24px;
+                gap: 32px;
+            }
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+            .hosting-guide {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA SUPERIOR -->
+    <header>
+        <a href="#" class="brand">
+            <div class="brand-icon">⚖️</div>
+            <div class="brand-text">
+                <h1>LexIA <span class="badge-mexico">México</span></h1>
+                <p>Asistente Jurídico Inteligente · Android</p>
+            </div>
+        </a>
+
+        <div class="header-status">
+            <span class="pulse-dot"></span>
+            <span>Versión 1.0.0 Vigente</span>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- HERO SECTION PRINCIPAL -->
+        <div class="hero">
+            <div class="hero-info">
+                <h2>Lleva el Derecho Mexicano y la IA en tu Bolsillo</h2>
+                <p>
+                    Descarga directa e instantánea del instalador oficial (APK) de LexIA. 
+                    Optimizado con motor FAISS Offline y sincronizado con el Diario Oficial de la Federación.
+                </p>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h3>1,326</h3>
+                        <p>Artículos DOF</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>FAISS</h3>
+                        <p>RAG 100% Offline</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>19.6 MB</h3>
+                        <p>Peso Ultra Ligero</p>
+                    </div>
+                </div>
+
+                <div class="download-actions">
+                    <a href="lexia-latest.apk" download="lexia-latest.apk" class="btn-download" id="downloadBtn">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Descargar APK Directo para Android
+                    </a>
+                    <span class="file-meta">Compatible con Android 8.0 Oreo hasta Android 14+ · Sin publicidad</span>
+                </div>
+            </div>
+
+            <!-- TARJETA QR DE ESCANEO -->
+            <div class="qr-card">
+                <div class="qr-wrapper">
+                    <canvas id="qrCanvas"></canvas>
+                </div>
+                <h4>Escanea con tu Celular</h4>
+                <p>Apunta con la cámara de tu móvil para descargar el APK en 2 segundos sin cables.</p>
+            </div>
+        </div>
+
+        <!-- GUÍA DE INSTALACIÓN PASO A PASO -->
+        <div class="section-title">
+            <h3>¿Cómo instalar el archivo APK en tu celular?</h3>
+            <p>Guía rápida de 3 pasos para instalar la aplicación en dispositivos Samsung, Xiaomi, Motorola y otros.</p>
+        </div>
+
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h5>Descargar el Instalador</h5>
+                <p>Presiona el botón de descarga o escanea el código QR. Si el navegador pregunta: <em>"¿Descargar este archivo potencialmente dañino?"</em>, elige <strong>"Descargar de todos modos"</strong> (alerta estándar de Android para apps fuera de Play Store).</p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h5>Permitir Orígenes Desconocidos</h5>
+                <p>Abre el archivo descargado desde las notificaciones o la carpeta <em>Descargas</em>. Si aparece el aviso de seguridad, pulsa <strong>"Ajustes"</strong> y activa la casilla <strong>"Permitir desde esta fuente"</strong>.</p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h5>Instalar y Abrir LexIA</h5>
+                <p>Presiona <strong>"Instalar"</strong>. Una vez completado, pulsa <strong>"Abrir"</strong>. La aplicación te llevará directamente al Catálogo de Leyes e iniciará en modo autónomo.</p>
+            </div>
+        </div>
+
+        <!-- HOSTING CON GITHUB PAGES Y RELEASES -->
+        <div class="hosting-guide">
+            <div class="hosting-text">
+                <h4>🚀 Publicación Global Gratuita con GitHub</h4>
+                <p>
+                    Para tener este enlace público en todo el mundo (ej. <code>https://tu-usuario.github.io/lexia/</code>):<br>
+                    1. Sube este archivo <code>index.html</code> a tu repositorio de GitHub.<br>
+                    2. En la sección <strong>Releases</strong> de GitHub, sube <code>lexia-latest.apk</code> para obtener un enlace de descarga CDN ultrarrápido y global.
+                </p>
+                <div class="code-box">git remote add origin https://github.com/TU_USUARIO/lexia.git</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 LexIA · Asistente Jurídico Inteligente para el Derecho Mexicano. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- GENERACIÓN DINÁMICA DEL CÓDIGO QR -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Genera la URL completa de descarga apuntando al archivo APK en el mismo directorio
+            const downloadUrl = new URL('lexia-latest.apk', window.location.href).href;
+
+            const canvas = document.getElementById('qrCanvas');
+            QRCode.toCanvas(canvas, downloadUrl, {
+                width: 180,
+                margin: 1,
+                color: {
+                    dark: '#081B38',
+                    light: '#FFFFFF'
+                }
+            }, function (error) {
+                if (error) console.error("Error generando QR:", error);
+            });
         });
-        tab.classList.add('active', 'bg-primary', 'text-on-primary');
-        tab.classList.remove('bg-surface-container', 'text-on-surface');
-
-        currentFilter = tab.getAttribute('data-filter');
-        applyFilters();
-      });
-    });
-
-    searchInput.addEventListener('input', applyFilters);
-    clearSearchBtn.addEventListener('click', () => {
-      searchInput.value = '';
-      applyFilters();
-      searchInput.focus();
-    });
-
-    // Mobile simulator logic
-    const simulatorModal = document.getElementById('simulatorModal');
-    const simulatorIframe = document.getElementById('simulatorIframe');
-    const simulatorScreenTitle = document.getElementById('simulatorScreenTitle');
-    const simulatorExternalLink = document.getElementById('simulatorExternalLink');
-    const closeSimulatorBtn = document.getElementById('closeSimulatorBtn');
-    const toggleDeviceSimulatorBtn = document.getElementById('toggleDeviceSimulatorBtn');
-
-    function openInSimulator(url, title) {
-      simulatorIframe.src = url;
-      simulatorScreenTitle.textContent = title;
-      simulatorExternalLink.href = url;
-      simulatorModal.classList.remove('hidden');
-      simulatorModal.classList.add('flex');
-    }
-
-    function closeSimulator() {
-      simulatorModal.classList.add('hidden');
-      simulatorModal.classList.remove('flex');
-    }
-
-    closeSimulatorBtn.addEventListener('click', closeSimulator);
-    simulatorModal.addEventListener('click', (e) => {
-      if (e.target === simulatorModal) closeSimulator();
-    });
-
-    toggleDeviceSimulatorBtn.addEventListener('click', () => {
-      openInSimulator('chat_rag_contextual/code.html', 'Chat RAG Contextual');
-    });
-
-    // Keyboard navigation (ESC to close modal)
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !simulatorModal.classList.contains('hidden')) {
-        closeSimulator();
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
