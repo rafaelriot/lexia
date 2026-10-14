@@ -459,7 +459,7 @@
                 </div>
 
                 <div class="download-actions">
-                    <a href="lexia-latest.apk" download="lexia-latest.apk" class="btn-download" id="downloadBtn">
+                    <a href="https://github.com/rafaelriot/lexia/raw/main/download/lexia-latest.apk" download="lexia-latest.apk" class="btn-download" id="downloadBtn">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="7 10 12 15 17 10"></polyline>
@@ -530,8 +530,13 @@
     <!-- GENERACIÓN DINÁMICA DEL CÓDIGO QR -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Genera la URL completa de descarga apuntando al archivo APK en el mismo directorio
-            const downloadUrl = new URL('lexia-latest.apk', window.location.href).href;
+            // URL directa del archivo APK binario
+            const downloadUrl = "https://github.com/rafaelriot/lexia/raw/main/download/lexia-latest.apk";
+
+            const downloadBtn = document.getElementById('downloadBtn');
+            if (downloadBtn) {
+                downloadBtn.href = downloadUrl;
+            }
 
             const canvas = document.getElementById('qrCanvas');
             QRCode.toCanvas(canvas, downloadUrl, {
