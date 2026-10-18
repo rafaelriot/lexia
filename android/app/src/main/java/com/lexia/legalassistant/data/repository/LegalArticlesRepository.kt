@@ -210,8 +210,13 @@ object LegalArticlesRepository {
     val cnpp = com.lexia.legalassistant.data.model.LawItem("cnpp", "Código Nacional de Procedimientos Penales", "CNPP", "DOF Vigente", "Federal", "Penal", 490, "Enero 2024")
     val cpf = com.lexia.legalassistant.data.model.LawItem("cpf", "Código Penal Federal", "CPF", "DOF Vigente", "Federal", "Penal", 429, "Noviembre 2023")
     val amparo = com.lexia.legalassistant.data.model.LawItem("amparo", "Ley de Amparo, Reglamentaria de los Arts. 103 y 107 CPEUM", "Ley de Amparo", "DOF Vigente", "Federal", "Amparo", 271, "Junio 2022")
+    val cpet = com.lexia.legalassistant.data.model.LawItem("cpet", "Código Penal para el Estado de Tabasco", "CP Tabasco", "POET Vigente", "Estatal (Tabasco)", "Penal", 369, "Marzo 2024")
+    val ccf = com.lexia.legalassistant.data.model.LawItem("ccf", "Código Civil Federal", "CCF", "DOF Vigente", "Federal", "Civil", 3044, "Enero 2024")
+    val cnpcyf = com.lexia.legalassistant.data.model.LawItem("cnpcyf", "Código Nacional de Procedimientos Civiles y Familiares", "CNPCyF", "DOF Vigente", "Nacional", "Familiar", 1191, "Junio 2023")
+    val ccet = com.lexia.legalassistant.data.model.LawItem("ccet", "Código Civil para el Estado de Tabasco", "CC Tabasco", "POET Vigente", "Estatal (Tabasco)", "Civil", 3227, "Diciembre 2023")
+    val lft = com.lexia.legalassistant.data.model.LawItem("lft", "Ley Federal del Trabajo", "LFT", "DOF Vigente", "Federal", "Laboral", 1010, "Abril 2024")
 
-    val catalogLaws: List<com.lexia.legalassistant.data.model.LawItem> = listOf(cpeum, cnpp, cpf, amparo)
+    val catalogLaws: List<com.lexia.legalassistant.data.model.LawItem> = listOf(cpeum, cnpp, cpf, amparo, cpet, ccf, cnpcyf, ccet, lft)
 
     fun getLawById(lawId: String?): com.lexia.legalassistant.data.model.LawItem {
         return catalogLaws.firstOrNull { it.id.equals(lawId, ignoreCase = true) } ?: cpeum
@@ -290,7 +295,19 @@ object LegalArticlesRepository {
         LawArticleDetail("amparo_215", "amparo", "Ley de Amparo", "Artículo 215", "Mecanismos de Creación de Jurisprudencia", "Penal/Amparo", "La jurisprudencia se establece por precedentes obligatorios (Pleno y Salas de la SCJN), por reiteración (Tribunales Colegiados) y por contradicción de criterios.", "VIGENTE DOF", "Junio 2022", 12, listOf(VectorChunk("amparo_215_p1", 1, 0.970f, "Precedentes Obligatorios", "Efecto vinculante de las sentencias del Pleno y Salas de la Suprema Corte.", true)))
     )
 
-    val allArticles: List<LawArticleDetail> = cpeumArticles + cnppArticles + cpfArticles + amparoArticles
+    // 4. CÓDIGO PENAL PARA EL ESTADO DE TABASCO (CPET)
+    val cpetArticles: List<LawArticleDetail> = listOf(
+        LawArticleDetail("cpet_1", "cpet", "CP Tabasco", "Artículo 1°", "Validez Espacial y Ámbito de Aplicación en Tabasco", "Penal", "Este Código se aplicará en el Estado de Tabasco por los delitos cometidos en su territorio que sean de la competencia de sus tribunales, respetando los derechos humanos y garantías constitucionales.", "VIGENTE POET", "Marzo 2024", 8, listOf(VectorChunk("cpet_1_p1", 1, 0.970f, "Ámbito Territorial Tabasco", "Aplica a todos los hechos constitutivos de delito del fuero común en los 17 municipios de Tabasco.", true))),
+        LawArticleDetail("cpet_110", "cpet", "CP Tabasco", "Artículo 110", "Homicidio Simple y Tipificación Sustantiva", "Penal", "Al que prive de la vida a otro, se le impondrá prisión de ocho a veinte años.", "VIGENTE POET", "Marzo 2024", 10, listOf(VectorChunk("cpet_110_p1", 1, 0.985f, "Tipo Básico de Homicidio", "Punibilidad de 8 a 20 años de prisión por la privación ilegítima de la vida en el fuero común de Tabasco.", true))),
+        LawArticleDetail("cpet_115", "cpet", "CP Tabasco", "Artículo 115 Bis", "Feminicidio por Razones de Género en Tabasco", "Penal", "Comete el delito de feminicidio quien prive de la vida a una mujer por razones de género. Se impondrá prisión de cuarenta a cincuenta años, y agravantes especiales cuando existan relaciones de confianza o violencia previa.", "VIGENTE POET", "Marzo 2024", 16, listOf(VectorChunk("cpet_115_p1", 1, 0.992f, "Tipo Penal de Feminicidio", "Razones de género, antecedentes de violencia familiar y sanciones privativas de 40 a 50 años.", true))),
+        LawArticleDetail("cpet_175", "cpet", "CP Tabasco", "Artículo 175", "Delito de Robo y Escalas de Punibilidad por UMA", "Penal", "Al que, con ánimo de dominio y sin consentimiento de quien legalmente pueda otorgarlo, se apodere de una cosa mueble ajena. Se sanciona según el valor de lo robado tasado en Unidades de Medida y Actualización (UMA).", "VIGENTE POET", "Marzo 2024", 12, listOf(VectorChunk("cpet_175_p1", 1, 0.980f, "Robo Simple y Graduación UMA", "Definición del apoderamiento sin consentimiento y escalas punitivas patrimoniales.", true))),
+        LawArticleDetail("cpet_196", "cpet", "CP Tabasco", "Artículo 196", "Extorsión y Coacción Patrimonial Ilícita", "Penal", "Al que para obtener un provecho indebido para sí o para un tercero, obligue a otro a dar, hacer, tolerar o dejar de hacer algo, conminándolo con causarle un daño en su persona, bienes o familia.", "VIGENTE POET", "Marzo 2024", 14, listOf(VectorChunk("cpet_196_p1", 1, 0.982f, "Delito de Extorsión", "Protección estricta frente a coacción, cobro de piso y amenazas de daño patrimonial o personal.", true))),
+        LawArticleDetail("cpet_205", "cpet", "CP Tabasco", "Artículo 205 Bis", "Abigeato Mayor (Ganado Bovino y Equino)", "Penal", "Comete el delito de abigeato quien se apodere de una o más cabezas de ganado bovino o equino sin derecho ni consentimiento. Se impondrá de seis a ocho años de prisión de una a dos cabezas, con penas aumentadas en caso de reincidencia o violencia.", "VIGENTE POET", "Marzo 2024", 16, listOf(VectorChunk("cpet_205_p1", 1, 0.990f, "Protección a la Producción Pecuaria", "Delito de abigeato en Tabasco, con sanciones graves para salvaguardar el hato ganadero estatal.", true))),
+        LawArticleDetail("cpet_208", "cpet", "CP Tabasco", "Artículo 208 Bis", "Violencia Familiar y Medidas de Protección", "Penal", "A quien cometa el delito de violencia familiar se le impondrá de uno a seis años de prisión. Se entiende por tal el acto abusivo de poder dirigido a agredir física, verbal, psicológica, patrimonial o sexualmente.", "VIGENTE POET", "Marzo 2024", 12, listOf(VectorChunk("cpet_208_p1", 1, 0.986f, "Violencia Familiar en Tabasco", "Tutela a la integridad de cónyuges, concubinos o familiares consanguíneos dentro o fuera del domicilio.", true))),
+        LawArticleDetail("cpet_304", "cpet", "CP Tabasco", "Artículo 304 Quater", "Maltrato o Crueldad en contra de Animales", "Penal", "A quien intencionalmente cometa actos de maltrato o crueldad en contra de cualquier animal causándole sufrimiento o lesiones, se le impondrán de uno a cinco años de prisión y multa económica.", "VIGENTE POET", "Marzo 2024", 10, listOf(VectorChunk("cpet_304_p1", 1, 0.978f, "Protección a Animales Domésticos", "Tipificación del maltrato animal y agravantes en caso de provocar la muerte.", true)))
+    )
+
+    val allArticles: List<LawArticleDetail> = cpeumArticles + cnppArticles + cpfArticles + amparoArticles + cpetArticles
 
     fun getArticlesForLaw(lawId: String?): List<LawArticleDetail> {
         val targetId = lawId?.lowercase() ?: "cpeum"
@@ -299,9 +316,14 @@ object LegalArticlesRepository {
 
     fun getGroupsForLaw(lawId: String?): List<String> {
         return when (lawId?.lowercase()) {
+            "cpet" -> listOf("Todos (CP Tabasco)", "Parte General y Validez (1-42)", "Vida e Integridad (105-140)", "Feminicidio (115 Bis)", "Libertad y Seguridad (141-174)", "Robo y Patrimonio (175-205)", "Abigeato y Ganado (205 Bis-Ter)", "Familia y Violencia (206-215)", "Servidores Públicos (230-260)", "Protección Animal (304-369)")
             "cnpp" -> listOf("Todos (CNPP)", "Principios y Derechos (1-14)", "Competencia y Plazos (15-104)", "Sujetos Procesales (105-136)", "Medidas Cautelares (153-182)", "Justicia Restaurativa (183-210)", "Investigación (211-258)", "Audiencia Inicial (307-333)", "Etapa Intermedia (334-347)", "Juicio Oral (348-413)", "Recursos (456-490)")
             "cpf" -> listOf("Todos (CPF)", "Teoría del Delito (1-23)", "Penas y Medidas (24-76)", "Extinción Penal (77-118)", "Seguridad de la Nación (119-138)", "Paz Pública y Terrorismo (139-148)", "Servidores Públicos (212-227)", "Vida e Integridad (302-322)", "Libertad Personal (323-366)", "Delitos Patrimoniales (367-399)", "Delitos Federales (400-429)")
             "amparo" -> listOf("Todos (Amparo)", "Reglas Generales (1-32)", "Competencia (33-60)", "Improcedencia y Sobreseimiento (61-72)", "Sentencias y Suplencia (73-106)", "Amparo Indirecto (107-124)", "Suspensión del Acto (125-169)", "Amparo Directo (170-191)", "Cumplimiento (192-214)", "Jurisprudencia (215-235)", "Responsabilidades (236-271)")
+            "ccf" -> listOf("Todos (CCF)", "Personas y Familia (1-746)", "Bienes y Propiedad (747-1280)", "Sucesiones y Herencias (1281-1791)", "Obligaciones y Contratos (1792-3044)")
+            "cnpcyf" -> listOf("Todos (CNPCyF)", "Sistema de Justicia Oral (1-100)", "Competencia y Jurisdicción (101-200)", "Pruebas y Audiencias (201-450)", "Juicio Oral Familiar (451-700)", "Juicio Oral Civil (701-900)", "Vía de Apremio y Recursos (901-1191)")
+            "ccet" -> listOf("Todos (CC Tabasco)", "Personas y Familia (1-800)", "Bienes y Posesión (801-1400)", "Sucesiones (1401-1900)", "Obligaciones y Contratos (1901-3227)")
+            "lft" -> listOf("Todos (LFT)", "Principios Generales (1-55)", "Relaciones Individuales (56-131)", "Condiciones de Trabajo (132-353)", "Relaciones Colectivas y Huelga (354-471)", "Riesgos de Trabajo (472-522)", "Justicia Laboral y Conciliación (685-1010)")
             else -> listOf("General (136)", "DDHH (1-29)", "Nacionalidad (30-38)", "Poderes (49-107)")
         }
     }

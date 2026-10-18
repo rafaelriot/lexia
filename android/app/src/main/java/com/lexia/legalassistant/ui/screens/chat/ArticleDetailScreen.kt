@@ -36,9 +36,15 @@ fun ArticleDetailScreen(
     var selectedCategoryFilter by remember { mutableStateOf("Todos") }
 
     val lawOptions = listOf(
-        Pair("cpeum", "CPEUM (136 Artículos)"),
+        Pair("cpeum", "CPEUM (Constitución)"),
         Pair("cnpp", "CNPP (Proc. Penales)"),
-        Pair("amparo", "Ley de Amparo")
+        Pair("cpf", "CPF (Penal Federal)"),
+        Pair("amparo", "Ley de Amparo"),
+        Pair("cpet", "CP Tabasco"),
+        Pair("ccf", "CCF (Civil Federal)"),
+        Pair("cnpcyf", "CNPCyF (Proc. Civil/Familiar)"),
+        Pair("ccet", "CC Tabasco (Civil)"),
+        Pair("lft", "LFT (Laboral)")
     )
 
     val cpeumCategories = listOf(

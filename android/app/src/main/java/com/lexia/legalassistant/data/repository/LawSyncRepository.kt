@@ -85,6 +85,51 @@ object LawSyncRepository {
                     lastSyncDate = prefs?.getString("sync_amparo", defaultDate) ?: defaultDate,
                     versionDof = "Reforma DOF Junio 2022 / Junio 2024",
                     officialSourceUrl = "https://www.diputados.gob.mx/LeyesBiblio/pdf/LAmp.pdf"
+                ),
+                LawSyncStatus(
+                    lawId = "cpet",
+                    shortName = "CP Tabasco",
+                    fullName = "Código Penal para el Estado de Tabasco",
+                    articlesCount = 369,
+                    lastSyncDate = prefs?.getString("sync_cpet", defaultDate) ?: defaultDate,
+                    versionDof = "Decreto 202 / POET Vigente 2024",
+                    officialSourceUrl = "https://congresotabasco.gob.mx/wp-content/uploads/2025/02/Codigo-Penal-para-el-Estado-de-Tabasco.pdf"
+                ),
+                LawSyncStatus(
+                    lawId = "ccf",
+                    shortName = "CCF",
+                    fullName = "Código Civil Federal",
+                    articlesCount = 3044,
+                    lastSyncDate = prefs?.getString("sync_ccf", defaultDate) ?: defaultDate,
+                    versionDof = "Reforma DOF Enero 2024",
+                    officialSourceUrl = "https://www.diputados.gob.mx/LeyesBiblio/pdf/CCF.pdf"
+                ),
+                LawSyncStatus(
+                    lawId = "cnpcyf",
+                    shortName = "CNPCyF",
+                    fullName = "Código Nacional de Procedimientos Civiles y Familiares",
+                    articlesCount = 1191,
+                    lastSyncDate = prefs?.getString("sync_cnpcyf", defaultDate) ?: defaultDate,
+                    versionDof = "Decreto DOF Junio 2023",
+                    officialSourceUrl = "https://www.diputados.gob.mx/LeyesBiblio/pdf/CNPCyF.pdf"
+                ),
+                LawSyncStatus(
+                    lawId = "ccet",
+                    shortName = "CC Tabasco",
+                    fullName = "Código Civil para el Estado de Tabasco",
+                    articlesCount = 3227,
+                    lastSyncDate = prefs?.getString("sync_ccet", defaultDate) ?: defaultDate,
+                    versionDof = "POET Vigente Diciembre 2023",
+                    officialSourceUrl = "https://congresotabasco.gob.mx/wp-content/uploads/2025/02/Codigo-Civil-para-el-Estado-de-Tabasco.pdf"
+                ),
+                LawSyncStatus(
+                    lawId = "lft",
+                    shortName = "LFT",
+                    fullName = "Ley Federal del Trabajo",
+                    articlesCount = 1010,
+                    lastSyncDate = prefs?.getString("sync_lft", defaultDate) ?: defaultDate,
+                    versionDof = "Reforma DOF Abril 2024",
+                    officialSourceUrl = "https://www.diputados.gob.mx/LeyesBiblio/pdf/LFT.pdf"
                 )
             )
         )

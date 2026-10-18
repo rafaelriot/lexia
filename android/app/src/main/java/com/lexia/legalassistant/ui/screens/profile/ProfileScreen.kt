@@ -273,15 +273,15 @@ fun ProfileScreen(
                             horizontalArrangement = Arrangement.SpaceAround
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("1,326", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = LexiaPrimary)
-                                Text("Artículos DOF", style = MaterialTheme.typography.labelSmall, color = LexiaSecondary)
+                                Text("10,167", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = LexiaPrimary)
+                                Text("Artículos DOF/POET", style = MaterialTheme.typography.labelSmall, color = LexiaSecondary)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("$userConsultationsCount", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = LexiaPrimary)
                                 Text("Consultas RAG", style = MaterialTheme.typography.labelSmall, color = LexiaSecondary)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("4 Códigos", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = LexiaPrimary)
+                                Text("9 Códigos", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = LexiaPrimary)
                                 Text("Leyes Activas", style = MaterialTheme.typography.labelSmall, color = LexiaSecondary)
                             }
                         }
@@ -449,6 +449,7 @@ fun ProfileScreen(
                                             "cnpp" -> Icons.Default.Gavel
                                             "cpf" -> Icons.Default.LocalPolice
                                             "amparo" -> Icons.Default.Shield
+                                            "cpet" -> Icons.Default.AccountBalance
                                             else -> Icons.Default.Balance
                                         },
                                         contentDescription = null,

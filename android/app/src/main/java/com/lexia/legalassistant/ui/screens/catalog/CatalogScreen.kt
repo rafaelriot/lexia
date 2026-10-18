@@ -27,16 +27,27 @@ fun CatalogScreen(
     var searchQuery by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("Todos") }
 
-    val categories = listOf("Todos", "Penal", "Constitucional", "Amparo", "Civil", "Laboral")
-
     val lawsList = com.lexia.legalassistant.data.repository.LegalArticlesRepository.catalogLaws
 
-    val filteredLaws = remember(searchQuery, selectedCategory) {
+    // Obtener dinámicamente las categorías reales de los libros del catálogo más opciones complementarias
+    val categories = remember(lawsList) {
+        val existingCategories = lawsList.map { it.category }.distinct()
+        listOf("Todos") + existingCategories + listOf("Civil", "Familiar", "Laboral").filter { it !in existingCategories }
+    }
+
+    val filteredLaws = remember(searchQuery, selectedCategory, lawsList) {
         lawsList.filter { law ->
-            val matchesCategory = selectedCategory == "Todos" || law.category.equals(selectedCategory, ignoreCase = true)
+            val matchesCategory = when (selectedCategory) {
+                "Todos" -> true
+                "Civil" -> law.category.equals("Civil", ignoreCase = true) || law.title.contains("Civil", ignoreCase = true)
+                "Familiar" -> law.category.equals("Familiar", ignoreCase = true) || law.title.contains("Familia", ignoreCase = true) || law.title.contains("Familiar", ignoreCase = true)
+                else -> law.category.equals(selectedCategory, ignoreCase = true)
+            }
             val matchesSearch = searchQuery.isBlank() ||
                     law.title.contains(searchQuery, ignoreCase = true) ||
-                    law.shortName.contains(searchQuery, ignoreCase = true)
+                    law.shortName.contains(searchQuery, ignoreCase = true) ||
+                    law.category.contains(searchQuery, ignoreCase = true) ||
+                    law.jurisdiction.contains(searchQuery, ignoreCase = true)
             matchesCategory && matchesSearch
         }
     }
@@ -53,10 +64,18 @@ fun CatalogScreen(
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            placeholder = { Text("Buscar códigos, leyes o artículos...", style = MaterialTheme.typography.bodyMedium) },
+            placeholder = { Text("Buscar códigos, leyes o materias...", style = MaterialTheme.typography.bodyMedium) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar", tint = LexiaOutline) },
+            trailingIcon = {
+                if (searchQuery.isNotBlank()) {
+                    IconButton(onClick = { searchQuery = "" }) {
+                        Icon(Icons.Default.Close, contentDescription = "Limpiar", tint = LexiaSecondary)
+                    }
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(10.dp),
+            singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = LexiaSurfaceContainerLowest,
                 unfocusedContainerColor = LexiaSurfaceContainerLowest,
@@ -67,34 +86,130 @@ fun CatalogScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Filter Chips Row
+        // Header de Tipos de Leyes con badge de total
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Icon(Icons.Default.FilterList, contentDescription = null, tint = LexiaPrimary, modifier = Modifier.size(16.dp))
+                Text(
+                    text = "Materia Jurídica",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = LexiaPrimary
+                )
+            }
+
+            Text(
+                text = "${filteredLaws.size} de ${lawsList.size} libros",
+                style = MaterialTheme.typography.labelSmall,
+                color = LexiaSecondary
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Filter Chips Row con íconos por especialidad
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             items(categories) { cat ->
                 val isSelected = cat == selectedCategory
+                val count = if (cat == "Todos") {
+                    lawsList.size
+                } else {
+                    lawsList.count { it.category.equals(cat, ignoreCase = true) }
+                }
+
                 FilterChip(
                     selected = isSelected,
                     onClick = { selectedCategory = cat },
-                    label = { Text(cat, style = MaterialTheme.typography.labelMedium) },
+                    leadingIcon = {
+                        val icon = when (cat) {
+                            "Penal" -> Icons.Default.Gavel
+                            "Constitucional" -> Icons.Default.Balance
+                            "Amparo" -> Icons.Default.Shield
+                            "Civil" -> Icons.Default.MenuBook
+                            "Familiar" -> Icons.Default.FamilyRestroom
+                            "Laboral" -> Icons.Default.Work
+                            else -> Icons.Default.Category
+                        }
+                        Icon(icon, contentDescription = null, modifier = Modifier.size(14.dp))
+                    },
+                    label = {
+                        Text(
+                            text = if (count > 0) "$cat ($count)" else cat,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        )
+                    },
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = LexiaPrimary,
-                        selectedLabelColor = LexiaOnPrimary,
-                        containerColor = LexiaSurfaceContainer,
-                        labelColor = LexiaOnSurface
-                    )
+                        selectedContainerColor = LexiaPrimaryContainer,
+                        selectedLabelColor = LexiaOnPrimaryContainer,
+                        selectedLeadingIconColor = LexiaOnPrimaryContainer,
+                        containerColor = LexiaSurfaceContainerLowest,
+                        labelColor = LexiaOnSurface,
+                        iconColor = LexiaSecondary
+                    ),
+                    shape = RoundedCornerShape(8.dp)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
-        // Statutory Laws List
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        if (filteredLaws.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.SearchOff,
+                        contentDescription = null,
+                        tint = LexiaOutline,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Text(
+                        text = "No hay libros en la materia «$selectedCategory»",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = LexiaPrimary
+                    )
+                    Text(
+                        text = "Prueba seleccionando «Todos» o «Penal» para ver los códigos vigentes.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = LexiaSecondary
+                    )
+                    Button(
+                        onClick = {
+                            selectedCategory = "Todos"
+                            searchQuery = ""
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = LexiaPrimary),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text("Ver Todos los Libros")
+                    }
+                }
+            }
+        } else {
+            // Statutory Laws List
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
             items(filteredLaws) { law ->
                 Card(
                     shape = RoundedCornerShape(12.dp),
@@ -189,4 +304,5 @@ fun CatalogScreen(
             }
         }
     }
+}
 }

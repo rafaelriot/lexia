@@ -575,7 +575,7 @@ fun ChatRagScreen(
                         color = LexiaSuccess100
                     ) {
                         Text(
-                            text = "DOF VIGENTE",
+                            text = currentLaw.dofStatus.uppercase(),
                             style = MaterialTheme.typography.labelSmall,
                             color = LexiaSuccess800,
                             fontWeight = FontWeight.Bold,
