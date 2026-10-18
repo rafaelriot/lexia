@@ -74,7 +74,8 @@ fun AuthScreen(
             val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
             val email = account.email ?: "usuario@gmail.com"
             val name = account.displayName ?: email.substringBefore("@")
-            AuthRepository.loginWithGoogle(email, name, account.idToken)
+            val photoUrl = account.photoUrl?.toString()
+            AuthRepository.loginWithGoogle(email, name, account.idToken, photoUrl)
             Toast.makeText(context, "Bienvenido, $name (Google)", Toast.LENGTH_SHORT).show()
             onLoginSuccess()
         } catch (e: Exception) {
@@ -90,7 +91,8 @@ fun AuthScreen(
                     // Fallback directo con la cuenta de Google predeterminada
                     val lastAccount = GoogleSignIn.getLastSignedInAccount(context)
                     if (lastAccount?.email != null) {
-                        AuthRepository.loginWithGoogle(lastAccount.email!!, lastAccount.displayName ?: "Abogado")
+                        val photo = lastAccount.photoUrl?.toString()
+                        AuthRepository.loginWithGoogle(lastAccount.email!!, lastAccount.displayName ?: "Abogado", photoUrl = photo)
                         Toast.makeText(context, "Sesión iniciada con ${lastAccount.email}", Toast.LENGTH_SHORT).show()
                         onLoginSuccess()
                     } else {

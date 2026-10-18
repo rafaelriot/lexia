@@ -19,6 +19,7 @@ object AuthRepository {
     private const val KEY_PROVIDER = "key_provider"
     private const val KEY_TIER = "key_tier"
     private const val KEY_CEDULA = "key_cedula"
+    private const val KEY_PHOTO_URL = "key_photo_url"
 
     private var prefs: SharedPreferences? = null
 
@@ -44,11 +45,13 @@ object AuthRepository {
             val tierStr = p.getString(KEY_TIER, LicenseTier.PROFESIONAL_FAISS.name)
             val tier = try { LicenseTier.valueOf(tierStr!!) } catch (e: Exception) { LicenseTier.PROFESIONAL_FAISS }
             val cedula = p.getString(KEY_CEDULA, null)
+            val photoUrl = p.getString(KEY_PHOTO_URL, null)
 
             _currentUser.value = AuthUser(
                 id = id,
                 email = email,
                 displayName = name,
+                photoUrl = photoUrl,
                 authProvider = provider,
                 licenseTier = tier,
                 cedulaProfesional = cedula,
@@ -170,12 +173,13 @@ object AuthRepository {
         return user
     }
 
-    fun loginWithGoogle(email: String, displayName: String, idToken: String? = null): AuthUser {
+    fun loginWithGoogle(email: String, displayName: String, idToken: String? = null, photoUrl: String? = null): AuthUser {
         val contract = checkEmailAiContract(email)
         val user = AuthUser(
             id = "google_${email.hashCode()}",
             email = email,
             displayName = displayName.ifBlank { email.substringBefore("@") },
+            photoUrl = photoUrl,
             authProvider = AuthProvider.GOOGLE,
             licenseTier = LicenseTier.PROFESIONAL_FAISS,
             isLoggedIn = true,
@@ -286,6 +290,7 @@ object AuthRepository {
             putString(KEY_USER_ID, user.id)
             putString(KEY_EMAIL, user.email)
             putString(KEY_NAME, user.displayName)
+            putString(KEY_PHOTO_URL, user.photoUrl)
             putString(KEY_PROVIDER, user.authProvider.name)
             putString(KEY_TIER, user.licenseTier.name)
             putString(KEY_CEDULA, user.cedulaProfesional)

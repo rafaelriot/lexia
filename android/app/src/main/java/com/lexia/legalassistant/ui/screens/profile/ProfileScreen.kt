@@ -18,6 +18,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.net.URL
+import android.graphics.BitmapFactory
+import androidx.compose.ui.graphics.ImageBitmap
 import com.lexia.legalassistant.data.repository.ConsultationHistoryRepository
 import com.lexia.legalassistant.data.repository.LawSyncRepository
 import com.lexia.legalassistant.ui.theme.*
@@ -45,6 +53,27 @@ fun ProfileScreen(
     val syncSummary by LawSyncRepository.lastSyncSummary.collectAsState()
 
     var autoSyncEnabled by remember { mutableStateOf(true) }
+
+    var userAvatarBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+    val photoUrl = currentUser?.photoUrl
+
+    LaunchedEffect(photoUrl) {
+        if (!photoUrl.isNullOrBlank()) {
+            withContext(Dispatchers.IO) {
+                try {
+                    val stream = URL(photoUrl).openStream()
+                    val bmp = BitmapFactory.decodeStream(stream)
+                    if (bmp != null) {
+                        userAvatarBitmap = bmp.asImageBitmap()
+                    }
+                } catch (e: Exception) {
+                    userAvatarBitmap = null
+                }
+            }
+        } else {
+            userAvatarBitmap = null
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -145,12 +174,30 @@ fun ProfileScreen(
                                     .background(LexiaPrimaryContainer),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Person,
-                                    contentDescription = null,
-                                    tint = LexiaPrimary,
-                                    modifier = Modifier.size(32.dp)
-                                )
+                                if (userAvatarBitmap != null) {
+                                    Image(
+                                        bitmap = userAvatarBitmap!!,
+                                        contentDescription = "Foto de perfil",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(CircleShape)
+                                    )
+                                } else if (currentUser != null && currentUser!!.displayName.isNotBlank()) {
+                                    Text(
+                                        text = currentUser!!.displayName.take(1).uppercase(),
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = LexiaPrimary
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Default.Person,
+                                        contentDescription = null,
+                                        tint = LexiaPrimary,
+                                        modifier = Modifier.size(32.dp)
+                                    )
+                                }
                             }
 
                             Column(modifier = Modifier.weight(1f)) {

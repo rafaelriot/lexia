@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.lexia.legalassistant.navigation.LexiaNavHost
@@ -51,7 +52,15 @@ fun LexiaMainApp() {
                 LexiaTopBar(
                     subtitle = currentTitle,
                     onProfileClick = {
-                        navController.navigate(Screen.Profile.route)
+                        if (currentRoute != Screen.Profile.route) {
+                            navController.navigate(Screen.Profile.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
                     }
                 )
             }
@@ -61,12 +70,24 @@ fun LexiaMainApp() {
                 LexiaBottomBar(
                     currentRoute = currentRoute,
                     onNavigate = { targetScreen ->
-                        navController.navigate(targetScreen.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
+                        if (currentRoute != targetScreen.route) {
+                            if (targetScreen == Screen.Catalog) {
+                                // Regreso garantizado a la raíz del catálogo limpiando pantallas superiores en la pila
+                                navController.navigate(Screen.Catalog.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        inclusive = false
+                                    }
+                                    launchSingleTop = true
+                                }
+                            } else {
+                                navController.navigate(targetScreen.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
                     }
                 )

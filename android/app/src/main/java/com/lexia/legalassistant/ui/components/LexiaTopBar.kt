@@ -25,8 +25,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
 import com.lexia.legalassistant.ui.theme.*
 import android.widget.Toast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.net.URL
+import android.graphics.BitmapFactory
+import androidx.compose.ui.graphics.ImageBitmap
 
 @Composable
 fun LexiaTopBar(
@@ -36,10 +44,34 @@ fun LexiaTopBar(
     val context = androidx.compose.ui.platform.LocalContext.current
     androidx.compose.runtime.LaunchedEffect(Unit) {
         com.lexia.legalassistant.data.repository.AiModelRepository.init(context)
+        com.lexia.legalassistant.data.repository.AuthRepository.init(context)
     }
 
     val currentAiModel by com.lexia.legalassistant.data.repository.AiModelRepository.currentModel.collectAsState()
+    val currentUser by com.lexia.legalassistant.data.repository.AuthRepository.currentUser.collectAsState()
     var showAiSelectorModal by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+
+    // Cargar foto de perfil de Google en segundo plano de manera reactiva
+    var userAvatarBitmap by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<ImageBitmap?>(null) }
+    val photoUrl = currentUser?.photoUrl
+
+    androidx.compose.runtime.LaunchedEffect(photoUrl) {
+        if (!photoUrl.isNullOrBlank()) {
+            withContext(Dispatchers.IO) {
+                try {
+                    val stream = URL(photoUrl).openStream()
+                    val bmp = BitmapFactory.decodeStream(stream)
+                    if (bmp != null) {
+                        userAvatarBitmap = bmp.asImageBitmap()
+                    }
+                } catch (e: Exception) {
+                    userAvatarBitmap = null
+                }
+            }
+        } else {
+            userAvatarBitmap = null
+        }
+    }
 
     // DIÁLOGO MODAL GLOBAL DE SELECCIÓN DE IA
     if (showAiSelectorModal) {
@@ -317,20 +349,40 @@ fun LexiaTopBar(
                     }
                 }
 
-                // Profile Avatar Button
-                IconButton(
-                    onClick = onProfileClick,
+                // Profile Avatar Button (Foto de Google o Inicial/Ícono Institucional)
+                val isProfileActive = subtitle == "Autenticación & Licencia"
+                Box(
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(40.dp)
                         .clip(CircleShape)
-                        .background(LexiaSecondaryContainer)
+                        .background(if (isProfileActive) LexiaPrimary else LexiaPrimaryContainer.copy(alpha = 0.15f))
+                        .clickable(onClick = onProfileClick),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Perfil",
-                        tint = LexiaPrimaryContainer,
-                        modifier = Modifier.size(20.dp)
-                    )
+                    if (userAvatarBitmap != null) {
+                        Image(
+                            bitmap = userAvatarBitmap!!,
+                            contentDescription = "Foto de perfil de Google",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(CircleShape)
+                        )
+                    } else if (currentUser != null && currentUser!!.displayName.isNotBlank()) {
+                        Text(
+                            text = currentUser!!.displayName.take(1).uppercase(),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isProfileActive) LexiaOnPrimary else LexiaPrimary
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Perfil de Usuario",
+                            tint = if (isProfileActive) LexiaOnPrimary else LexiaPrimary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
                 }
             }
         }
