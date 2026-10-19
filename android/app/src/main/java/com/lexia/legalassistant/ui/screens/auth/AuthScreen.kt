@@ -1,14 +1,10 @@
 package com.lexia.legalassistant.ui.screens.auth
 
 import android.accounts.AccountManager
-import android.app.Activity
-import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,7 +12,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -26,8 +21,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,7 +41,6 @@ fun AuthScreen(
     }
 
 
-    var showTiersDrawer by remember { mutableStateOf(false) }
     var showAccountPickerDialog by remember { mutableStateOf(false) }
     var deviceGoogleAccounts by remember { mutableStateOf<List<String>>(emptyList()) }
 
@@ -143,7 +135,8 @@ fun AuthScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    val name = email.substringBefore("@").replace(".", " ").capitalize()
+                                    val name = email.substringBefore("@").replace(".", " ")
+                                        .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
                                     AuthRepository.loginWithGoogle(email, name)
                                     showAccountPickerDialog = false
                                     Toast.makeText(context, "Sesión iniciada con $email", Toast.LENGTH_SHORT).show()
@@ -202,30 +195,29 @@ fun AuthScreen(
             .background(LexiaSurface)
             .safeDrawingPadding()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(horizontal = 24.dp, vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
         // Brand Emblem Solemn Identity
         Surface(
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(20.dp),
             color = LexiaPrimary,
-            modifier = Modifier.size(68.dp),
-            shadowElevation = 4.dp
+            modifier = Modifier.size(76.dp),
+            shadowElevation = 6.dp
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.Default.Balance,
                     contentDescription = null,
                     tint = LexiaOnPrimary,
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(40.dp)
                 )
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(4.dp)
-                        .size(18.dp)
+                        .size(20.dp)
                         .clip(CircleShape)
                         .background(LexiaSecondaryContainer),
                     contentAlignment = Alignment.Center
@@ -234,17 +226,17 @@ fun AuthScreen(
                         imageVector = Icons.Default.AutoAwesome,
                         contentDescription = null,
                         tint = LexiaOnSecondaryContainer,
-                        modifier = Modifier.size(11.dp)
+                        modifier = Modifier.size(12.dp)
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
                 text = "LexIA",
@@ -268,23 +260,23 @@ fun AuthScreen(
 
         Text(
             text = "Asistente Jurídico Inteligente para el Derecho Mexicano",
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = LexiaSecondary,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp)
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 6.dp)
         )
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(36.dp))
 
         // BOTÓN PRINCIPAL DE GOOGLE AUTH / GMAIL
         Surface(
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(14.dp),
             color = Color.White,
             shadowElevation = 3.dp,
             border = androidx.compose.foundation.BorderStroke(1.dp, LexiaOutlineVariant),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp)
+                .height(54.dp)
                 .clickable {
                     // Iniciar el selector nativo de Google Play Services
                     val signInIntent = googleSignInClient.signInIntent
@@ -302,13 +294,13 @@ fun AuthScreen(
                 Surface(
                     shape = CircleShape,
                     color = Color.Transparent,
-                    modifier = Modifier.size(22.dp)
+                    modifier = Modifier.size(24.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(
                             text = "G",
                             fontWeight = FontWeight.Black,
-                            fontSize = 18.sp,
+                            fontSize = 20.sp,
                             color = Color(0xFF4285F4)
                         )
                     }
@@ -322,178 +314,5 @@ fun AuthScreen(
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Card de Información de Licencia IA (FAISS RAG)
-        Surface(
-            shape = RoundedCornerShape(12.dp),
-            color = LexiaSurfaceContainerLow,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(modifier = Modifier.padding(14.dp)) {
-                Row(
-                    verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Surface(
-                        shape = RoundedCornerShape(8.dp),
-                        color = LexiaSecondaryContainer,
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(Icons.Default.VerifiedUser, contentDescription = null, tint = LexiaOnSecondaryContainer, modifier = Modifier.size(18.dp))
-                        }
-                    }
-                    Column(modifier = Modifier.weight(1f)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Text(
-                                text = "Verificación de Licencia IA",
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = LexiaOnSurface
-                            )
-                            Surface(
-                                shape = RoundedCornerShape(4.dp),
-                                color = LexiaTertiaryContainer
-                            ) {
-                                Text(
-                                    text = "FAISS RAG",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = LexiaOnTertiaryContainer,
-                                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
-                                )
-                            }
-                        }
-                        Text(
-                            text = "Tu cuenta de Gmail verifica tu acceso colegiado. Con cuenta activa obtendrás FAISS RAG Ilimitado; o puedes consultar en Modo Estudiante (10 consultas/día).",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = LexiaSecondary,
-                            lineHeight = 16.sp,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .clip(CircleShape)
-                                .background(LexiaSuccess600)
-                        )
-                        Text(
-                            text = "Cotejo automático de credenciales",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = LexiaSecondary
-                        )
-                    }
-
-                    TextButton(
-                        onClick = { showTiersDrawer = !showTiersDrawer },
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Text(
-                            text = if (showTiersDrawer) "Ocultar" else "Conocer tiers",
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = LexiaPrimary
-                        )
-                        Icon(
-                            imageVector = if (showTiersDrawer) Icons.Default.ExpandLess else Icons.Default.ChevronRight,
-                            contentDescription = null,
-                            tint = LexiaPrimary,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                }
-
-                AnimatedVisibility(visible = showTiersDrawer) {
-                    Column(
-                        modifier = Modifier.padding(top = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = LexiaSurfaceContainer,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(10.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Icon(Icons.Default.School, contentDescription = null, tint = LexiaSecondary, modifier = Modifier.size(16.dp))
-                                    Text("Estudiante / Consulta Simple", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold)
-                                }
-                                Text("10 v/día · SCJN", style = MaterialTheme.typography.labelSmall, color = LexiaSecondary)
-                            }
-                        }
-
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = LexiaSecondaryContainer,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(10.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Icon(Icons.Default.Verified, contentDescription = null, tint = LexiaOnSecondaryContainer, modifier = Modifier.size(16.dp))
-                                    Text("Firma / Poder Judicial", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, color = LexiaOnSecondaryContainer)
-                                }
-                                Text("Ilimitado · FAISS", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = LexiaOnSecondaryContainer)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Aviso de Deontología y LFPDPPP
-        Surface(
-            shape = RoundedCornerShape(8.dp),
-            color = LexiaSurfaceContainerLowest,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Icon(Icons.Default.Gavel, contentDescription = null, tint = LexiaSecondary, modifier = Modifier.size(14.dp))
-                    Text("LFPDPPP & Secreto Profesional", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = LexiaOnSurface)
-                }
-                Text(
-                    text = "El acceso con cuentas institucionales y Google cumple estrictamente con el secreto profesional. Los expedientes y consultas nunca se comparten con terceros.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = LexiaSecondary,
-                    lineHeight = 14.sp
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(40.dp))
     }
 }
