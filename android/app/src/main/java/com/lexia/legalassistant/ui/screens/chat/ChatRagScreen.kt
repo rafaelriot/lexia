@@ -57,24 +57,26 @@ private fun findReferencedArticlesInText(text: String, defaultLawId: String): Li
     val results = mutableListOf<LawArticleDetail>()
     val seenIds = mutableSetOf<String>()
 
-    val regex = Regex("""(?i)(?:art[íi]culo|art\.?)\s+(\d{1,4})[°º]?(?:\s+(?:de\s+la\s+|del\s+)?([a-záéíóúñ\s]+))?""")
-    val matches = regex.findAll(text)
-
-    for (match in matches) {
-        val num = match.groupValues[1].toIntOrNull() ?: continue
-        val lawHint = match.groupValues.getOrNull(2)?.lowercase()?.trim() ?: ""
-
-        val lawId = when {
-            lawHint.contains("amparo") -> "amparo"
-            lawHint.contains("cnpp") || lawHint.contains("procedimientos penales") -> "cnpp"
-            lawHint.contains("cpf") || lawHint.contains("penal federal") -> "cpf"
-            lawHint.contains("cpet") || lawHint.contains("tabasco") -> "cpet"
-            lawHint.contains("constituc") || lawHint.contains("cpeum") || lawHint.contains("carta magna") -> "cpeum"
-            lawHint.contains("civil federal") || lawHint.contains("ccf") -> "ccf"
-            lawHint.contains("trabajo") || lawHint.contains("lft") -> "lft"
+    fun mapLawHint(hint: String): String {
+        val h = hint.lowercase().trim()
+        return when {
+            h.contains("amparo") -> "amparo"
+            h.contains("cnpp") || h.contains("procedimientos penales") || h.contains("procedimiento penal") -> "cnpp"
+            h.contains("cpf") || h.contains("penal federal") -> "cpf"
+            h.contains("cpet") || h.contains("tabasco") -> "cpet"
+            h.contains("constituc") || h.contains("cpeum") || h.contains("carta magna") -> "cpeum"
+            h.contains("civil federal") || h.contains("ccf") -> "ccf"
+            h.contains("trabajo") || h.contains("lft") -> "lft"
             else -> defaultLawId
         }
+    }
 
+    // Pattern 1: "Artículo 262 del Código Penal Federal / del CPF"
+    val regexPost = Regex("""(?i)(?:art[íi]culo|art\.?)\s+(\d{1,4})[°º]?(?:\s+(?:de\s+la\s+|del\s+)?([a-záéíóúñ\s]+))?""")
+    for (match in regexPost.findAll(text)) {
+        val num = match.groupValues[1].toIntOrNull() ?: continue
+        val lawHint = match.groupValues.getOrNull(2) ?: ""
+        val lawId = mapLawHint(lawHint)
         val articleId = "${lawId}_$num"
         if (!seenIds.contains(articleId)) {
             val article = DynamicStatutoryDirectory.getArticle(lawId, num)
@@ -84,6 +86,23 @@ private fun findReferencedArticlesInText(text: String, defaultLawId: String): Li
             }
         }
     }
+
+    // Pattern 2: "Código Penal Federal (CPF, Artículo 262)" or "CPF · Artículo 262"
+    val regexPre = Regex("""(?i)\b(cpeum|cpf|cnpp|amparo|cpet|ccf|lft|código penal federal|código penal|código nacional|ley de amparo|constituci[óo]n)\b[^\n\.\;]{0,35}?(?:art[íi]culo|art\.?)\s*(\d{1,4})""")
+    for (match in regexPre.findAll(text)) {
+        val lawHint = match.groupValues[1]
+        val num = match.groupValues[2].toIntOrNull() ?: continue
+        val lawId = mapLawHint(lawHint)
+        val articleId = "${lawId}_$num"
+        if (!seenIds.contains(articleId)) {
+            val article = DynamicStatutoryDirectory.getArticle(lawId, num)
+            if (article != null) {
+                seenIds.add(articleId)
+                results.add(article)
+            }
+        }
+    }
+
     return results
 }
 
@@ -112,6 +131,8 @@ fun ChatRagScreen(
 
     val currentAiModel by com.lexia.legalassistant.data.repository.AiModelRepository.currentModel.collectAsState()
     var showAiModelSelector by remember { mutableStateOf(false) }
+    var geminiApiKeyInput by remember { mutableStateOf(com.lexia.legalassistant.data.repository.AiModelRepository.getGeminiApiKey() ?: "") }
+    var isApiKeyCardExpanded by remember { mutableStateOf(false) }
 
     val navSessionState by com.lexia.legalassistant.navigation.LegalNavigationSession.currentState.collectAsState()
 
@@ -2142,6 +2163,91 @@ fun ChatRagScreen(
                                         fontWeight = FontWeight.Bold,
                                         color = LexiaOutline
                                     )
+                                }
+                            }
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = LexiaSurfaceContainerLow,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, LexiaOutlineVariant),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { isApiKeyCardExpanded = !isApiKeyCardExpanded },
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(Icons.Default.Key, contentDescription = null, tint = LexiaPrimary, modifier = Modifier.size(18.dp))
+                                    Text(
+                                        text = "Google Gemini API Key (Opcional)",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = LexiaPrimary
+                                    )
+                                }
+                                Icon(
+                                    imageVector = if (isApiKeyCardExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                    contentDescription = null,
+                                    tint = LexiaSecondary
+                                )
+                            }
+
+                            if (isApiKeyCardExpanded) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Si deseas que Gemini responda en vivo desde los servidores de Google, ingresa tu API Key gratuita de Google AI Studio. Si lo dejas vacío, LexIA utiliza el motor dogmático inteligente 100% offline y privado.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = LexiaOnSurfaceVariant,
+                                    lineHeight = 15.sp
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                OutlinedTextField(
+                                    value = geminiApiKeyInput,
+                                    onValueChange = { geminiApiKeyInput = it },
+                                    label = { Text("API Key (AIzaSy...)") },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    singleLine = true,
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Button(
+                                        onClick = {
+                                            com.lexia.legalassistant.data.repository.AiModelRepository.setGeminiApiKey(geminiApiKeyInput)
+                                            Toast.makeText(context, if (geminiApiKeyInput.isBlank()) "Modo Offline activado" else "API Key de Gemini guardada", Toast.LENGTH_SHORT).show()
+                                        },
+                                        shape = RoundedCornerShape(8.dp),
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text("Guardar")
+                                    }
+                                    if (geminiApiKeyInput.isNotBlank()) {
+                                        OutlinedButton(
+                                            onClick = {
+                                                geminiApiKeyInput = ""
+                                                com.lexia.legalassistant.data.repository.AiModelRepository.setGeminiApiKey(null)
+                                                Toast.makeText(context, "API Key eliminada · Modo Offline", Toast.LENGTH_SHORT).show()
+                                            },
+                                            shape = RoundedCornerShape(8.dp)
+                                        ) {
+                                            Text("Borrar")
+                                        }
+                                    }
                                 }
                             }
                         }

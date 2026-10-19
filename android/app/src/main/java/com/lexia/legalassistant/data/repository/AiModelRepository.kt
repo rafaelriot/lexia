@@ -12,6 +12,7 @@ object AiModelRepository {
 
     private const val PREFS_NAME = "lexia_ai_prefs"
     private const val KEY_SELECTED_MODEL = "key_selected_ai_model"
+    private const val KEY_GEMINI_API_KEY = "key_gemini_api_key"
 
     private var prefs: SharedPreferences? = null
 
@@ -89,5 +90,17 @@ object AiModelRepository {
         val target = availableModels.find { it.id == modelId } ?: return
         _currentModel.value = target
         prefs?.edit()?.putString(KEY_SELECTED_MODEL, target.id)?.apply()
+    }
+
+    fun getGeminiApiKey(): String? {
+        return prefs?.getString(KEY_GEMINI_API_KEY, null)?.takeIf { it.isNotBlank() }
+    }
+
+    fun setGeminiApiKey(key: String?) {
+        if (key.isNullOrBlank()) {
+            prefs?.edit()?.remove(KEY_GEMINI_API_KEY)?.apply()
+        } else {
+            prefs?.edit()?.putString(KEY_GEMINI_API_KEY, key.trim())?.apply()
+        }
     }
 }

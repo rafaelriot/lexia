@@ -156,7 +156,10 @@ object DynamicStatutoryDirectory {
         val curated = LegalArticlesRepository.cpetCuratedArticles.find { it.id == "cpet_$num" }
         if (curated != null) return curated
 
-        val (title, category, summary) = when {
+        val specificMeta = CpetStatutoryData.articles[num]
+        val (title, category, summary) = if (specificMeta != null) {
+            Triple(specificMeta.title, specificMeta.category, specificMeta.summary)
+        } else when {
             num in 1..42 -> Triple(
                 "Parte General: Principios, Validez y Penas",
                 "Parte General",
@@ -175,7 +178,7 @@ object DynamicStatutoryDirectory {
             num in 141..174 -> Triple(
                 "Delitos contra la Libertad Personal y Seguridad Sexual",
                 "Libertad y Seguridad",
-                "Privación ilegal de la libertad, abuso sexual, hostigamiento, violación y estupro en los municipios del Estado de Tabasco."
+                "Privación de la libertad, abuso sexual, hostigamiento y delitos sexuales conforme al Código Penal de Tabasco."
             )
             num in 175..205 -> Triple(
                 "Delitos contra el Patrimonio: Robo, Fraude y Usura",
@@ -234,7 +237,10 @@ object DynamicStatutoryDirectory {
     }
 
     private fun resolveCcfArticle(num: Int): LawArticleDetail {
-        val (title, category, summary) = when {
+        val specificMeta = CcfStatutoryData.articles[num]
+        val (title, category, summary) = if (specificMeta != null) {
+            Triple(specificMeta.title, specificMeta.category, specificMeta.summary)
+        } else when {
             num in 1..21 -> Triple(
                 "Disposiciones Preliminares del Código Civil",
                 "Ámbito de Validez Civil",
@@ -508,7 +514,10 @@ object DynamicStatutoryDirectory {
     }
 
     private fun resolveLftArticle(num: Int): LawArticleDetail {
-        val (title, category, summary) = when {
+        val specificMeta = LftStatutoryData.articles[num]
+        val (title, category, summary) = if (specificMeta != null) {
+            Triple(specificMeta.title, specificMeta.category, specificMeta.summary)
+        } else when {
             num in 1..19 -> Triple(
                 "Principios Generales del Derecho del Trabajo",
                 "Principios Laborales",

@@ -660,10 +660,181 @@ object LegalArticlesRepository {
             listOf("inviolabilidad de la constitución") to 136
         )
 
-        // El mapa de palabras clave apunta a artículos constitucionales: solo aplica cuando la ley activa es la CPEUM
-        if (targetLawId.equals("cpeum", ignoreCase = true)) for ((words, artNum) in keywordMap) {
-            if (words.any { q.contains(it) }) {
-                val match = cpeumArticles.find { it.id == "cpeum_$artNum" }
+        // 2. Specialized keyword mappings per legal statute to avoid range fallbacks
+        val targetKeywordMap: List<Pair<List<String>, Int>> = when (targetLawId.lowercase()) {
+            "cpeum" -> keywordMap
+            "cpet" -> listOf(
+                listOf("estupro", "tipo penal de estupro") to 153,
+                listOf("feminicidio") to 115,
+                listOf("homicidio", "privar de la vida") to 110,
+                listOf("homicidio calificado", "premeditacion", "alevosia") to 111,
+                listOf("lesiones", "daño en la salud") to 116,
+                listOf("peligro la vida", "lesiones graves") to 120,
+                listOf("parricidio", "parentesco") to 126,
+                listOf("suicidio", "induccion al suicidio") to 131,
+                listOf("privacion de la libertad", "privación ilegal", "encierro") to 141,
+                listOf("violacion", "violación") to 147,
+                listOf("violacion equiparada", "violación equiparada") to 148,
+                listOf("abuso sexual", "tocamiento") to 149,
+                listOf("hostigamiento", "acoso sexual") to 150,
+                listOf("corrupcion de menores", "corrupción de menores") to 155,
+                listOf("robo", "apoderamiento") to 175,
+                listOf("abuso de confianza") to 183,
+                listOf("fraude", "lucro indebido") to 185,
+                listOf("despojo", "terreno", "inmueble") to 192,
+                listOf("extorsion", "extorsión", "cobro de piso") to 196,
+                listOf("abigeato", "ganado", "bovino") to 205,
+                listOf("alimentos", "asistencia familiar", "pension alimenticia") to 206,
+                listOf("violencia familiar", "violencia domestica") to 208,
+                listOf("ejercicio indebido", "servidor publico") to 216,
+                listOf("abuso de autoridad") to 220,
+                listOf("cohecho", "mordida", "dadiva") to 224,
+                listOf("peculado", "desvio de recursos") to 228,
+                listOf("asociacion delictuosa", "banda") to 261,
+                listOf("maltrato animal", "crueldad animal", "animales") to 304
+            )
+            "lft" -> listOf(
+                listOf("despido", "despido injustificado", "reinstalacion", "salarios caidos", "salarios vencidos", "indemnizacion constitucional") to 48,
+                listOf("causas de despido", "rescisión patronal", "falta de probidad", "faltas injustificadas") to 47,
+                listOf("rescision del trabajador", "renuncia justificada") to 51,
+                listOf("contrato de trabajo", "relacion laboral", "subordinacion") to 20,
+                listOf("presuncion laboral", "presuncion de relacion") to 21,
+                listOf("requisitos del contrato", "contrato escrito") to 25,
+                listOf("modalidades de contratacion", "tiempo determinado", "tiempo indeterminado") to 35,
+                listOf("periodo de prueba", "capacitacion inicial") to 39,
+                listOf("jornada de trabajo", "jornada diurna", "jornada nocturna", "jornada mixta") to 61,
+                listOf("horas extras", "horas extraordinarias", "horas dobles") to 67,
+                listOf("horas triples", "limite de horas extras") to 68,
+                listOf("descanso semanal", "septimo dia") to 69,
+                listOf("prima dominical") to 71,
+                listOf("dias festivos", "dias de descanso obligatorio", "feriados") to 74,
+                listOf("vacaciones", "vacaciones dignas", "periodo vacacional") to 76,
+                listOf("prima vacacional") to 80,
+                listOf("salario", "definicion de salario", "remuneracion") to 82,
+                listOf("salario integrado", "integracion del salario", "cuota diaria") to 84,
+                listOf("aguinaldo", "pago de aguinaldo", "15 dias de salario") to 87,
+                listOf("salario minimo", "conasami", "inembargabilidad") to 90,
+                listOf("utilidades", "ptu", "reparto de utilidades", "10% utilidades") to 117,
+                listOf("plazo de utilidades", "mayo", "pago de ptu") to 122,
+                listOf("obligaciones patronales", "obligaciones del patron") to 132,
+                listOf("prohibiciones al patron", "prohibiciones patronales") to 133,
+                listOf("prima de antiguedad", "prima de antigüedad", "12 dias por año") to 162,
+                listOf("maternidad", "incapacidad por maternidad", "embarazo", "lactancia") to 170,
+                listOf("teletrabajo", "home office", "trabajo remoto") to 311,
+                listOf("desconexion digital", "desconexión digital") to 330,
+                listOf("sindicato", "libertad sindical", "asociacion laboral") to 356,
+                listOf("contrato colectivo", "contrato colectivo de trabajo", "cct") to 386,
+                listOf("huelga", "derecho de huelga", "suspension de labores") to 440,
+                listOf("riesgo de trabajo", "accidentes de trabajo", "enfermedad de trabajo") to 473,
+                listOf("conciliacion prejudicial", "centro federal de conciliacion", "cfrcl", "audiencia de conciliacion") to 684,
+                listOf("juicio laboral", "tribunales laborales", "audiencia de juicio laboral") to 870
+            )
+            "ccf" -> listOf(
+                listOf("divorcio", "divorcio incausado", "disolucion del matrimonio") to 266,
+                listOf("convenio de divorcio", "propuesta de convenio") to 267,
+                listOf("alimentos", "pension alimenticia", "obligacion alimentaria") to 301,
+                listOf("alimentos de padres a hijos") to 303,
+                listOf("contenido de alimentos", "comida habitacion vestido") to 308,
+                listOf("proporcionalidad de alimentos") to 311,
+                listOf("matrimonio", "esponsales") to 139,
+                listOf("concubinato", "union libre") to 292,
+                listOf("patria potestad", "guarda y custodia") to 411,
+                listOf("perdida de patria potestad", "suspension de patria potestad") to 444,
+                listOf("bienes inmuebles", "bienes muebles", "propiedad") to 750,
+                listOf("posesion", "posesion originaria", "posesion derivada") to 790,
+                listOf("usucapion", "usucapión", "prescripcion positiva", "prescribir bien") to 1135,
+                listOf("requisitos de usucapion", "posesion pacifica publica continua") to 1151,
+                listOf("plazos de usucapion", "cinco años", "diez años") to 1152,
+                listOf("prescripcion negativa", "prescripcion extintiva") to 1158,
+                listOf("herencia", "sucesion mortis causa") to 1281,
+                listOf("testamento", "testador") to 1295,
+                listOf("sucesion legitima", "sucesion intestamentaria", "intestado") to 1599,
+                listOf("orden de herederos", "prelacion intestada") to 1602,
+                listOf("contrato", "convenio", "acuerdo de voluntades") to 1792,
+                listOf("elementos del contrato", "consentimiento y objeto") to 1794,
+                listOf("vicios del consentimiento", "error dolo violencia") to 1812,
+                listOf("enriquecimiento sin causa", "enriquecimiento ilegitimo") to 1882,
+                listOf("pago de lo indebido", "cobro indebido") to 1883,
+                listOf("responsabilidad civil", "hecho ilicito", "reparar el daño") to 1910,
+                listOf("daño moral", "afectacion a sentimientos honor reputacion") to 1916,
+                listOf("responsabilidad objetiva", "riesgo creado", "mecanismos peligrosos") to 1935,
+                listOf("pago", "cumplimiento de obligacion") to 2062,
+                listOf("compraventa", "precio cierto") to 2248,
+                listOf("arrendamiento", "renta", "inquilino", "arrendador") to 2398,
+                listOf("hipoteca", "garantia real") to 2893
+            )
+            "amparo" -> listOf(
+                listOf("amparo indirecto", "juez de distrito") to 107,
+                listOf("amparo directo", "tribunales colegiados", "sentencias definitivas") to 170,
+                listOf("suspension del acto", "suspension provisional", "suspension definitiva") to 125,
+                listOf("suspension de oficio", "suspension de plano", "peligro de vida") to 126,
+                listOf("improcedencia", "causales de improcedencia") to 61,
+                listOf("sobreseimiento") to 63,
+                listOf("suplencia de la queja", "queja deficiente") to 79,
+                listOf("partes en el amparo", "quejoso", "autoridad responsable", "tercero interesado") to 5,
+                listOf("interes legitimo", "interes juridico") to 6,
+                listOf("plazo del amparo", "termino de 15 dias") to 17,
+                listOf("demanda de amparo indirecto", "requisitos de demanda") to 108,
+                listOf("informe justificado", "audiencia constitucional") to 115,
+                listOf("jurisprudencia", "precedentes obligatorios", "reiteracion", "contradiccion de criterios") to 215
+            )
+            "cnpp" -> listOf(
+                listOf("flagrancia", "detencion en flagrancia") to 146,
+                listOf("caso urgente", "orden ministerial de detencion") to 150,
+                listOf("medidas cautelares", "fines cautelares") to 153,
+                listOf("catalogo de medidas cautelares", "prision preventiva justificada", "brazalete electronico") to 155,
+                listOf("temporalidad de prision preventiva", "dos años maximo") to 165,
+                listOf("etapas del procedimiento penal", "investigacion intermedia juicio oral") to 211,
+                listOf("actos de investigacion sin autorizacion", "inspeccion de personas") to 251,
+                listOf("actos con control judicial previo", "cateos", "intervencion de comunicaciones") to 252,
+                listOf("audiencia inicial", "desarrollo de audiencia inicial") to 307,
+                listOf("control de detencion", "calificacion de detencion") to 308,
+                listOf("imputacion", "concepto de imputacion") to 309,
+                listOf("formulacion de la imputacion", "requisitos para formular la imputacion") to 311,
+                listOf("declaracion del imputado", "guardar silencio") to 312,
+                listOf("vinculacion a proceso", "plazo de 72 horas", "duplicidad 144 horas") to 313,
+                listOf("requisitos de vinculacion a proceso", "auto de vinculacion") to 316,
+                listOf("prueba licita", "libertad probatoria", "prueba ilicita") to 356,
+                listOf("sentencia en juicio oral", "fallo judicial") to 401,
+                listOf("recurso de apelacion", "resoluciones apelables") to 467
+            )
+            "cpf" -> listOf(
+                listOf("estupro", "delito de estupro") to 262,
+                listOf("abuso sexual") to 260,
+                listOf("violacion", "violación") to 265,
+                listOf("homicidio", "privar de la vida") to 302,
+                listOf("homicidio calificado", "calificativas de homicidio") to 320,
+                listOf("feminicidio") to 325,
+                listOf("lesiones") to 288,
+                listOf("secuestro", "privacion de la libertad") to 366,
+                listOf("robo", "apoderamiento de cosa mueble") to 367,
+                listOf("abuso de confianza") to 382,
+                listOf("fraude", "lucro indebido") to 386,
+                listOf("extorsion", "extorsión") to 390,
+                listOf("despojo") to 395,
+                listOf("concepto de delito", "teoria del delito") to 7,
+                listOf("dolo y culpa", "formas de culpabilidad") to 9,
+                listOf("tentativa", "tentativa punible") to 12,
+                listOf("autoria y participacion", "responsables del delito") to 13,
+                listOf("causas de exclusion", "legitima defensa") to 15,
+                listOf("catalogo de penas", "penas y medidas de seguridad") to 24,
+                listOf("reparacion del daño") to 29,
+                listOf("prescripcion de la accion penal") to 105,
+                listOf("terrorismo") to 139,
+                listOf("delitos contra la administracion de justicia") to 225,
+                listOf("falsificacion de documentos") to 243
+            )
+            else -> emptyList()
+        }
+
+        val flattenedKeywords = targetKeywordMap.flatMap { (words, artNum) ->
+            words.map { it to artNum }
+        }.sortedByDescending { it.first.length }
+
+        for ((keyword, artNum) in flattenedKeywords) {
+            if (q.contains(keyword)) {
+                val match = lawArticles.find { it.id == "${targetLawId}_$artNum" }
+                    ?: lawArticles.find { articleNumberOf(it) == artNum }
                 if (match != null) return match
             }
         }
@@ -680,7 +851,7 @@ object LegalArticlesRepository {
         }?.takeIf { art ->
             val text = (art.topicTitle + " " + art.summary + " " + art.category).lowercase()
             queryWords.any { text.contains(it) }
-        } ?: lawArticles.firstOrNull()
+        }
     }
 
     fun queryConstitutionalRag(
@@ -696,9 +867,35 @@ object LegalArticlesRepository {
         val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
         val randomId = UUID.randomUUID().toString()
         val law = getLawById(lawId)
-        val modelName = aiModel?.let { "${it.iconEmoji} ${it.name}" } ?: "LexIA Assistant"
+        val selectedModel = aiModel ?: AiModelRepository.currentModel.value
+        val modelName = "${selectedModel.iconEmoji} ${selectedModel.name}"
 
-        // 1. Target article resolution
+        // Scope header context text
+        val scopePrefix = when (scope) {
+            ScopeChoice.GENERAL_CONSTITUTION -> "🏛️ [Búsqueda General · ${law.shortName} (${law.articlesCount} Artículos)]\n"
+            ScopeChoice.GROUP_DDHH -> "🛡️ [Capítulo Especializado · ${activeGroupName ?: law.shortName}]\n"
+            ScopeChoice.SPECIFIC_ARTICLE -> "📋 [Criterio Acotado · ${activeArticle?.articleNumber ?: "Artículo Específico"}]\n"
+        }
+
+        // 1. Cross-statutory and Out-of-Scope Ontology Check
+        val crossConcept = LegalOntologyDirectory.findConceptForQuery(q, lawId)
+        if (crossConcept != null) {
+            val isOutOfScope = !crossConcept.properLawId.equals(lawId, ignoreCase = true)
+            val matchedProperArticle = DynamicStatutoryDirectory.getArticle(crossConcept.properLawId, crossConcept.properArticleNumber)
+
+            return AiSynthesisEngine.synthesizeLegalResponse(
+                userQuery = q,
+                scopePrefix = scopePrefix,
+                activeLaw = law,
+                matchedArticle = matchedProperArticle,
+                crossConcept = crossConcept,
+                isOutOfScope = isOutOfScope,
+                aiModel = selectedModel,
+                apiKey = AiModelRepository.getGeminiApiKey()
+            )
+        }
+
+        // 2. In-statute target article resolution
         val matchedArticle = when {
             scope == ScopeChoice.SPECIFIC_ARTICLE && activeArticle != null -> {
                 val specificInQuery = findBestMatchingArticle(lower, lawId)
@@ -708,400 +905,57 @@ object LegalArticlesRepository {
                     activeArticle
                 }
             }
-            else -> findBestMatchingArticle(lower, lawId) ?: getArticlesForLaw(lawId).first()
+            else -> findBestMatchingArticle(lower, lawId)
         }
 
-        // Scope header context text
-        val scopePrefix = when (scope) {
-            ScopeChoice.GENERAL_CONSTITUTION -> "🏛️ [Búsqueda General · ${law.shortName} (${law.articlesCount} Artículos)]\n"
-            ScopeChoice.GROUP_DDHH -> "🛡️ [Capítulo Especializado · ${activeGroupName ?: law.shortName}]\n"
-            ScopeChoice.SPECIFIC_ARTICLE -> "📋 [Criterio Acotado · ${activeArticle?.articleNumber ?: matchedArticle.articleNumber}]\n"
-        }
-
-        // 2. Specialized responses for prominent constitutional matters
+        // 3. If matched, synthesize using the chosen AI model persona
         if (matchedArticle != null) {
-            when (matchedArticle.id) {
-                "cpeum_30" -> {
-                    val intros = listOf(
-                        "El Artículo 30 de la Constitución Política de los Estados Unidos Mexicanos regula de forma integral la nacionalidad mexicana y sus fuentes legales de adquisición:",
-                        "Conforme a la Carta Magna vigente, el Artículo 30 establece el régimen fundamental de la nacionalidad mexicana, distinguiendo dos vías exclusivas:",
-                        "Analizando el texto supremo constitucional (Título Primero, Capítulo II), el Artículo 30 estipula que la nacionalidad mexicana se adquiere por nacimiento o por naturalización:"
-                    )
-                    val text = """
-${scopePrefix}${intros.random()}
-
-1. Nacionalidad por Nacimiento (Apartado A):
-• Jus Soli: Quienes nazcan en el territorio de la República, sea cual fuere la nacionalidad de sus progenitores; así como las personas nacidas a bordo de embarcaciones o aeronaves mexicanas (de guerra o mercantes).
-• Jus Sanguinis: Quienes nazcan en el extranjero siendo hijos de padre o madre mexicanos nacidos en territorio nacional, o hijos de mexicanos por naturalización (reforma DOF del 17-05-2021 que amplió este derecho sin límite generacional).
-
-2. Nacionalidad por Naturalización (Apartado B):
-• Las personas extranjeras que obtengan de la Secretaría de Relaciones Exteriores (SRE) la correspondiente carta de naturalización.
-• La persona extranjera que contraiga matrimonio con varón o mujer mexicanos, que tenga o establezca su domicilio en territorio nacional y cumpla los requisitos de la ley.
-
-Protección Constitucional Conexa:
-El Artículo 37, Apartado A de la CPEUM garantiza que ningún mexicano por nacimiento podrá ser privado de su nacionalidad bajo ninguna circunstancia.
-""".trimIndent()
-
-                    return RagMessage(
-                        id = randomId,
-                        isUser = false,
-                        senderName = "LexIA Assistant",
-                        text = text,
-                        timestamp = time,
-                        citation = LegalCitation(
-                            articleTitle = "Artículo 30 CPEUM (Apartados A y B)",
-                            excerpt = "La nacionalidad mexicana se adquiere por nacimiento o por naturalización. A) Son mexicanos por nacimiento los nacidos en territorio de la República... B) Son mexicanos por naturalización...",
-                            similarityScore = 0.985f,
-                            reformDate = "Reforma DOF 17-05-2021",
-                            citationPath = "CPEUM > Título Primero > Capítulo II > Art. 30",
-                            articleId = "cpeum_30",
-                            lawId = "cpeum"
-                        ),
-                        exceptionalGrounds = listOf(
-                            "• Jus Soli: Adquisición originaria por nacer en territorio o transporte de bandera mexicana.",
-                            "• Jus Sanguinis: Protección para hijos de mexicanos nacidos en el extranjero (DOF 17-05-2021).",
-                            "• Principio de Inalienabilidad: Ningún mexicano por nacimiento pierde su nacionalidad (Art. 37 CPEUM)."
-                        )
-                    )
-                }
-
-                "cpeum_16" -> {
-                    val intros = listOf(
-                        "El Artículo 16 de la CPEUM es la columna vertebral del principio de legalidad y seguridad jurídica en el sistema normativo mexicano:",
-                        "Conforme al Artículo 16 constitucional, todo acto de molestia en contra de los gobernados exige estricta reserva de ley y control judicial:",
-                        "En el orden constitucional mexicano, el control judicial de la libertad y posesiones se rige por el Artículo 16 de la Carta Magna:"
-                    )
-                    val text = """
-${scopePrefix}${intros.random()}
-
-«Nadie puede ser molestado en su persona, familia, domicilio, papeles o posesiones, sino en virtud de mandamiento escrito de la autoridad competente, que funde y motive la causa legal del procedimiento.»
-
-Garantías Fundamentales del Precepto:
-1. Mandamiento Escrito Previo: Requisito formal ineludible emitido por autoridad legitimada.
-2. Fundamentación y Motivación: Expresión precisa del precepto legal aplicable y las razones fácticas del caso concreto.
-3. Excepciones para la Privación de Libertad:
-   • Orden Judicial de Aprehensión (Párrafo 3°): Previa denuncia o querella con datos que acrediten el hecho delictivo y probabilidad de autoría.
-   • Flagrancia Estricta (Párrafo 5°): Aprehensión en el instante mismo de la comisión del delito.
-   • Caso Urgente (Párrafo 6°): Exclusivo del Ministerio Público tratándose de delitos graves ante riesgo inminente de fuga.
-4. Inviolabilidad de las Comunicaciones Privadas y Domicilio (Órdenes de cateo exclusivas de la autoridad judicial).
-""".trimIndent()
-
-                    return RagMessage(
-                        id = randomId,
-                        isUser = false,
-                        senderName = "LexIA Assistant",
-                        text = text,
-                        timestamp = time,
-                        citation = LegalCitation(
-                            articleTitle = "Artículo 16 CPEUM (Párrafos 1°, 3°, 5° y 11°)",
-                            excerpt = "Nadie puede ser molestado en su persona, familia, domicilio, papeles o posesiones, sino en virtud de mandamiento escrito de la autoridad competente, que funde y motive la causa legal del procedimiento.",
-                            similarityScore = 0.988f,
-                            reformDate = "Reforma DOF 28-05-2021",
-                            citationPath = "CPEUM > Título Primero > Cap. I > Art. 16",
-                            articleId = "cpeum_16",
-                            lawId = "cpeum"
-                        ),
-                        exceptionalGrounds = listOf(
-                            "1. Mandamiento Escrito: Fundamentación y motivación estricta del acto de molestia.",
-                            "2. Excepciones de Detención: Flagrancia inmediata o caso urgente ministerial estricto.",
-                            "3. Reserva Judicial: Inviolabilidad del domicilio y comunicaciones salvo mandato judicial."
-                        )
-                    )
-                }
-
-                "cpeum_14" -> {
-                    val text = """
-${scopePrefix}El Artículo 14 constitucional tutela el debido proceso legal y la garantía de audiencia previa a cualquier acto privativo:
-
-«Nadie podrá ser privado de la libertad o de sus propiedades, posesiones o derechos, sino mediante juicio seguido ante los tribunales previamente establecidos, en el que se cumplan las formalidades esenciales del procedimiento y conforme a las Leyes expedidas con anterioridad al hecho.»
-
-Principios Rectores:
-1. Irretroactividad de la Ley (Párrafo 1°): A ninguna ley se dará efecto retroactivo en perjuicio de persona alguna.
-2. Garantía de Audiencia (Párrafo 2°): Juicio previo ante tribunales competentes con notificación, pruebas y alegatos.
-3. Exacta Aplicación de la Ley Penal (Párrafo 3°): Prohibición terminante de imponer penas por analogía o mayoría de razón.
-4. Principio de Legalidad en Juicios Civiles (Párrafo 4°): Resoluciones conformes a la letra de la ley, su interpretación jurídica o principios generales del derecho.
-""".trimIndent()
-
-                    return RagMessage(
-                        id = randomId,
-                        isUser = false,
-                        senderName = "LexIA Assistant",
-                        text = text,
-                        timestamp = time,
-                        citation = LegalCitation(
-                            articleTitle = "Artículo 14 CPEUM (Párrafos 1° a 4°)",
-                            excerpt = "Nadie podrá ser privado de la libertad o de sus propiedades, posesiones o derechos, sino mediante juicio seguido ante los tribunales previamente establecidos...",
-                            similarityScore = 0.982f,
-                            reformDate = "DOF Vigente",
-                            citationPath = "CPEUM > Título Primero > Cap. I > Art. 14",
-                            articleId = "cpeum_14",
-                            lawId = "cpeum"
-                        ),
-                        exceptionalGrounds = listOf(
-                            "• Irretroactividad de la norma en perjuicio de cualquier gobernado.",
-                            "• Formalidades esenciales: Oportunidad de defensa, ofrecimiento probatorio y alegatos.",
-                            "• Tipicidad Penal Estricta: Prohibición absoluta de analogía punitiva."
-                        )
-                    )
-                }
-
-                "cpeum_1" -> {
-                    val text = """
-${scopePrefix}El Artículo 1° constitucional es la cúspide de la reforma en materia de derechos humanos y consagra:
-
-1. Bloque de Constitucionalidad:
-Todas las personas gozan de los derechos reconocidos en la Constitución y en los tratados internacionales ratificados por México.
-
-2. Principio Pro Persona (Párrafo 2°):
-Las normas de derechos humanos deben interpretarse favoreciendo en todo tiempo la protección más amplia a las personas.
-
-3. Obligaciones de las Autoridades (Párrafo 3°):
-Todas las autoridades del país están obligadas a promover, respetar, proteger y garantizar los derechos humanos bajo principios de universalidad, interdependencia, indivisibilidad y progresividad.
-
-4. Cláusula Antidiscriminatoria (Párrafo 5°):
-Queda estrictamente prohibida toda discriminación motivada por origen étnico, género, edad, discapacidad, condición social, religión o preferencias sexuales.
-""".trimIndent()
-
-                    return RagMessage(
-                        id = randomId,
-                        isUser = false,
-                        senderName = "LexIA Assistant",
-                        text = text,
-                        timestamp = time,
-                        citation = LegalCitation(
-                            articleTitle = "Artículo 1° CPEUM (Párrafos 1°, 2°, 3° y 5°)",
-                            excerpt = "En los Estados Unidos Mexicanos todas las personas gozarán de los derechos humanos reconocidos en esta Constitución y en los tratados internacionales...",
-                            similarityScore = 0.990f,
-                            reformDate = "Reforma DOF 10-06-2011",
-                            citationPath = "CPEUM > Título Primero > Cap. I > Art. 1°",
-                            articleId = "cpeum_1",
-                            lawId = "cpeum"
-                        ),
-                        exceptionalGrounds = listOf(
-                            "• Principio Pro Persona: Elección obligada de la norma o interpretación más garantista.",
-                            "• Control Difuso de Convencionalidad: Deber judicial ex officio ante la CIDH.",
-                            "• Reparación Integral del Daño por violaciones a derechos fundamentales."
-                        )
-                    )
-                }
-
-                "cpeum_123" -> {
-                    val text = """
-${scopePrefix}El Artículo 123 constitucional consagra el derecho humano al trabajo digno y socialmente útil:
-
-«Toda persona tiene derecho al trabajo digno y socialmente útil; al efecto, se promoverán la creación de empleos y la organización social de trabajo, conforme a la ley.»
-
-Estructura Fundamental:
-• Apartado A (Trabajadores en General, Obreros, Empleados):
-  - Jornada máxima de 8 horas diurnas y 7 nocturnas.
-  - Salario mínimo suficiente para satisfacer necesidades familiares.
-  - Derecho a la huelga, libertad sindical, reparto de utilidades (PTU) y seguridad social (IMSS e INFONAVIT).
-  - Justicia laboral impartida por Tribunales Laborales del Poder Judicial con conciliación prejudicial obligatoria.
-
-• Apartado B (Servidores Públicos de los Poderes de la Unión):
-  - Estabilidad en el empleo, escalafón y seguridad social a través del ISSSTE.
-""".trimIndent()
-
-                    return RagMessage(
-                        id = randomId,
-                        isUser = false,
-                        senderName = "LexIA Assistant",
-                        text = text,
-                        timestamp = time,
-                        citation = LegalCitation(
-                            articleTitle = "Artículo 123 CPEUM (Apartados A y B)",
-                            excerpt = "Toda persona tiene derecho al trabajo digno y socialmente útil... El Congreso de la Unión deberá expedir leyes sobre el trabajo...",
-                            similarityScore = 0.984f,
-                            reformDate = "Reforma DOF 01-05-2019",
-                            citationPath = "CPEUM > Título Sexto > Art. 123",
-                            articleId = "cpeum_123",
-                            lawId = "cpeum"
-                        ),
-                        exceptionalGrounds = listOf(
-                            "• Jornada legal máxima y salario remunerador inviolable.",
-                            "• Democracia y libertad sindical mediante voto personal, libre, directo y secreto.",
-                            "• Nuevo modelo procesal laboral con tribunales judiciales y centros de conciliación."
-                        )
-                    )
-                }
-
-                "cpeum_107" -> {
-                    val text = """
-${scopePrefix}El Artículo 107 constitucional, en concordancia con el Artículo 103 y la Ley de Amparo, reglamenta las bases del Juicio de Amparo mexicano:
-
-El juicio de amparo es el principal mecanismo de control constitucional para proteger los derechos humanos y garantías frente a normas generales, actos u omisiones de autoridades que vulneren el orden fundamental.
-
-Bases Fundamentales:
-1. Instancia de Parte Agraviada: Promovido por quien aduzca ser titular de un derecho subjetivo o un interés legítimo individual o colectivo.
-2. Principio de Relatividad de las Sentencias (Fórmula Otero): La sentencia se limita a amparar al quejoso en el caso particular.
-3. Principio de Definitividad: Exigencia previa de agotar los recursos ordinarios procedentes, salvo excepciones constitucionales.
-4. Suspensión del Acto Reclamado: Medida cautelar para preservar la materia del juicio y evitar daños irreparables.
-""".trimIndent()
-
-                    return RagMessage(
-                        id = randomId,
-                        isUser = false,
-                        senderName = "LexIA Assistant",
-                        text = text,
-                        timestamp = time,
-                        citation = LegalCitation(
-                            articleTitle = "Artículo 107 CPEUM y Ley de Amparo",
-                            excerpt = "El juicio de amparo se seguirá siempre a instancia de parte agraviada, teniendo tal carácter quien aduce ser titular de un derecho o de un interés legítimo...",
-                            similarityScore = 0.986f,
-                            reformDate = "Reforma DOF 11-03-2021",
-                            citationPath = "CPEUM > Título Tercero > Cap. IV > Art. 107",
-                            articleId = "cpeum_107",
-                            lawId = "cpeum"
-                        ),
-                        exceptionalGrounds = listOf(
-                            "• Tutela de interés legítimo individual o colectivo ante afectaciones a la esfera jurídica.",
-                            "• Suspensión provisional y definitiva para frenar la ejecución de actos lesivos.",
-                            "• Amparo Directo ante Tribunales Colegiados y Amparo Indirecto ante Juzgados de Distrito."
-                        )
-                    )
-                }
-
-                "cnpp_311" -> {
-                    val text = """
-${scopePrefix}El Artículo 311 del Código Nacional de Procedimientos Penales (CNPP) regula minuciosamente el procedimiento para formular la imputación durante la Audiencia Inicial:
-
-«Una vez que el imputado esté presente en la audiencia inicial, por haberse calificado de legal su detención o por haber comparecido mediante citación u orden de aprehensión, se le dará la palabra al Ministerio Público para que exponga al imputado el hecho que se le atribuye, la calificación jurídica preliminar, la fecha, lugar y modo de su comisión, la forma de intervención que se le atribuye en el mismo, así como el nombre de su acusador.»
-
-Fases y Reglas Esenciales del Precepto:
-1. Requisito Previo de Procedencia:
-   • El imputado debe encontrarse presente tras haberse calificado de legal la detención en flagrancia/caso urgente (Art. 308) o por comparecencia por citatorio o mandamiento judicial (Art. 310).
-2. Contenido Taxativo que debe exponer el Ministerio Público:
-   • Hechos Fácticos Concretos: Circunstancias de tiempo, modo y lugar de la conducta atribuida.
-   • Clasificación Jurídica Preliminar: Tipo penal sustantivo y modalidades aplicables.
-   • Grado y Forma de Intervención: Coautoría, autoría material, complicidad o instigación.
-   • Datos del Denunciante / Querellante: Salvo reserva judicial por medidas de protección a víctimas.
-3. Control Judicial y Claridad:
-   • El Juez de Control verificará si el imputado comprendió la imputación; de no ser así, ordenará al MP realizar las precisiones o aclaraciones conducentes.
-4. Consecuencia Inmediata (Art. 312):
-   • Una vez formulada la imputación, el Juez otorgará al imputado la oportunidad de rendir su declaración preparatoria o acogerse al derecho a guardar silencio.
-""".trimIndent()
-
-                    return RagMessage(
-                        id = randomId,
-                        isUser = false,
-                        senderName = modelName,
-                        text = text,
-                        timestamp = time,
-                        citation = LegalCitation(
-                            articleTitle = "Artículo 311 CNPP · Procedimiento para Formular Imputación",
-                            excerpt = "Una vez que el imputado esté presente en la audiencia inicial... se le dará la palabra al Ministerio Público para que exponga al imputado el hecho que se le atribuye, la calificación jurídica preliminar, la fecha, lugar y modo de su comisión...",
-                            similarityScore = 0.988f,
-                            reformDate = "DOF Vigente (Enero 2024)",
-                            citationPath = "CNPP > Título VII > Capítulo II > Audiencia Inicial > Art. 311",
-                            articleId = "cnpp_311",
-                            lawId = "cnpp"
-                        ),
-                        exceptionalGrounds = listOf(
-                            "• Comunicación formalizada y judicial de la acusación fáctica ante Juez de Control.",
-                            "• Fijación de la litis penal para la posterior vinculación a proceso (Art. 316).",
-                            "• Garantía ineludible de defensa técnica adecuada y no autoincriminación (Art. 113)."
-                        )
-                    )
-                }
-
-                // General dynamic fallback for any matched article in any law (CNPP, CPEUM, CPF, AMPARO)
-                else -> {
-                    val text = """
-${scopePrefix}Conforme al texto del ${matchedArticle.lawShortName} (${law.title}), el ${matchedArticle.articleNumber} («${matchedArticle.topicTitle}») dispone:
-
-«${matchedArticle.summary}»
-
-Análisis Jurídico y Dogmático:
-• Materia Legal: ${matchedArticle.category}.
-• Estatus DOF: ${matchedArticle.dofStatus} (Última reforma registrada: ${matchedArticle.lastReformDate}).
-• Ámbito de Aplicación: Ordenamiento de observancia federal y vinculatoriedad para operadores del sistema jurídico mexicano.
-""".trimIndent()
-
-                    return RagMessage(
-                        id = randomId,
-                        isUser = false,
-                        senderName = modelName,
-                        text = text,
-                        timestamp = time,
-                        citation = LegalCitation(
-                            articleTitle = "${matchedArticle.lawShortName} · ${matchedArticle.articleNumber}",
-                            excerpt = matchedArticle.summary,
-                            similarityScore = 0.975f,
-                            reformDate = matchedArticle.lastReformDate,
-                            citationPath = "${matchedArticle.lawShortName} > ${matchedArticle.category} > ${matchedArticle.articleNumber}",
-                            articleId = matchedArticle.id,
-                            lawId = matchedArticle.lawId
-                        ),
-                        exceptionalGrounds = listOf(
-                            "• Materia Normativa: ${matchedArticle.category}.",
-                            "• Cotejo Oficial: ${matchedArticle.dofStatus} (${matchedArticle.lastReformDate}).",
-                            "• Validez y aplicabilidad vinculante en el marco del ordenamiento jurídico."
-                        )
-                    )
-                }
-            }
-        }
-
-        // 3. Fallback when query is broad or no specific article matched:
-        if (scope == ScopeChoice.GROUP_DDHH) {
-            val text = """
-${scopePrefix}Analizando tu consulta en relación con el bloque temático especializado (${activeGroupName ?: law.shortName}):
-
-En el marco de ${law.title} (${law.shortName}), este bloque contiene las disposiciones especializadas para el desahogo de procedimientos y tutela sustantiva.
-
-Puedes consultar por cualquier artículo específico (ej. '${matchedArticle?.articleNumber ?: "Artículo 1"}') o realizar preguntas puntuales para obtener el análisis sistemático y correlacionado.
-""".trimIndent()
-
-            return RagMessage(
-                id = randomId,
-                isUser = false,
-                senderName = modelName,
-                text = text,
-                timestamp = time,
-                citation = LegalCitation(
-                    articleTitle = "${law.shortName} · ${activeGroupName ?: "Capítulo Especializado"}",
-                    excerpt = "Bloque normativo especializado con vigencia en el Diario Oficial de la Federación.",
-                    similarityScore = 0.970f,
-                    reformDate = law.lastReformDate,
-                    citationPath = "${law.shortName} > ${activeGroupName ?: "Bloque Temático"}"
-                ),
-                exceptionalGrounds = listOf(
-                    "• Análisis sistemático de disposiciones afines.",
-                    "• Principio de especialidad de la norma.",
-                    "• Vinculación procesal y sustantiva en la materia."
-                )
+            return AiSynthesisEngine.synthesizeLegalResponse(
+                userQuery = q,
+                scopePrefix = scopePrefix,
+                activeLaw = law,
+                matchedArticle = matchedArticle,
+                crossConcept = null,
+                isOutOfScope = false,
+                aiModel = selectedModel,
+                apiKey = AiModelRepository.getGeminiApiKey()
             )
         }
 
-        // Broad General response synthesizing matched law (CNPP, CPF, Amparo o CPEUM):
-        val text = """
-${scopePrefix}Analizando tu consulta («$q») en el contexto general de ${law.title} (${law.shortName} con ${law.articlesCount} Artículos indexados):
+        // 4. Honest Out-of-Scope / Broad guidance fallback when no article in this book matches
+        val guidanceText = """
+${scopePrefix}${selectedModel.iconEmoji} [${selectedModel.name}]
+Orientación de Búsqueda y Deslinde Competencial:
 
-Este ordenamiento federal regula:
-1. Materia y Competencia: ${law.category} a nivel federal y en el fuero correspondiente.
-2. Estatus DOF: ${law.dofStatus} (Última reforma: ${law.lastReformDate}).
-3. Disposiciones Sustantivas y Procesales: Indexadas en vectores semánticos FAISS para respuesta en tiempo real.
+No se encontraron disposiciones directas para la consulta «$q» dentro de ${law.title} (${law.shortName} con ${law.articlesCount} Artículos indexados).
 
-Puedes formularme preguntas específicas sobre cualquier artículo (ej. 'Artículo 311', 'Artículo 146', 'Artículo 16') o por tema para obtener la fundamentación detallada con cotejo oficial del DOF.
+¿Dónde buscar según la materia?:
+• Delitos y Tipos Penales (ej. Estupro, Homicidio, Robo, Fraude, Despojo): Consulta el Código Penal Federal (CPF) o Código Penal de Tabasco (CPET).
+• Etapas Procesales y Audiencias (ej. Imputación, Vinculación, Medidas Cautelares): Consulta el Código Nacional de Procedimientos Penales (CNPP).
+• Juicio Constitucional contra Autoridades: Consulta la Ley de Amparo.
+• Derechos Laborales, Salarios y Despidos: Consulta la Ley Federal del Trabajo (LFT).
+• Contratos, Arrendamiento, Familia y Sucesiones: Consulta el Código Civil Federal (CCF).
+
+Puedes formular tu pregunta indicando el precepto específico (ej. 'Artículo 16', 'Art. 311', 'Art. 262 CPF') o cambiar de libro en el Catálogo Superior.
 """.trimIndent()
 
         return RagMessage(
             id = randomId,
             isUser = false,
             senderName = modelName,
-            text = text,
+            text = guidanceText,
             timestamp = time,
             citation = LegalCitation(
-                articleTitle = "${law.shortName} · ${law.title}",
-                excerpt = "Cuerpo normativo oficial federal indexado con ${law.articlesCount} artículos vigentes en el DOF.",
-                similarityScore = 0.960f,
+                articleTitle = "${law.shortName} · Orientación Temática",
+                excerpt = "Orientación de deslinde competencial entre ordenamientos del sistema jurídico mexicano.",
+                similarityScore = 0.950f,
                 reformDate = law.lastReformDate,
-                citationPath = "${law.shortName} > Búsqueda Transversal FAISS"
+                citationPath = "${law.shortName} > Deslinde de Materias"
             ),
             exceptionalGrounds = listOf(
-                "• Búsqueda transversal en los ${law.articlesCount} artículos de ${law.shortName}.",
-                "• Estatus oficial: ${law.dofStatus} (${law.lastReformDate}).",
-                "• Síntesis inteligente impulsada por ${modelName}."
+                "• Deslinde de Materias: El término consultado no se encuentra regulado en ${law.shortName}.",
+                "• Competencia: Verificar Código Penal, Procesal Penal, Amparo, Civil o Laboral.",
+                "• Síntesis generada por ${selectedModel.name}."
             )
         )
     }
