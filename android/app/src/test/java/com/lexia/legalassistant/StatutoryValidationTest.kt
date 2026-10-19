@@ -4,6 +4,7 @@ import com.lexia.legalassistant.data.model.ScopeChoice
 import com.lexia.legalassistant.data.repository.DynamicStatutoryDirectory
 import com.lexia.legalassistant.data.repository.LegalArticlesRepository
 import com.lexia.legalassistant.data.repository.LegalOntologyDirectory
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -213,7 +214,7 @@ class StatutoryValidationTest {
     // ==================== 8. VALIDACIÓN DE DESLINDE OUT-OF-SCOPE EN CHAT ====================
 
     @Test
-    fun testQueryEstuproInCpeumDoesNotReturnArticles1To5() {
+    fun testQueryEstuproInCpeumDoesNotReturnArticles1To5() = runBlocking {
         // En la CPEUM, preguntar por "qué es estupro" debe detectar deslinde de competencia y no mandar Arts 1 a 5
         val ragResponse = LegalArticlesRepository.queryConstitutionalRag(
             userQuery = "que es estupro en el cpeum",
@@ -234,7 +235,7 @@ class StatutoryValidationTest {
     }
 
     @Test
-    fun testQueryDespidoInCpeumDirectsToLft48() {
+    fun testQueryDespidoInCpeumDirectsToLft48() = runBlocking {
         val ragResponse = LegalArticlesRepository.queryConstitutionalRag(
             userQuery = "que procede en un despido injustificado",
             scope = ScopeChoice.GENERAL_CONSTITUTION,

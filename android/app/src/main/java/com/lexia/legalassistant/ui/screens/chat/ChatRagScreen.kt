@@ -45,6 +45,8 @@ import com.lexia.legalassistant.data.model.ScopeChoice
 import com.lexia.legalassistant.data.repository.ConsultationHistoryRepository
 import com.lexia.legalassistant.data.repository.DynamicStatutoryDirectory
 import com.lexia.legalassistant.data.repository.LegalArticlesRepository
+import com.lexia.legalassistant.ui.components.AiProviderSettingsCard
+import com.lexia.legalassistant.ui.components.AiTraceChip
 import com.lexia.legalassistant.ui.components.RagCitationCard
 import com.lexia.legalassistant.ui.theme.*
 import com.lexia.legalassistant.ui.screens.dictamen.PdfGeneratorHelper
@@ -127,12 +129,20 @@ fun ChatRagScreen(
 
     LaunchedEffect(Unit) {
         com.lexia.legalassistant.data.repository.AiModelRepository.init(context)
+        com.lexia.legalassistant.data.repository.AuthRepository.init(context)
+    }
+
+    val currentUser by com.lexia.legalassistant.data.repository.AuthRepository.currentUser.collectAsState()
+    val activeSenderName = remember(currentUser) {
+        when {
+            currentUser != null && currentUser!!.email.isNotBlank() -> currentUser!!.email
+            currentUser != null && currentUser!!.displayName.isNotBlank() -> currentUser!!.displayName
+            else -> "Tú"
+        }
     }
 
     val currentAiModel by com.lexia.legalassistant.data.repository.AiModelRepository.currentModel.collectAsState()
     var showAiModelSelector by remember { mutableStateOf(false) }
-    var geminiApiKeyInput by remember { mutableStateOf(com.lexia.legalassistant.data.repository.AiModelRepository.getGeminiApiKey() ?: "") }
-    var isApiKeyCardExpanded by remember { mutableStateOf(false) }
 
     val navSessionState by com.lexia.legalassistant.navigation.LegalNavigationSession.currentState.collectAsState()
 
@@ -260,19 +270,22 @@ fun ChatRagScreen(
     fun generateAiResponse(userQuery: String, scope: ScopeChoice, isVoice: Boolean = false) {
         coroutineScope.launch {
             isGeneratingResponse = true
-            delay(750) // FAISS vector retrieval & synthesis simulation
 
-            val response = LegalArticlesRepository.queryConstitutionalRag(
-                userQuery = userQuery,
-                scope = scope,
-                lawId = selectedLawId,
-                activeArticle = currentArticle,
-                activeGroupName = selectedGroupName,
-                aiModel = currentAiModel
-            )
+            // Real call: local RAG retrieval + HTTPS request to the selected provider's API
+            val response = try {
+                LegalArticlesRepository.queryConstitutionalRag(
+                    userQuery = userQuery,
+                    scope = scope,
+                    lawId = selectedLawId,
+                    activeArticle = currentArticle,
+                    activeGroupName = selectedGroupName,
+                    aiModel = currentAiModel
+                )
+            } finally {
+                isGeneratingResponse = false
+            }
 
             messages.add(response)
-            isGeneratingResponse = false
 
             // Automatically record consultation into persistent history
             val activeUserId = com.lexia.legalassistant.data.repository.AuthRepository.currentUser.value?.id ?: "guest"
@@ -304,7 +317,7 @@ fun ChatRagScreen(
             RagMessage(
                 id = UUID.randomUUID().toString(),
                 isUser = true,
-                senderName = "Lic. M. Herrera",
+                senderName = activeSenderName,
                 text = query,
                 timestamp = time,
                 isVoiceRecording = true,
@@ -317,7 +330,7 @@ fun ChatRagScreen(
             RagMessage(
                 id = UUID.randomUUID().toString(),
                 isUser = true,
-                senderName = "Lic. M. Herrera",
+                senderName = activeSenderName,
                 text = query,
                 timestamp = time
             )
@@ -565,8 +578,13 @@ fun ChatRagScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.End
                         ) {
+                            val userBubbleLabel = if (message.senderName == "Tú" || message.senderName.isBlank()) {
+                                message.timestamp
+                            } else {
+                                "${message.senderName} · ${message.timestamp}"
+                            }
                             Text(
-                                text = "${message.senderName} · ${message.timestamp}",
+                                text = userBubbleLabel,
                                 style = MaterialTheme.typography.labelSmall,
                                 color = LexiaSecondary,
                                 modifier = Modifier.padding(bottom = 4.dp, end = 4.dp)
@@ -780,6 +798,10 @@ fun ChatRagScreen(
                                         lineHeight = 22.sp
                                     )
 
+                                    message.aiTrace?.let { trace ->
+                                        AiTraceChip(trace = trace)
+                                    }
+
                                     message.citation?.let { cit ->
                                         RagCitationCard(
                                             citation = cit,
@@ -983,7 +1005,10 @@ fun ChatRagScreen(
                                     color = LexiaPrimary
                                 )
                                 Text(
-                                    text = "Buscando en FAISS y sintetizando con IA...",
+                                    text = if (currentAiModel.provider == com.lexia.legalassistant.data.model.LlmProvider.LOCAL)
+                                        "Buscando en el corpus local..."
+                                    else
+                                        "Consultando ${currentAiModel.provider.displayName} con el contexto RAG...",
                                     style = MaterialTheme.typography.labelMedium,
                                     color = LexiaPrimary
                                 )
@@ -2170,88 +2195,7 @@ fun ChatRagScreen(
                     
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = LexiaSurfaceContainerLow,
-                        border = androidx.compose.foundation.BorderStroke(1.dp, LexiaOutlineVariant),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { isApiKeyCardExpanded = !isApiKeyCardExpanded },
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Icon(Icons.Default.Key, contentDescription = null, tint = LexiaPrimary, modifier = Modifier.size(18.dp))
-                                    Text(
-                                        text = "Google Gemini API Key (Opcional)",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = LexiaPrimary
-                                    )
-                                }
-                                Icon(
-                                    imageVector = if (isApiKeyCardExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                                    contentDescription = null,
-                                    tint = LexiaSecondary
-                                )
-                            }
-
-                            if (isApiKeyCardExpanded) {
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = "Si deseas que Gemini responda en vivo desde los servidores de Google, ingresa tu API Key gratuita de Google AI Studio. Si lo dejas vacío, LexIA utiliza el motor dogmático inteligente 100% offline y privado.",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = LexiaOnSurfaceVariant,
-                                    lineHeight = 15.sp
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                OutlinedTextField(
-                                    value = geminiApiKeyInput,
-                                    onValueChange = { geminiApiKeyInput = it },
-                                    label = { Text("API Key (AIzaSy...)") },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    singleLine = true,
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Button(
-                                        onClick = {
-                                            com.lexia.legalassistant.data.repository.AiModelRepository.setGeminiApiKey(geminiApiKeyInput)
-                                            Toast.makeText(context, if (geminiApiKeyInput.isBlank()) "Modo Offline activado" else "API Key de Gemini guardada", Toast.LENGTH_SHORT).show()
-                                        },
-                                        shape = RoundedCornerShape(8.dp),
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        Text("Guardar")
-                                    }
-                                    if (geminiApiKeyInput.isNotBlank()) {
-                                        OutlinedButton(
-                                            onClick = {
-                                                geminiApiKeyInput = ""
-                                                com.lexia.legalassistant.data.repository.AiModelRepository.setGeminiApiKey(null)
-                                                Toast.makeText(context, "API Key eliminada · Modo Offline", Toast.LENGTH_SHORT).show()
-                                            },
-                                            shape = RoundedCornerShape(8.dp)
-                                        ) {
-                                            Text("Borrar")
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    AiProviderSettingsCard(currentModel = currentAiModel)
                 }
             },
             confirmButton = {},

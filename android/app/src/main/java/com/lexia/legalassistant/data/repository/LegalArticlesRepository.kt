@@ -2,6 +2,7 @@ package com.lexia.legalassistant.data.repository
 
 import com.lexia.legalassistant.data.model.DictamenData
 import com.lexia.legalassistant.data.model.LawArticleDetail
+import com.lexia.legalassistant.data.model.LawItem
 import com.lexia.legalassistant.data.model.LegalCitation
 import com.lexia.legalassistant.data.model.RagMessage
 import com.lexia.legalassistant.data.model.ScopeChoice
@@ -854,7 +855,11 @@ object LegalArticlesRepository {
         }
     }
 
-    fun queryConstitutionalRag(
+    /**
+     * Answers a legal question: retrieves the relevant article / cross-statute concept locally (RAG)
+     * and sends it as context to the API of the selected AI model. Must be called from a coroutine.
+     */
+    suspend fun queryConstitutionalRag(
         userQuery: String,
         scope: ScopeChoice,
         lawId: String = "cpeum",
@@ -879,24 +884,12 @@ object LegalArticlesRepository {
 
         // 1. Cross-statutory and Out-of-Scope Ontology Check
         val crossConcept = LegalOntologyDirectory.findConceptForQuery(q, lawId)
-        if (crossConcept != null) {
-            val isOutOfScope = !crossConcept.properLawId.equals(lawId, ignoreCase = true)
-            val matchedProperArticle = DynamicStatutoryDirectory.getArticle(crossConcept.properLawId, crossConcept.properArticleNumber)
+        val isOutOfScope = crossConcept != null && !crossConcept.properLawId.equals(lawId, ignoreCase = true)
 
-            return AiSynthesisEngine.synthesizeLegalResponse(
-                userQuery = q,
-                scopePrefix = scopePrefix,
-                activeLaw = law,
-                matchedArticle = matchedProperArticle,
-                crossConcept = crossConcept,
-                isOutOfScope = isOutOfScope,
-                aiModel = selectedModel,
-                apiKey = AiModelRepository.getGeminiApiKey()
-            )
-        }
-
-        // 2. In-statute target article resolution
-        val matchedArticle = when {
+        // 2. Target article resolution (concept article, or in-statute match)
+        val matchedArticle: LawArticleDetail? = if (crossConcept != null) {
+            DynamicStatutoryDirectory.getArticle(crossConcept.properLawId, crossConcept.properArticleNumber)
+        } else when {
             scope == ScopeChoice.SPECIFIC_ARTICLE && activeArticle != null -> {
                 val specificInQuery = findBestMatchingArticle(lower, lawId)
                 if (specificInQuery != null && (lower.contains("art") || lower.any { it.isDigit() }) && specificInQuery.id != activeArticle.id) {
@@ -908,21 +901,46 @@ object LegalArticlesRepository {
             else -> findBestMatchingArticle(lower, lawId)
         }
 
-        // 3. If matched, synthesize using the chosen AI model persona
-        if (matchedArticle != null) {
-            return AiSynthesisEngine.synthesizeLegalResponse(
+        // 3. Local (non-AI) response, used for the offline engine or as labelled fallback
+        val localResponse = if (crossConcept != null || matchedArticle != null) {
+            AiSynthesisEngine.synthesizeLegalResponse(
                 userQuery = q,
                 scopePrefix = scopePrefix,
                 activeLaw = law,
                 matchedArticle = matchedArticle,
-                crossConcept = null,
-                isOutOfScope = false,
-                aiModel = selectedModel,
-                apiKey = AiModelRepository.getGeminiApiKey()
+                crossConcept = crossConcept,
+                isOutOfScope = isOutOfScope,
+                aiModel = selectedModel
             )
+        } else {
+            buildGuidanceResponse(q, scopePrefix, law, selectedModel, modelName, randomId, time)
         }
 
-        // 4. Honest Out-of-Scope / Broad guidance fallback when no article in this book matches
+        // 4. Send to the selected provider's API (Gemini / Claude / GPT) with the RAG context
+        return AiSynthesisEngine.answerWithSelectedModel(
+            userQuery = q,
+            scope = scope,
+            scopePrefix = scopePrefix,
+            activeLaw = law,
+            activeGroupName = activeGroupName,
+            matchedArticle = matchedArticle,
+            crossConcept = crossConcept,
+            isOutOfScope = isOutOfScope,
+            aiModel = selectedModel,
+            localFallback = localResponse
+        )
+    }
+
+    /** Honest Out-of-Scope / Broad guidance when no article in this book matches. */
+    private fun buildGuidanceResponse(
+        q: String,
+        scopePrefix: String,
+        law: LawItem,
+        selectedModel: com.lexia.legalassistant.data.model.AiModel,
+        modelName: String,
+        randomId: String,
+        time: String
+    ): RagMessage {
         val guidanceText = """
 ${scopePrefix}${selectedModel.iconEmoji} [${selectedModel.name}]
 Orientación de Búsqueda y Deslinde Competencial:

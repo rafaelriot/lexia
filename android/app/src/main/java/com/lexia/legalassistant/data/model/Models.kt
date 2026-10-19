@@ -39,7 +39,8 @@ data class RagMessage(
     val voiceDurationSeconds: Int = 0,
     val voiceAudioWaveform: List<Float> = emptyList(),
     val audioFilePath: String? = null,
-    val transcribedText: String? = null
+    val transcribedText: String? = null,
+    val aiTrace: AiTrace? = null
 )
 
 data class VectorChunk(
