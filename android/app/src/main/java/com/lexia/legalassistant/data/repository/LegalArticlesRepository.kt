@@ -222,8 +222,8 @@ object LegalArticlesRepository {
         return catalogLaws.firstOrNull { it.id.equals(lawId, ignoreCase = true) } ?: cpeum
     }
 
-    // 1. CÓDIGO NACIONAL DE PROCEDIMIENTOS PENALES (CNPP)
-    val cnppArticles: List<LawArticleDetail> = listOf(
+    // 1. CÓDIGO NACIONAL DE PROCEDIMIENTOS PENALES (CNPP) - Curated highlights
+    val cnppCuratedArticles: List<LawArticleDetail> = listOf(
         LawArticleDetail("cnpp_1", "cnpp", "CNPP", "Artículo 1°", "Ámbito de Aplicación Territorial y Fuero", "Penal", "Las disposiciones de este Código son de orden público y de observancia general en toda la República Mexicana, para los delitos que sean competencia de los órganos jurisdiccionales federales y locales.", "VIGENTE DOF", "Enero 2024", 8, listOf(VectorChunk("cnpp_1_p1", 1, 0.960f, "Ámbito Territorial", "Aplica en todo el territorio nacional tanto para delitos del fuero común como del fuero federal.", true))),
         LawArticleDetail("cnpp_2", "cnpp", "CNPP", "Artículo 2°", "Objeto del Código Nacional", "Penal", "Esclarecer los hechos, proteger al inocente, procurar que el culpable no quede impune y que los daños causados por el delito se reparen.", "VIGENTE DOF", "Enero 2024", 8, listOf(VectorChunk("cnpp_2_p1", 1, 0.955f, "Fines del Proceso", "Tutela integral a víctimas y garantía de esclarecimiento fáctico y reparación.", true))),
         LawArticleDetail("cnpp_4", "cnpp", "CNPP", "Artículo 4°", "Características y Principios Rectores", "Penal", "El proceso penal será acusatorio y oral, en él se observarán los principios de publicidad, contradicción, concentración, continuidad e inmediación.", "VIGENTE DOF", "Enero 2024", 10, listOf(VectorChunk("cnpp_4_p1", 1, 0.968f, "Principios Rectores", "Oralidad, contradicción de pruebas, inmediación del juzgador y concentración de actos.", true))),
@@ -251,9 +251,11 @@ object LegalArticlesRepository {
         LawArticleDetail("cnpp_401", "cnpp", "CNPP", "Artículo 401", "Sentencia Definitiva en Juicio Oral", "Penal", "Inmediatamente después de la deliberación, el Tribunal de Enjuiciamiento comunicará el fallo absolutorio o condenatorio fundado y motivado.", "VIGENTE DOF", "Enero 2024", 10, listOf(VectorChunk("cnpp_401_p1", 1, 0.944f, "Fallo Judicial", "Lectura y explicación pública de la sentencia definitiva en audiencia de juicio.", true))),
         LawArticleDetail("cnpp_467", "cnpp", "CNPP", "Artículo 467", "Resoluciones del Juez de Control Apelables", "Penal", "Desistimiento de la acción penal, vinculación o no a proceso, imposición o modificación de medidas cautelares, y sentencia definitiva en procedimiento abreviado.", "VIGENTE DOF", "Enero 2024", 12, listOf(VectorChunk("cnpp_467_p1", 1, 0.960f, "Recurso de Apelación", "Recursos ordinarios ante el Tribunal de Alzada contra resoluciones de control previo.", true)))
     )
+    // Colección completa de los 490 Artículos del CNPP
+    val cnppArticles: List<LawArticleDetail> by lazy { DynamicStatutoryDirectory.getAllArticlesForLaw("cnpp") }
 
-    // 2. CÓDIGO PENAL FEDERAL (CPF)
-    val cpfArticles: List<LawArticleDetail> = listOf(
+    // 2. CÓDIGO PENAL FEDERAL (CPF) - Curated highlights
+    val cpfCuratedArticles: List<LawArticleDetail> = listOf(
         LawArticleDetail("cpf_7", "cpf", "CPF", "Artículo 7°", "Concepto Dogmático de Delito", "Penal Sustantivo", "Delito es el acto u omisión que sancionan las leyes penales. En los delitos de resultado material también será atribuible el resultado cuando quien omite tenía el deber jurídico de evitarlo.", "VIGENTE DOF", "Noviembre 2023", 10, listOf(VectorChunk("cpf_7_p1", 1, 0.970f, "Teoría del Delito", "Acción u omisión típica, antijurídica y culpable con sanción penal expresa.", true))),
         LawArticleDetail("cpf_8", "cpf", "CPF", "Artículo 8°", "Formas de Culpabilidad: Dolo y Culpa", "Penal Sustantivo", "Las acciones u omisiones delictivas solamente pueden realizarse dolosa o culposamente.", "VIGENTE DOF", "Noviembre 2023", 8, listOf(VectorChunk("cpf_8_p1", 1, 0.950f, "Dolo y Culpa", "Exclusión de responsabilidad objetiva en el orden penal federal.", true))),
         LawArticleDetail("cpf_9", "cpf", "CPF", "Artículo 9°", "Definición Legal del Dolo y Culpa", "Penal Sustantivo", "Obra dolosamente el que, conociendo los elementos del tipo penal, o previendo como posible el resultado típico, quiere o acepta su realización. Obra culposamente el que produce el resultado que no previó siendo previsible.", "VIGENTE DOF", "Noviembre 2023", 12, listOf(VectorChunk("cpf_9_p1", 1, 0.965f, "Elemento Cognitivo y Volitivo", "Distinción entre dolo directo, dolo eventual y culpa con o sin representación.", true))),
@@ -272,10 +274,13 @@ object LegalArticlesRepository {
         LawArticleDetail("cpf_386", "cpf", "CPF", "Artículo 386", "Tipo Penal de Fraude", "Penal Sustantivo", "Comete el delito de fraude el que engañando a uno o aprovechándose del error en que éste se halla se hace ilícitamente de alguna cosa o alcanza un lucro indebido.", "VIGENTE DOF", "Noviembre 2023", 12, listOf(VectorChunk("cpf_386_p1", 1, 0.965f, "Engaño y Lucro Indebido", "Relación causal entre el engaño/error y el perjuicio patrimonial resentido.", true))),
         LawArticleDetail("cpf_390", "cpf", "CPF", "Artículo 390", "Tipo Penal de Extorsión", "Penal Sustantivo", "Al que sin derecho obligue a otro a dar, hacer, dejar de hacer o tolerar algo, obteniendo un lucro para sí o para otro o causando a alguien un perjuicio patrimonial, se le aplicarán de dos a ocho años de prisión.", "VIGENTE DOF", "Noviembre 2023", 12, listOf(VectorChunk("cpf_390_p1", 1, 0.970f, "Extorsión", "Coacción ilegal y afectación patrimonial.", true)))
     )
+    // Colección completa de los 429 Artículos del Código Penal Federal
+    val cpfArticles: List<LawArticleDetail> by lazy { DynamicStatutoryDirectory.getAllArticlesForLaw("cpf") }
 
-    // 3. LEY DE AMPARO
-    val amparoArticles: List<LawArticleDetail> = listOf(
+    // 3. LEY DE AMPARO - Curated highlights
+    val amparoCuratedArticles: List<LawArticleDetail> = listOf(
         LawArticleDetail("amparo_1", "amparo", "Ley de Amparo", "Artículo 1°", "Objeto y Fines del Juicio de Amparo", "Amparo", "El juicio de amparo tiene por objeto resolver toda controversia por normas generales, actos u omisiones de autoridad que violen los derechos humanos reconocidos y las garantías otorgadas para su protección por la Constitución y tratados.", "VIGENTE DOF", "Junio 2022", 14, listOf(VectorChunk("amparo_1_p1", 1, 0.985f, "Objeto del Amparo", "Mecanismo extraordinario de tutela constitucional y convencional.", true))),
+        LawArticleDetail("amparo_2", "amparo", "Ley de Amparo", "Artículo 2°", "Vías de Tramitación y Supletoriedad", "Amparo", "El juicio de amparo se tramitará en vía directa o indirecta. Se substanciará y resolverá de acuerdo con las formas y procedimientos que establece esta Ley. A falta de disposición expresa se aplicará en forma supletoria el Código Federal de Procedimientos Civiles y, en su defecto, los principios generales del derecho.", "VIGENTE DOF", "Junio 2022", 8, listOf(VectorChunk("amparo_2_p1", 1, 0.975f, "Vía Directa e Indirecta", "Tramitación del amparo en vía directa o indirecta y supletoriedad del CFPC.", true))),
         LawArticleDetail("amparo_5", "amparo", "Ley de Amparo", "Artículo 5°", "Partes en el Juicio de Amparo", "Amparo", "Son partes en el juicio de amparo: I. El quejoso; II. La autoridad responsable; III. El tercero interesado; IV. El Ministerio Público de la Federación.", "VIGENTE DOF", "Junio 2022", 12, listOf(VectorChunk("amparo_5_p1", 1, 0.970f, "Partes Procesales", "Legitimación procesal de las cuatro partes del juicio de garantías.", true))),
         LawArticleDetail("amparo_6", "amparo", "Ley de Amparo", "Artículo 6°", "Legitimación del Quejoso e Interés Legítimo", "Amparo", "El juicio de amparo puede promoverse por la persona física o moral que aduzca ser titular de un derecho subjetivo o de un interés legítimo individual o colectivo.", "VIGENTE DOF", "Junio 2022", 10, listOf(VectorChunk("amparo_6_p1", 1, 0.960f, "Interés Jurídico y Legítimo", "Acreditación de afectación a la esfera jurídica para acudir al amparo.", true))),
         LawArticleDetail("amparo_17", "amparo", "Ley de Amparo", "Artículo 17", "Plazos Generales para la Demanda de Amparo", "Amparo", "El plazo para presentar la demanda de amparo es de quince días. Excepciones: 30 días contra normas autoaplicativas; 8 años contra sentencia condenatoria penal; o en cualquier tiempo contra actos del Art. 22 constitucional.", "VIGENTE DOF", "Junio 2022", 14, listOf(VectorChunk("amparo_17_p1", 1, 0.975f, "Términos Procesales", "Cómputo estricto del plazo de 15 días hábiles y supuestos de imprescriptibilidad.", true))),
@@ -294,9 +299,11 @@ object LegalArticlesRepository {
         LawArticleDetail("amparo_175", "amparo", "Ley de Amparo", "Artículo 175", "Requisitos de la Demanda de Amparo Directo", "Amparo", "Se presentará por conducto de la autoridad responsable que emitió la sentencia definitiva, con los conceptos de violación de fondo y violaciones procesales trascendentes.", "VIGENTE DOF", "Junio 2022", 12, listOf(VectorChunk("amparo_175_p1", 1, 0.965f, "Presentación por Autoridad", "Tramitación por conducto de la autoridad responsable y certificación de notificación.", true))),
         LawArticleDetail("amparo_215", "amparo", "Ley de Amparo", "Artículo 215", "Mecanismos de Creación de Jurisprudencia", "Penal/Amparo", "La jurisprudencia se establece por precedentes obligatorios (Pleno y Salas de la SCJN), por reiteración (Tribunales Colegiados) y por contradicción de criterios.", "VIGENTE DOF", "Junio 2022", 12, listOf(VectorChunk("amparo_215_p1", 1, 0.970f, "Precedentes Obligatorios", "Efecto vinculante de las sentencias del Pleno y Salas de la Suprema Corte.", true)))
     )
+    // Colección completa de los 271 Artículos de la Ley de Amparo
+    val amparoArticles: List<LawArticleDetail> by lazy { DynamicStatutoryDirectory.getAllArticlesForLaw("amparo") }
 
-    // 4. CÓDIGO PENAL PARA EL ESTADO DE TABASCO (CPET)
-    val cpetArticles: List<LawArticleDetail> = listOf(
+    // 4. CÓDIGO PENAL PARA EL ESTADO DE TABASCO (CPET) - Curated highlights
+    val cpetCuratedArticles: List<LawArticleDetail> = listOf(
         LawArticleDetail("cpet_1", "cpet", "CP Tabasco", "Artículo 1°", "Validez Espacial y Ámbito de Aplicación en Tabasco", "Penal", "Este Código se aplicará en el Estado de Tabasco por los delitos cometidos en su territorio que sean de la competencia de sus tribunales, respetando los derechos humanos y garantías constitucionales.", "VIGENTE POET", "Marzo 2024", 8, listOf(VectorChunk("cpet_1_p1", 1, 0.970f, "Ámbito Territorial Tabasco", "Aplica a todos los hechos constitutivos de delito del fuero común en los 17 municipios de Tabasco.", true))),
         LawArticleDetail("cpet_110", "cpet", "CP Tabasco", "Artículo 110", "Homicidio Simple y Tipificación Sustantiva", "Penal", "Al que prive de la vida a otro, se le impondrá prisión de ocho a veinte años.", "VIGENTE POET", "Marzo 2024", 10, listOf(VectorChunk("cpet_110_p1", 1, 0.985f, "Tipo Básico de Homicidio", "Punibilidad de 8 a 20 años de prisión por la privación ilegítima de la vida en el fuero común de Tabasco.", true))),
         LawArticleDetail("cpet_115", "cpet", "CP Tabasco", "Artículo 115 Bis", "Feminicidio por Razones de Género en Tabasco", "Penal", "Comete el delito de feminicidio quien prive de la vida a una mujer por razones de género. Se impondrá prisión de cuarenta a cincuenta años, y agravantes especiales cuando existan relaciones de confianza o violencia previa.", "VIGENTE POET", "Marzo 2024", 16, listOf(VectorChunk("cpet_115_p1", 1, 0.992f, "Tipo Penal de Feminicidio", "Razones de género, antecedentes de violencia familiar y sanciones privativas de 40 a 50 años.", true))),
@@ -306,12 +313,41 @@ object LegalArticlesRepository {
         LawArticleDetail("cpet_208", "cpet", "CP Tabasco", "Artículo 208 Bis", "Violencia Familiar y Medidas de Protección", "Penal", "A quien cometa el delito de violencia familiar se le impondrá de uno a seis años de prisión. Se entiende por tal el acto abusivo de poder dirigido a agredir física, verbal, psicológica, patrimonial o sexualmente.", "VIGENTE POET", "Marzo 2024", 12, listOf(VectorChunk("cpet_208_p1", 1, 0.986f, "Violencia Familiar en Tabasco", "Tutela a la integridad de cónyuges, concubinos o familiares consanguíneos dentro o fuera del domicilio.", true))),
         LawArticleDetail("cpet_304", "cpet", "CP Tabasco", "Artículo 304 Quater", "Maltrato o Crueldad en contra de Animales", "Penal", "A quien intencionalmente cometa actos de maltrato o crueldad en contra de cualquier animal causándole sufrimiento o lesiones, se le impondrán de uno a cinco años de prisión y multa económica.", "VIGENTE POET", "Marzo 2024", 10, listOf(VectorChunk("cpet_304_p1", 1, 0.978f, "Protección a Animales Domésticos", "Tipificación del maltrato animal y agravantes en caso de provocar la muerte.", true)))
     )
+    // Colección completa de los 369 Artículos del Código Penal para el Estado de Tabasco
+    val cpetArticles: List<LawArticleDetail> by lazy { DynamicStatutoryDirectory.getAllArticlesForLaw("cpet") }
 
-    val allArticles: List<LawArticleDetail> = cpeumArticles + cnppArticles + cpfArticles + amparoArticles + cpetArticles
+    // Todos los artículos de TODOS los libros del catálogo (CPEUM, CNPP, CPF, Amparo, CPET, CCF, CNPCyF, CCET, LFT)
+    val allArticles: List<LawArticleDetail> by lazy {
+        catalogLaws.flatMap { DynamicStatutoryDirectory.getAllArticlesForLaw(it.id) }
+    }
 
     fun getArticlesForLaw(lawId: String?): List<LawArticleDetail> {
         val targetId = lawId?.lowercase() ?: "cpeum"
         return DynamicStatutoryDirectory.getAllArticlesForLaw(targetId)
+    }
+
+    /** Número entero del artículo a partir de su id ("amparo_2" -> 2). */
+    fun articleNumberOf(article: LawArticleDetail): Int? = article.id.substringAfterLast("_").toIntOrNull()
+
+    /**
+     * Filtra los artículos de una ley según la etiqueta de capítulo (ej. "Reglas Generales (1-32)").
+     * "Todos"/null devuelve la ley completa. Usa el rango numérico; si no hay rango, busca por tema.
+     */
+    fun filterArticlesByGroup(articles: List<LawArticleDetail>, groupName: String?): List<LawArticleDetail> {
+        if (groupName.isNullOrBlank() || groupName.startsWith("Todos", ignoreCase = true)) return articles
+        val range = Regex("""(\d+)\s*-\s*(\d+)\)""").find(groupName)
+        if (range != null) {
+            val start = range.groupValues[1].toInt()
+            val end = range.groupValues[2].toInt()
+            return articles.filter { art -> articleNumberOf(art)?.let { it in start..end } == true }
+        }
+        val single = Regex("""\((\d+)""").find(groupName)?.groupValues?.get(1)?.toIntOrNull()
+        if (single != null) return articles.filter { articleNumberOf(it) == single }
+        val clean = groupName.substringBefore("(").trim()
+        val byTopic = articles.filter {
+            it.topicTitle.contains(clean, ignoreCase = true) || it.category.contains(clean, ignoreCase = true)
+        }
+        return byTopic.ifEmpty { articles }
     }
 
     fun getGroupsForLaw(lawId: String?): List<String> {
@@ -561,13 +597,14 @@ object LegalArticlesRepository {
         val lawArticles = getArticlesForLaw(targetLawId)
 
         // Check for direct article number like "146", "30", "16", "art 30", "articulo 107"
-        val numberRegex = Regex("""(?:art[ií]culo|art\.?)\s*(\d{1,3})|(?:\b(\d{1,3})\b)""")
+        val numberRegex = Regex("""(?:art[ií]culo|art\.?)\s*(\d{1,4})|(?:\b(\d{1,4})\b)""")
         val matches = numberRegex.findAll(q)
         for (m in matches) {
             val numStr = m.groupValues[1].ifEmpty { m.groupValues[2] }
             val num = numStr.toIntOrNull()
             if (num != null) {
-                val found = lawArticles.find { it.id == "${targetLawId}_$num" || it.articleNumber.contains(numStr) }
+                val found = lawArticles.find { it.id == "${targetLawId}_$num" }
+                    ?: lawArticles.find { articleNumberOf(it) == num }
                 if (found != null) return found
             }
         }
@@ -623,7 +660,8 @@ object LegalArticlesRepository {
             listOf("inviolabilidad de la constitución") to 136
         )
 
-        for ((words, artNum) in keywordMap) {
+        // El mapa de palabras clave apunta a artículos constitucionales: solo aplica cuando la ley activa es la CPEUM
+        if (targetLawId.equals("cpeum", ignoreCase = true)) for ((words, artNum) in keywordMap) {
             if (words.any { q.contains(it) }) {
                 val match = cpeumArticles.find { it.id == "cpeum_$artNum" }
                 if (match != null) return match
@@ -715,7 +753,9 @@ El Artículo 37, Apartado A de la CPEUM garantiza que ningún mexicano por nacim
                             excerpt = "La nacionalidad mexicana se adquiere por nacimiento o por naturalización. A) Son mexicanos por nacimiento los nacidos en territorio de la República... B) Son mexicanos por naturalización...",
                             similarityScore = 0.985f,
                             reformDate = "Reforma DOF 17-05-2021",
-                            citationPath = "CPEUM > Título Primero > Capítulo II > Art. 30"
+                            citationPath = "CPEUM > Título Primero > Capítulo II > Art. 30",
+                            articleId = "cpeum_30",
+                            lawId = "cpeum"
                         ),
                         exceptionalGrounds = listOf(
                             "• Jus Soli: Adquisición originaria por nacer en territorio o transporte de bandera mexicana.",
@@ -757,7 +797,9 @@ Garantías Fundamentales del Precepto:
                             excerpt = "Nadie puede ser molestado en su persona, familia, domicilio, papeles o posesiones, sino en virtud de mandamiento escrito de la autoridad competente, que funde y motive la causa legal del procedimiento.",
                             similarityScore = 0.988f,
                             reformDate = "Reforma DOF 28-05-2021",
-                            citationPath = "CPEUM > Título Primero > Cap. I > Art. 16"
+                            citationPath = "CPEUM > Título Primero > Cap. I > Art. 16",
+                            articleId = "cpeum_16",
+                            lawId = "cpeum"
                         ),
                         exceptionalGrounds = listOf(
                             "1. Mandamiento Escrito: Fundamentación y motivación estricta del acto de molestia.",
@@ -791,7 +833,9 @@ Principios Rectores:
                             excerpt = "Nadie podrá ser privado de la libertad o de sus propiedades, posesiones o derechos, sino mediante juicio seguido ante los tribunales previamente establecidos...",
                             similarityScore = 0.982f,
                             reformDate = "DOF Vigente",
-                            citationPath = "CPEUM > Título Primero > Cap. I > Art. 14"
+                            citationPath = "CPEUM > Título Primero > Cap. I > Art. 14",
+                            articleId = "cpeum_14",
+                            lawId = "cpeum"
                         ),
                         exceptionalGrounds = listOf(
                             "• Irretroactividad de la norma en perjuicio de cualquier gobernado.",
@@ -829,7 +873,9 @@ Queda estrictamente prohibida toda discriminación motivada por origen étnico, 
                             excerpt = "En los Estados Unidos Mexicanos todas las personas gozarán de los derechos humanos reconocidos en esta Constitución y en los tratados internacionales...",
                             similarityScore = 0.990f,
                             reformDate = "Reforma DOF 10-06-2011",
-                            citationPath = "CPEUM > Título Primero > Cap. I > Art. 1°"
+                            citationPath = "CPEUM > Título Primero > Cap. I > Art. 1°",
+                            articleId = "cpeum_1",
+                            lawId = "cpeum"
                         ),
                         exceptionalGrounds = listOf(
                             "• Principio Pro Persona: Elección obligada de la norma o interpretación más garantista.",
@@ -867,7 +913,9 @@ Estructura Fundamental:
                             excerpt = "Toda persona tiene derecho al trabajo digno y socialmente útil... El Congreso de la Unión deberá expedir leyes sobre el trabajo...",
                             similarityScore = 0.984f,
                             reformDate = "Reforma DOF 01-05-2019",
-                            citationPath = "CPEUM > Título Sexto > Art. 123"
+                            citationPath = "CPEUM > Título Sexto > Art. 123",
+                            articleId = "cpeum_123",
+                            lawId = "cpeum"
                         ),
                         exceptionalGrounds = listOf(
                             "• Jornada legal máxima y salario remunerador inviolable.",
@@ -901,7 +949,9 @@ Bases Fundamentales:
                             excerpt = "El juicio de amparo se seguirá siempre a instancia de parte agraviada, teniendo tal carácter quien aduce ser titular de un derecho o de un interés legítimo...",
                             similarityScore = 0.986f,
                             reformDate = "Reforma DOF 11-03-2021",
-                            citationPath = "CPEUM > Título Tercero > Cap. IV > Art. 107"
+                            citationPath = "CPEUM > Título Tercero > Cap. IV > Art. 107",
+                            articleId = "cpeum_107",
+                            lawId = "cpeum"
                         ),
                         exceptionalGrounds = listOf(
                             "• Tutela de interés legítimo individual o colectivo ante afectaciones a la esfera jurídica.",
@@ -942,7 +992,9 @@ Fases y Reglas Esenciales del Precepto:
                             excerpt = "Una vez que el imputado esté presente en la audiencia inicial... se le dará la palabra al Ministerio Público para que exponga al imputado el hecho que se le atribuye, la calificación jurídica preliminar, la fecha, lugar y modo de su comisión...",
                             similarityScore = 0.988f,
                             reformDate = "DOF Vigente (Enero 2024)",
-                            citationPath = "CNPP > Título VII > Capítulo II > Audiencia Inicial > Art. 311"
+                            citationPath = "CNPP > Título VII > Capítulo II > Audiencia Inicial > Art. 311",
+                            articleId = "cnpp_311",
+                            lawId = "cnpp"
                         ),
                         exceptionalGrounds = listOf(
                             "• Comunicación formalizada y judicial de la acusación fáctica ante Juez de Control.",
@@ -976,7 +1028,9 @@ Análisis Jurídico y Dogmático:
                             excerpt = matchedArticle.summary,
                             similarityScore = 0.975f,
                             reformDate = matchedArticle.lastReformDate,
-                            citationPath = "${matchedArticle.lawShortName} > ${matchedArticle.category} > ${matchedArticle.articleNumber}"
+                            citationPath = "${matchedArticle.lawShortName} > ${matchedArticle.category} > ${matchedArticle.articleNumber}",
+                            articleId = matchedArticle.id,
+                            lawId = matchedArticle.lawId
                         ),
                         exceptionalGrounds = listOf(
                             "• Materia Normativa: ${matchedArticle.category}.",

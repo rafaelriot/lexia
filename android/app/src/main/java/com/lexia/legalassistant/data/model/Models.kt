@@ -22,7 +22,9 @@ data class LegalCitation(
     val excerpt: String,
     val similarityScore: Float = 0.942f,
     val reformDate: String = "DOF 28-05-2021",
-    val citationPath: String = "CPEUM > Art. 16 > Párrafo 1°"
+    val citationPath: String = "CPEUM > Art. 16 > Párrafo 1°",
+    val articleId: String? = null,
+    val lawId: String? = null
 )
 
 data class RagMessage(

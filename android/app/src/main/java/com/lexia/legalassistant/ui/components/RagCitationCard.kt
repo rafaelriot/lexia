@@ -1,11 +1,13 @@
 package com.lexia.legalassistant.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.material.icons.filled.Print
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,12 +23,16 @@ import com.lexia.legalassistant.ui.theme.*
 @Composable
 fun RagCitationCard(
     citation: LegalCitation,
-    onViewFullDofText: () -> Unit = {}
+    onViewFullDofText: () -> Unit = {},
+    onPrintPdf: (() -> Unit)? = null
 ) {
     Card(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = LexiaSurfaceContainerLow),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onViewFullDofText)
     ) {
         Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
             // Left decorative indicator strip (tertiary-container / intelligence gold)
@@ -49,6 +55,7 @@ fun RagCitationCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(
+                        modifier = Modifier.weight(1f, fill = false),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
@@ -61,8 +68,8 @@ fun RagCitationCard(
                         Text(
                             text = citation.articleTitle,
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = LexiaOnSurface
+                            fontWeight = FontWeight.Bold,
+                            color = LexiaPrimary
                         )
                     }
 
@@ -94,7 +101,7 @@ fun RagCitationCard(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Footer: Reform Date & View DOF Action Button
+                // Footer: Reform Date & Action Buttons (Imprimir PDF + Ver texto íntegro)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -106,27 +113,56 @@ fun RagCitationCard(
                         color = LexiaSecondary
                     )
 
-                    Button(
-                        onClick = onViewFullDofText,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = LexiaSurfaceContainer,
-                            contentColor = LexiaPrimary
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                        modifier = Modifier.height(32.dp)
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Ver texto íntegro DOF",
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Icon(
-                            imageVector = Icons.Default.OpenInNew,
-                            contentDescription = null,
-                            modifier = Modifier.size(13.dp)
-                        )
+                        if (onPrintPdf != null) {
+                            OutlinedButton(
+                                onClick = onPrintPdf,
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = LexiaPrimary
+                                ),
+                                shape = RoundedCornerShape(8.dp),
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                                modifier = Modifier.height(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Print,
+                                    contentDescription = "Imprimir",
+                                    modifier = Modifier.size(14.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "PDF",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
+
+                        Button(
+                            onClick = onViewFullDofText,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = LexiaPrimaryContainer,
+                                contentColor = LexiaOnPrimaryContainer
+                            ),
+                            shape = RoundedCornerShape(8.dp),
+                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                            modifier = Modifier.height(32.dp)
+                        ) {
+                            Text(
+                                text = "Ver artículo completo",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                imageVector = Icons.Default.OpenInNew,
+                                contentDescription = null,
+                                modifier = Modifier.size(13.dp)
+                            )
+                        }
                     }
                 }
             }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -41,13 +43,49 @@ import com.lexia.legalassistant.data.model.LegalCitation
 import com.lexia.legalassistant.data.model.RagMessage
 import com.lexia.legalassistant.data.model.ScopeChoice
 import com.lexia.legalassistant.data.repository.ConsultationHistoryRepository
+import com.lexia.legalassistant.data.repository.DynamicStatutoryDirectory
 import com.lexia.legalassistant.data.repository.LegalArticlesRepository
 import com.lexia.legalassistant.ui.components.RagCitationCard
 import com.lexia.legalassistant.ui.theme.*
+import com.lexia.legalassistant.ui.screens.dictamen.PdfGeneratorHelper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+
+private fun findReferencedArticlesInText(text: String, defaultLawId: String): List<LawArticleDetail> {
+    val results = mutableListOf<LawArticleDetail>()
+    val seenIds = mutableSetOf<String>()
+
+    val regex = Regex("""(?i)(?:art[íi]culo|art\.?)\s+(\d{1,4})[°º]?(?:\s+(?:de\s+la\s+|del\s+)?([a-záéíóúñ\s]+))?""")
+    val matches = regex.findAll(text)
+
+    for (match in matches) {
+        val num = match.groupValues[1].toIntOrNull() ?: continue
+        val lawHint = match.groupValues.getOrNull(2)?.lowercase()?.trim() ?: ""
+
+        val lawId = when {
+            lawHint.contains("amparo") -> "amparo"
+            lawHint.contains("cnpp") || lawHint.contains("procedimientos penales") -> "cnpp"
+            lawHint.contains("cpf") || lawHint.contains("penal federal") -> "cpf"
+            lawHint.contains("cpet") || lawHint.contains("tabasco") -> "cpet"
+            lawHint.contains("constituc") || lawHint.contains("cpeum") || lawHint.contains("carta magna") -> "cpeum"
+            lawHint.contains("civil federal") || lawHint.contains("ccf") -> "ccf"
+            lawHint.contains("trabajo") || lawHint.contains("lft") -> "lft"
+            else -> defaultLawId
+        }
+
+        val articleId = "${lawId}_$num"
+        if (!seenIds.contains(articleId)) {
+            val article = DynamicStatutoryDirectory.getArticle(lawId, num)
+            if (article != null) {
+                seenIds.add(articleId)
+                results.add(article)
+            }
+        }
+    }
+    return results
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,6 +121,7 @@ fun ChatRagScreen(
     var selectedTab by remember { mutableIntStateOf(0) } // 0: Chat IA, 1: Texto DOF & Chunks FAISS
     var showArticlePicker by remember { mutableStateOf(false) }
     var showScopeDialog by remember { mutableStateOf(false) }
+    var inspectedArticle by remember { mutableStateOf<LawArticleDetail?>(null) }
 
     var queryText by remember { mutableStateOf("") }
     var isRecording by remember { mutableStateOf(false) }
@@ -112,13 +151,17 @@ fun ChatRagScreen(
         LegalArticlesRepository.getGroupsForLaw(selectedLawId)
     }
 
-    val currentGroupArticles = remember(selectedGroupName, selectedLawId) {
-        if (selectedGroupName != null) {
-            currentLawArticles.filter { it.topicTitle.contains(selectedGroupName!!, ignoreCase = true) || it.category.contains(selectedGroupName!!, ignoreCase = true) || it.articleNumber.contains(selectedGroupName!!, ignoreCase = true) }
-                .ifEmpty { currentLawArticles.take(15) }
-        } else {
-            currentLawArticles.take(15)
-        }
+    val currentGroupArticles = remember(selectedGroupName, selectedLawId, currentLawArticles) {
+        LegalArticlesRepository.filterArticlesByGroup(currentLawArticles, selectedGroupName)
+    }
+
+    // Si cambia la ley activa, descartar capítulo/artículo que pertenezcan a otra ley
+    var previousLawId by remember { mutableStateOf(selectedLawId) }
+    LaunchedEffect(selectedLawId) {
+        if (previousLawId == selectedLawId) return@LaunchedEffect
+        previousLawId = selectedLawId
+        if (selectedGroupName != null && selectedGroupName !in currentLawGroups) selectedGroupName = null
+        if (selectedArticleId != null && !selectedArticleId!!.startsWith("${selectedLawId}_")) selectedArticleId = null
     }
 
     // Permission launcher for microphone recording
@@ -159,221 +202,37 @@ fun ChatRagScreen(
         }
     }
 
-    // Initial Messages in chat
+    // Initial Messages in chat: Inicia completamente limpio
     val messages = remember(initialLawId, initialArticleId) {
-        mutableStateListOf<RagMessage>().apply {
-            if (initialArticleId == null) {
-                add(
-                    RagMessage(
-                        id = "msg_init_general",
-                        isUser = false,
-                        senderName = "LexIA Assistant",
-                        text = "🏛️ Has seleccionado ${currentLaw.title} (${currentLaw.shortName}).\n\nActualmente te encuentras en modo de consulta abierta con ${currentLaw.articlesCount} artículos indexados.\n\nPuedes hacerme preguntas por texto o nota de voz usando la barra inferior, o seleccionar un artículo o capítulo en el menú superior.",
-                        timestamp = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date()),
-                        citation = LegalCitation(
-                            articleTitle = "${currentLaw.shortName} · ${currentLaw.title}",
-                            excerpt = "Cuerpo normativo federal con ${currentLaw.articlesCount} artículos vigentes en el DOF.",
-                            similarityScore = 0.985f,
-                            reformDate = currentLaw.lastReformDate,
-                            citationPath = "${currentLaw.shortName} > Texto Oficial Completo"
-                        ),
-                        exceptionalGrounds = listOf(
-                            "• Búsqueda Global FAISS: ${currentLaw.articlesCount} Artículos disponibles.",
-                            "• Agrupaciones por capítulos temáticos listas para análisis."
-                        )
-                    )
-                )
-            } else {
-                add(
-                    RagMessage(
-                        id = "msg_1",
-                        isUser = true,
-                        senderName = "Lic. M. Herrera",
-                        text = "¿Cuáles son las garantías individuales frente a una detención arbitraria y qué dice el artículo 16 constitucional?",
-                        timestamp = "09:41"
-                    )
-                )
-                add(
-                    RagMessage(
-                        id = "msg_2",
-                        isUser = false,
-                        senderName = "LexIA Assistant",
-                        text = "En el ordenamiento jurídico mexicano, el control de la privación de la libertad se cimienta fundamentalmente en los principios de legalidad, seguridad jurídica y reserva judicial estricta.",
-                        timestamp = "09:42",
-                        citation = LegalCitation(
-                            articleTitle = "Artículo 16 CPEUM (Párrafo 1°)",
-                            excerpt = "Nadie puede ser molestado en su persona, familia, domicilio, papeles o posesiones, sino en virtud de mandamiento escrito de la autoridad competente, que funde y motive la causa legal del procedimiento.",
-                            similarityScore = 0.942f,
-                            reformDate = "Reformado DOF 28-05-2021",
-                            citationPath = "CPEUM > Art. 16 > Párrafo 1°"
-                        ),
-                        exceptionalGrounds = listOf(
-                            "1. Orden de Aprehensión: Mandamiento judicial previo librado ante datos que establezcan la comisión del hecho.",
-                            "2. Flagrancia Estricta (Párrafo 5°): Cualquier persona puede detener al indiciado al momento de cometer el delito.",
-                            "3. Caso Urgente (Párrafo 6°): Exclusivo del Ministerio Público tratándose de delito grave ante riesgo inminente de sustracción."
-                        )
-                    )
-                )
-            }
-        }
+        mutableStateListOf<RagMessage>()
     }
 
     // Reactive sync effect with LegalNavigationSession
     LaunchedEffect(navSessionState.updateTimestamp) {
         if (navSessionState.updateTimestamp > 0) {
-            val newLawId = navSessionState.lawId
-            val newArticleId = navSessionState.articleId
-            val newGroupName = navSessionState.groupName
-
-            val lawChanged = selectedLawId != newLawId
-            selectedLawId = newLawId
-            selectedArticleId = newArticleId
-            selectedGroupName = newGroupName
-
-            val targetLaw = LegalArticlesRepository.getLawById(newLawId)
-            val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-
-            if (newArticleId != null) {
-                val art = LegalArticlesRepository.getArticleById(newArticleId)
-                if (art != null) {
-                    messages.add(
-                        RagMessage(
-                            id = UUID.randomUUID().toString(),
-                            isUser = false,
-                            senderName = currentAiModel?.let { "${it.iconEmoji} ${it.name}" } ?: "LexIA Assistant",
-                            text = "📋 Has seleccionado el ${art.articleNumber} (${art.lawShortName}): ${art.topicTitle}.\n\n«${art.summary}»\n\nPuedes hacerme cualquier consulta por texto o nota de voz sobre este artículo.",
-                            timestamp = time,
-                            citation = LegalCitation(
-                                articleTitle = "${art.lawShortName} · ${art.articleNumber}",
-                                excerpt = art.summary,
-                                similarityScore = 0.985f,
-                                reformDate = art.lastReformDate,
-                                citationPath = "${art.lawShortName} > ${art.category} > ${art.articleNumber}"
-                            ),
-                            exceptionalGrounds = listOf(
-                                "• Materia Legal: ${art.category}.",
-                                "• Estatus DOF: ${art.dofStatus} (${art.lastReformDate})."
-                            )
-                        )
-                    )
-                }
-            } else if (lawChanged) {
-                messages.add(
-                    RagMessage(
-                        id = UUID.randomUUID().toString(),
-                        isUser = false,
-                        senderName = currentAiModel?.let { "${it.iconEmoji} ${it.name}" } ?: "LexIA Assistant",
-                        text = "🏛️ Has seleccionado ${targetLaw.title} (${targetLaw.shortName}).\n\nActualmente te encuentras en modo de consulta abierta con ${targetLaw.articlesCount} artículos indexados.\n\nPuedes hacerme preguntas por texto o nota de voz usando la barra inferior.",
-                        timestamp = time,
-                        citation = LegalCitation(
-                            articleTitle = "${targetLaw.shortName} · ${targetLaw.title}",
-                            excerpt = "Cuerpo normativo federal con ${targetLaw.articlesCount} artículos vigentes en el DOF.",
-                            similarityScore = 0.985f,
-                            reformDate = targetLaw.lastReformDate,
-                            citationPath = "${targetLaw.shortName} > Texto Oficial Completo"
-                        ),
-                        exceptionalGrounds = listOf(
-                            "• Búsqueda Global FAISS: ${targetLaw.articlesCount} Artículos disponibles.",
-                            "• Agrupaciones por capítulos temáticos listas para análisis."
-                        )
-                    )
-                )
-            }
+            selectedLawId = navSessionState.lawId
+            selectedArticleId = navSessionState.articleId
+            selectedGroupName = navSessionState.groupName
         }
     }
 
-    // Function to switch active article and notify in chat
+    // Function to switch active article
     fun selectArticle(article: LawArticleDetail) {
         selectedArticleId = article.id
         selectedLawId = article.lawId
         selectedGroupName = null
-
-        val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-        val introMsg = RagMessage(
-            id = UUID.randomUUID().toString(),
-            isUser = false,
-            senderName = "LexIA Assistant",
-            text = "📋 Has seleccionado el ${article.articleNumber} (${article.lawShortName}): ${article.topicTitle}.\n\n«${article.summary}»\n\nPuedes hacerme cualquier consulta por texto o nota de voz sobre este artículo.",
-            timestamp = time,
-            citation = LegalCitation(
-                articleTitle = "${article.lawShortName} · ${article.articleNumber}",
-                excerpt = article.summary,
-                similarityScore = 0.965f,
-                reformDate = article.lastReformDate,
-                citationPath = "${article.lawShortName} > ${article.category} > ${article.articleNumber}"
-            ),
-            exceptionalGrounds = listOf(
-                "• Materia Constitucional: ${article.category}",
-                "• Estatus DOF: ${article.dofStatus} (${article.lastReformDate})"
-            )
-        )
-        messages.add(introMsg)
-
-        coroutineScope.launch {
-            listState.animateScrollToItem(messages.size - 1)
-        }
     }
 
     // Function to switch active group (e.g. DDHH)
     fun selectGroup(groupName: String) {
         selectedGroupName = groupName
         selectedArticleId = null
-
-        val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-        val introMsg = RagMessage(
-            id = UUID.randomUUID().toString(),
-            isUser = false,
-            senderName = "LexIA Assistant",
-            text = "🛡️ Has seleccionado el grupo de $groupName.\n\nSe ha activado el contexto para los artículos de este capítulo. Las consultas que realices podrán correlacionarse dentro de este bloque de derechos.",
-            timestamp = time,
-            citation = LegalCitation(
-                articleTitle = "CPEUM · $groupName",
-                excerpt = "Bloque temático constitucional integral.",
-                similarityScore = 0.970f,
-                reformDate = "DOF Vigente",
-                citationPath = "CPEUM > $groupName"
-            ),
-            exceptionalGrounds = listOf(
-                "• Análisis correlacionado del bloque normativo.",
-                "• Búsqueda acotada a los artículos de este capítulo."
-            )
-        )
-        messages.add(introMsg)
-
-        coroutineScope.launch {
-            listState.animateScrollToItem(messages.size - 1)
-        }
     }
 
     // Function to switch back to General Constitution
     fun selectGeneralConstitution() {
         selectedGroupName = null
         selectedArticleId = null
-
-        val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-        val introMsg = RagMessage(
-            id = UUID.randomUUID().toString(),
-            isUser = false,
-            senderName = "LexIA Assistant",
-            text = "🏛️ Modo activo: Constitución Política en General (136 Artículos).\n\nLas consultas se procesarán con búsqueda transversal en toda la Carta Magna.",
-            timestamp = time,
-            citation = LegalCitation(
-                articleTitle = "CPEUM · Texto Completo",
-                excerpt = "136 Artículos y 9 Títulos Constitucionales.",
-                similarityScore = 0.960f,
-                reformDate = "DOF Vigente",
-                citationPath = "CPEUM > Búsqueda Global"
-            ),
-            exceptionalGrounds = listOf(
-                "• Cobertura en los 136 artículos.",
-                "• Correlación jerárquica y tratados internacionales."
-            )
-        )
-        messages.add(introMsg)
-
-        coroutineScope.launch {
-            listState.animateScrollToItem(messages.size - 1)
-        }
     }
 
     // Function to generate automated AI RAG response based on legal query and selected scope
@@ -634,6 +493,49 @@ fun ChatRagScreen(
                 contentPadding = PaddingValues(vertical = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
+                // Empty State Limpio: Solo invitación sutil a preguntar
+                if (messages.isEmpty() && !isGeneratingResponse) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 40.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Surface(
+                                    shape = CircleShape,
+                                    color = LexiaPrimaryContainer.copy(alpha = 0.5f),
+                                    modifier = Modifier.size(56.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            Icons.Default.ChatBubble,
+                                            contentDescription = null,
+                                            tint = LexiaPrimary,
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                    }
+                                }
+                                Text(
+                                    text = "¿En qué te puedo asesorar hoy?",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = LexiaPrimary
+                                )
+                                Text(
+                                    text = "Escribe tu consulta o graba una nota de voz sobre ${currentLaw.shortName}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = LexiaSecondary
+                                )
+                            }
+                        }
+                    }
+                }
+
                 // Chat Messages Feed
                 items(messages) { message ->
                     if (message.isUser) {
@@ -860,8 +762,85 @@ fun ChatRagScreen(
                                     message.citation?.let { cit ->
                                         RagCitationCard(
                                             citation = cit,
-                                            onViewFullDofText = { selectedTab = 1 }
+                                            onViewFullDofText = {
+                                                val art = cit.articleId?.let { LegalArticlesRepository.getArticleById(it) }
+                                                    ?: currentLawArticles.firstOrNull { it.articleNumber.equals(cit.articleTitle, ignoreCase = true) || cit.articleTitle.contains(it.articleNumber, ignoreCase = true) }
+                                                    ?: currentArticle
+                                                if (art != null) {
+                                                    inspectedArticle = art
+                                                } else {
+                                                    selectedTab = 1
+                                                }
+                                            },
+                                            onPrintPdf = {
+                                                val art = cit.articleId?.let { LegalArticlesRepository.getArticleById(it) }
+                                                    ?: currentArticle
+                                                val dictamen = LegalArticlesRepository.buildDictamen(
+                                                    articleId = art?.id,
+                                                    groupName = null,
+                                                    lawId = art?.lawId ?: selectedLawId
+                                                )
+                                                val pdfFile = PdfGeneratorHelper.generateDictamenPdf(context, dictamen)
+                                                PdfGeneratorHelper.printPdf(context, pdfFile, dictamen.title)
+                                            }
                                         )
+                                    }
+
+                                    val additionalArticles = remember(message.text, selectedLawId) {
+                                        findReferencedArticlesInText(message.text, message.citation?.lawId ?: selectedLawId)
+                                            .filter { it.id != message.citation?.articleId }
+                                    }
+
+                                    if (additionalArticles.isNotEmpty()) {
+                                        Column(
+                                            modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                                        ) {
+                                            Text(
+                                                text = "Artículos citados en la respuesta:",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = LexiaPrimary,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .horizontalScroll(rememberScrollState()),
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                            ) {
+                                                additionalArticles.forEach { refArt ->
+                                                    OutlinedButton(
+                                                        onClick = { inspectedArticle = refArt },
+                                                        shape = RoundedCornerShape(8.dp),
+                                                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
+                                                        modifier = Modifier.height(30.dp),
+                                                        colors = ButtonDefaults.outlinedButtonColors(
+                                                            containerColor = LexiaSurfaceContainerLow,
+                                                            contentColor = LexiaPrimary
+                                                        )
+                                                    ) {
+                                                        Icon(
+                                                            imageVector = Icons.Default.MenuBook,
+                                                            contentDescription = null,
+                                                            modifier = Modifier.size(13.dp),
+                                                            tint = LexiaPrimary
+                                                        )
+                                                        Spacer(modifier = Modifier.width(4.dp))
+                                                        Text(
+                                                            text = "${refArt.lawShortName} ${refArt.articleNumber}",
+                                                            style = MaterialTheme.typography.labelSmall,
+                                                            fontWeight = FontWeight.Bold
+                                                        )
+                                                        Spacer(modifier = Modifier.width(4.dp))
+                                                        Text(
+                                                            text = "· Ver y PDF",
+                                                            style = MaterialTheme.typography.labelSmall,
+                                                            color = LexiaSecondary
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
 
                                     if (message.exceptionalGrounds.isNotEmpty()) {
@@ -1004,6 +983,20 @@ fun ChatRagScreen(
             ) {
                 if (currentArticle != null) {
                     // 1. SPECIFIC ARTICLE VIEW
+                    item {
+                        TextButton(
+                            onClick = { selectGeneralConstitution() },
+                            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp)
+                        ) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, modifier = Modifier.size(16.dp), tint = LexiaPrimary)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                "Ver los ${currentLawArticles.size} artículos de ${currentLaw.shortName}",
+                                color = LexiaPrimary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
                     item {
                         Card(
                             shape = RoundedCornerShape(12.dp),
@@ -1339,36 +1332,109 @@ fun ChatRagScreen(
                         )
                     }
 
-                    val dynamicGroups = currentLawGroups.filter { !it.startsWith("Todos") }
+                    // Chapter horizontal selector chips
+                    item {
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            items(currentLawGroups) { gName ->
+                                val isSelected = (selectedGroupName == null && gName.startsWith("Todos")) || selectedGroupName == gName
+                                FilterChip(
+                                    selected = isSelected,
+                                    onClick = {
+                                        if (gName.startsWith("Todos")) {
+                                            selectedGroupName = null
+                                        } else {
+                                            selectGroup(gName)
+                                        }
+                                    },
+                                    label = { Text(gName, style = MaterialTheme.typography.labelSmall) },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = LexiaPrimaryContainer,
+                                        selectedLabelColor = LexiaOnPrimaryContainer,
+                                        containerColor = LexiaSurfaceContainerLowest,
+                                        labelColor = LexiaOnSurfaceVariant
+                                    )
+                                )
+                            }
+                        }
+                    }
 
-                    items(dynamicGroups) { groupName ->
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Artículos de ${currentLaw.shortName} (${currentGroupArticles.size})",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = LexiaPrimary
+                            )
+                            Text(
+                                text = "Toca para inspeccionar",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = LexiaSecondary
+                            )
+                        }
+                    }
+
+                    items(currentGroupArticles) { art ->
                         Card(
                             shape = RoundedCornerShape(10.dp),
                             colors = CardDefaults.cardColors(containerColor = LexiaSurfaceContainerLowest),
                             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { selectGroup(groupName) }
+                                .clickable { selectArticle(art) }
                         ) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(14.dp),
+                                    .padding(12.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        Text(
+                                            text = art.articleNumber,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = LexiaPrimary
+                                        )
+                                        Surface(
+                                            shape = RoundedCornerShape(4.dp),
+                                            color = LexiaSurfaceContainerHighest
+                                        ) {
+                                            Text(
+                                                text = art.category,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = LexiaSecondary,
+                                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                                fontSize = 10.sp
+                                            )
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.height(2.dp))
                                     Text(
-                                        text = groupName,
-                                        style = MaterialTheme.typography.titleSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = LexiaPrimary
+                                        text = art.topicTitle,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = LexiaOnSurface
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
-                                        text = "Bloque temático especializado de ${currentLaw.shortName}",
+                                        text = art.summary,
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = LexiaOnSurfaceVariant
+                                        color = LexiaOnSurfaceVariant,
+                                        maxLines = 2,
+                                        fontSize = 11.sp
                                     )
                                 }
                                 Icon(Icons.Default.ArrowForwardIos, contentDescription = null, modifier = Modifier.size(14.dp), tint = LexiaPrimary)
@@ -2104,13 +2170,12 @@ fun ChatRagScreen(
         }
 
         val filteredArticles = remember(pickerSearch, pickerChapterFilter, allLawArticles) {
-            var list = allLawArticles
-            if (pickerChapterFilter != "Todos") {
-                list = list.filter { it.category.contains(pickerChapterFilter, ignoreCase = true) || it.topicTitle.contains(pickerChapterFilter, ignoreCase = true) }
-            }
+            var list = LegalArticlesRepository.filterArticlesByGroup(allLawArticles, pickerChapterFilter)
             if (pickerSearch.isNotBlank()) {
                 val q = pickerSearch.trim().lowercase()
+                val qNum = q.filter { it.isDigit() }.toIntOrNull()
                 list = list.filter {
+                    (qNum != null && LegalArticlesRepository.articleNumberOf(it) == qNum) ||
                     it.articleNumber.lowercase().contains(q) ||
                     it.topicTitle.lowercase().contains(q) ||
                     it.summary.lowercase().contains(q)
@@ -2266,6 +2331,202 @@ fun ChatRagScreen(
                                 )
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    // VENTANA / MODAL DEDICADO PARA VISUALIZACIÓN ÍNTEGRA DEL ARTÍCULO REFERENCIADO
+    inspectedArticle?.let { article ->
+        ModalBottomSheet(
+            onDismissRequest = { inspectedArticle = null },
+            containerColor = LexiaSurfaceContainerLowest,
+            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+            dragHandle = { BottomSheetDefaults.DragHandle() }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 28.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                // Header: Ley y Estatus DOF
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = article.articleNumber,
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = LexiaPrimary
+                        )
+                        Text(
+                            text = "${article.lawShortName} · Materia: ${article.category}",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = LexiaSecondary
+                        )
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(6.dp),
+                        color = LexiaSuccess100
+                    ) {
+                        Text(
+                            text = article.dofStatus,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = LexiaSuccess800,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Topic title
+                Text(
+                    text = article.topicTitle,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = LexiaOnSurface
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "Última reforma publicada en DOF: ${article.lastReformDate}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = LexiaOutline
+                )
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Texto Íntegro / Contenido Normativo Completo
+                Text(
+                    text = "TEXTO ÍNTEGRO DEL PRECEPTO LEGAL",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = LexiaPrimary
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = LexiaSurfaceContainerLow,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, LexiaOutlineVariant),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = article.summary,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = LexiaOnSurface,
+                        lineHeight = 24.sp,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+
+                if (article.chunks.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "FRANGMENTOS Y CRITERIOS INDEXADOS (k=${article.chunks.size})",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = LexiaSecondary
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    article.chunks.forEach { chunk ->
+                        Card(
+                            shape = RoundedCornerShape(8.dp),
+                            colors = CardDefaults.cardColors(containerColor = LexiaSurfaceContainer),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(10.dp)) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = chunk.path,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = LexiaPrimary
+                                    )
+                                    Text(
+                                        text = "Similitud: ${chunk.similarity}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = LexiaSecondary
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = chunk.content,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = LexiaOnSurfaceVariant,
+                                    lineHeight = 18.sp
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Barra de Acciones: Imprimir PDF y Abrir Dictamen Oficial
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            val dictamen = LegalArticlesRepository.buildDictamen(
+                                articleId = article.id,
+                                groupName = null,
+                                lawId = article.lawId
+                            )
+                            val pdfFile = PdfGeneratorHelper.generateDictamenPdf(context, dictamen)
+                            PdfGeneratorHelper.printPdf(context, pdfFile, "${article.lawShortName} ${article.articleNumber}")
+                        },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = LexiaPrimary)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Print,
+                            contentDescription = "Imprimir",
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Imprimir PDF", fontWeight = FontWeight.Bold)
+                    }
+
+                    Button(
+                        onClick = {
+                            inspectedArticle = null
+                            onNavigateToDictamen(article.id, null)
+                        },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = LexiaPrimary,
+                            contentColor = LexiaOnPrimary
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.PictureAsPdf,
+                            contentDescription = "Dictamen",
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Ver Dictamen", fontWeight = FontWeight.Bold)
                     }
                 }
             }

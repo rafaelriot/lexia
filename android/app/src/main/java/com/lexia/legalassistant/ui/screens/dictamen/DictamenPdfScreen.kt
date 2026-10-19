@@ -56,6 +56,15 @@ fun DictamenPdfScreen(
         }
     }
 
+    val handlePrint: () -> Unit = {
+        try {
+            val pdfFile = PdfGeneratorHelper.generateDictamenPdf(context, dictamenData)
+            PdfGeneratorHelper.printPdf(context, pdfFile, dictamenData.title)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -97,6 +106,9 @@ fun DictamenPdfScreen(
                 }
 
                 Row {
+                    IconButton(onClick = handlePrint) {
+                        Icon(Icons.Default.Print, contentDescription = "Imprimir", tint = LexiaPrimary)
+                    }
                     IconButton(onClick = handleShare) {
                         Icon(Icons.Default.Share, contentDescription = "Compartir", tint = LexiaPrimary)
                     }

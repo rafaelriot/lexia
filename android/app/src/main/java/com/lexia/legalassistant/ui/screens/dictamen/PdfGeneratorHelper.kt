@@ -256,4 +256,63 @@ object PdfGeneratorHelper {
             }
         }
     }
+
+    fun printPdf(context: Context, pdfFile: File, jobName: String = "Dictamen Legal") {
+        try {
+            val printManager = context.getSystemService(Context.PRINT_SERVICE) as? android.print.PrintManager
+            if (printManager == null) {
+                Toast.makeText(context, "Servicio de impresión no disponible en este dispositivo", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val printAdapter = object : android.print.PrintDocumentAdapter() {
+                override fun onLayout(
+                    oldAttributes: android.print.PrintAttributes?,
+                    newAttributes: android.print.PrintAttributes?,
+                    cancellationSignal: android.os.CancellationSignal?,
+                    callback: LayoutResultCallback?,
+                    extras: android.os.Bundle?
+                ) {
+                    if (cancellationSignal?.isCanceled == true) {
+                        callback?.onLayoutCancelled()
+                        return
+                    }
+                    val info = android.print.PrintDocumentInfo.Builder("$jobName.pdf")
+                        .setContentType(android.print.PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
+                        .setPageCount(1)
+                        .build()
+                    callback?.onLayoutFinished(info, true)
+                }
+
+                override fun onWrite(
+                    pages: Array<out android.print.PageRange>?,
+                    destination: android.os.ParcelFileDescriptor?,
+                    cancellationSignal: android.os.CancellationSignal?,
+                    callback: WriteResultCallback?
+                ) {
+                    try {
+                        destination?.fileDescriptor?.let { fd ->
+                            FileOutputStream(fd).use { out ->
+                                pdfFile.inputStream().use { inp ->
+                                    inp.copyTo(out)
+                                }
+                            }
+                        }
+                        callback?.onWriteFinished(arrayOf(android.print.PageRange.ALL_PAGES))
+                    } catch (e: Exception) {
+                        callback?.onWriteFailed(e.message)
+                    }
+                }
+            }
+
+            val printAttributes = android.print.PrintAttributes.Builder()
+                .setMediaSize(android.print.PrintAttributes.MediaSize.ISO_A4)
+                .build()
+
+            printManager.print(jobName, printAdapter, printAttributes)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(context, "Error al enviar a imprimir: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
