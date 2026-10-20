@@ -11,11 +11,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.BatteryFull
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.SignalCellularAlt
-import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -222,60 +219,15 @@ fun LexiaTopBar(
         shadowElevation = 2.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            // Simulated Android System Status Bar (09:41, 5G, Wi-Fi, battery)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "09:41",
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = LexiaOnSurface
-                )
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.SignalCellularAlt,
-                        contentDescription = "Signal",
-                        modifier = Modifier.size(14.dp),
-                        tint = LexiaOnSurfaceVariant
-                    )
-                    Text(
-                        text = "5G",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = LexiaOnSurfaceVariant
-                    )
-                    Icon(
-                        imageVector = Icons.Default.Wifi,
-                        contentDescription = "WiFi",
-                        modifier = Modifier.size(14.dp),
-                        tint = LexiaOnSurfaceVariant
-                    )
-                    Icon(
-                        imageVector = Icons.Default.BatteryFull,
-                        contentDescription = "Battery",
-                        modifier = Modifier.size(16.dp),
-                        tint = LexiaOnSurfaceVariant
-                    )
-                }
-            }
-
-            // LexIA Application Header Bar
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+        // LexIA Application Header Bar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -387,4 +339,3 @@ fun LexiaTopBar(
             }
         }
     }
-}
