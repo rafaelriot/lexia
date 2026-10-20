@@ -20,6 +20,7 @@ object LlmGateway {
 
     fun clientFor(provider: LlmProvider): LlmClient? = when (provider) {
         LlmProvider.GEMINI -> GeminiClient
+        LlmProvider.GROQ -> GroqClient
         LlmProvider.ANTHROPIC -> AnthropicClient
         LlmProvider.OPENAI -> OpenAiClient
         LlmProvider.LOCAL -> null

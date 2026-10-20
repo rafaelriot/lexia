@@ -113,7 +113,8 @@ private fun findReferencedArticlesInText(text: String, defaultLawId: String): Li
 fun ChatRagScreen(
     initialLawId: String = "cpeum",
     initialArticleId: String? = null,
-    onNavigateToDictamen: (articleId: String?, groupName: String?) -> Unit = { _, _ -> }
+    onNavigateToDictamen: (articleId: String?, groupName: String?) -> Unit = { _, _ -> },
+    chatViewModel: ChatViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
@@ -157,7 +158,7 @@ fun ChatRagScreen(
     var queryText by remember { mutableStateOf("") }
     var isRecording by remember { mutableStateOf(false) }
     var recordingSeconds by remember { mutableIntStateOf(0) }
-    var isGeneratingResponse by remember { mutableStateOf(false) }
+    val isGeneratingResponse by chatViewModel.isGeneratingResponse.collectAsState()
     var playingAudioId by remember { mutableStateOf<String?>(null) }
     var currentRecognizedVoiceText by remember { mutableStateOf("") }
 
@@ -233,10 +234,8 @@ fun ChatRagScreen(
         }
     }
 
-    // Initial Messages in chat: Inicia completamente limpio
-    val messages = remember(initialLawId, initialArticleId) {
-        mutableStateListOf<RagMessage>()
-    }
+    // Messages feed provided by ChatViewModel: retained across configuration changes
+    val messages by chatViewModel.messages.collectAsState()
 
     // Reactive sync effect with LegalNavigationSession
     LaunchedEffect(navSessionState.updateTimestamp) {
@@ -266,44 +265,6 @@ fun ChatRagScreen(
         selectedArticleId = null
     }
 
-    // Function to generate automated AI RAG response based on legal query and selected scope
-    fun generateAiResponse(userQuery: String, scope: ScopeChoice, isVoice: Boolean = false) {
-        coroutineScope.launch {
-            isGeneratingResponse = true
-
-            // Real call: local RAG retrieval + HTTPS request to the selected provider's API
-            val response = try {
-                LegalArticlesRepository.queryConstitutionalRag(
-                    userQuery = userQuery,
-                    scope = scope,
-                    lawId = selectedLawId,
-                    activeArticle = currentArticle,
-                    activeGroupName = selectedGroupName,
-                    aiModel = currentAiModel
-                )
-            } finally {
-                isGeneratingResponse = false
-            }
-
-            messages.add(response)
-
-            // Automatically record consultation into persistent history
-            val activeUserId = com.lexia.legalassistant.data.repository.AuthRepository.currentUser.value?.id ?: "guest"
-            ConsultationHistoryRepository.recordConsultation(
-                context = context,
-                query = userQuery,
-                aiAnswer = response.text,
-                lawId = selectedLawId,
-                articleId = selectedArticleId,
-                groupName = selectedGroupName,
-                isVoice = isVoice,
-                userId = activeUserId
-            )
-
-            listState.animateScrollToItem(messages.size - 1)
-        }
-    }
-
     // Function to execute query after choosing scope in dialog
     fun executeScopedQuery(
         query: String,
@@ -312,41 +273,43 @@ fun ChatRagScreen(
         voiceFile: java.io.File?,
         voiceDuration: Int
     ) {
-        val time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-        val userMsg = if (isVoice) {
-            RagMessage(
-                id = UUID.randomUUID().toString(),
-                isUser = true,
-                senderName = activeSenderName,
-                text = query,
-                timestamp = time,
-                isVoiceRecording = true,
-                voiceDurationSeconds = voiceDuration,
-                voiceAudioWaveform = listOf(0.3f, 0.7f, 0.4f, 0.9f, 0.6f, 1.0f, 0.5f, 0.8f, 0.4f, 0.6f),
-                audioFilePath = voiceFile?.absolutePath,
-                transcribedText = query
-            )
-        } else {
-            RagMessage(
-                id = UUID.randomUUID().toString(),
-                isUser = true,
-                senderName = activeSenderName,
-                text = query,
-                timestamp = time
-            )
-        }
-
-        messages.add(userMsg)
+        chatViewModel.appendUserMessage(
+            query = query,
+            senderName = activeSenderName,
+            isVoice = isVoice,
+            voiceFile = voiceFile,
+            voiceDuration = voiceDuration
+        )
         queryText = ""
         pendingQueryText = ""
         pendingIsVoice = false
         pendingVoiceFile = null
 
         coroutineScope.launch {
-            listState.animateScrollToItem(messages.size - 1)
+            if (messages.isNotEmpty()) {
+                listState.animateScrollToItem(messages.size - 1)
+            }
         }
 
-        generateAiResponse(query, scope, isVoice)
+        val activeUserId = com.lexia.legalassistant.data.repository.AuthRepository.currentUser.value?.id ?: "guest"
+        chatViewModel.generateAiResponse(
+            context = context,
+            userQuery = query,
+            scope = scope,
+            lawId = selectedLawId,
+            activeArticle = currentArticle,
+            activeGroupName = selectedGroupName,
+            aiModel = currentAiModel,
+            isVoice = isVoice,
+            activeUserId = activeUserId,
+            onCompleted = {
+                coroutineScope.launch {
+                    if (messages.isNotEmpty()) {
+                        listState.animateScrollToItem(messages.size - 1)
+                    }
+                }
+            }
+        )
     }
 
     // Function to initiate text message sending (triggers Scope Dialog)

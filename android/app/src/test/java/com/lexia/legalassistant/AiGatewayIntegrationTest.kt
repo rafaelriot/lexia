@@ -26,15 +26,19 @@ class AiGatewayIntegrationTest {
     @Test
     fun testProviderMappingForEveryAvailableModel() {
         val models = AiModelRepository.availableModels
-        assertEquals(5, models.size)
+        assertEquals(6, models.size)
 
         val geminiPro = models.find { it.id == "gemini-pro-scjn" }!!
         assertEquals(LlmProvider.GEMINI, geminiPro.provider)
-        assertEquals("gemini-2.5-pro", geminiPro.defaultRemoteModelId)
+        assertEquals("gemini-3.8-flash", geminiPro.defaultRemoteModelId)
 
         val geminiFlash = models.find { it.id == "gemini-flash-speed" }!!
         assertEquals(LlmProvider.GEMINI, geminiFlash.provider)
-        assertEquals("gemini-2.5-flash", geminiFlash.defaultRemoteModelId)
+        assertEquals("gemini-3.8-flash", geminiFlash.defaultRemoteModelId)
+
+        val groq = models.find { it.id == "groq-lpu-ultra" }!!
+        assertEquals(LlmProvider.GROQ, groq.provider)
+        assertEquals("openai/gpt-oss-120b", groq.defaultRemoteModelId)
 
         val claude = models.find { it.id == "claude-litigation" }!!
         assertEquals(LlmProvider.ANTHROPIC, claude.provider)
@@ -47,11 +51,14 @@ class AiGatewayIntegrationTest {
         val offline = models.find { it.id == "lexia-offline-faiss" }!!
         assertEquals(LlmProvider.LOCAL, offline.provider)
         assertTrue(offline.isOfflineCapable)
+
+        assertEquals(AiModelRepository.defaultGroqApiKey, AiModelRepository.getApiKey(LlmProvider.GROQ))
     }
 
     @Test
     fun testGatewayClientsResolution() {
         assertNotNull(LlmGateway.clientFor(LlmProvider.GEMINI))
+        assertNotNull(LlmGateway.clientFor(LlmProvider.GROQ))
         assertNotNull(LlmGateway.clientFor(LlmProvider.ANTHROPIC))
         assertNotNull(LlmGateway.clientFor(LlmProvider.OPENAI))
         assertNull(LlmGateway.clientFor(LlmProvider.LOCAL))

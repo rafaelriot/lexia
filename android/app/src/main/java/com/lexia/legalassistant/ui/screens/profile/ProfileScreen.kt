@@ -28,6 +28,8 @@ import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.ImageBitmap
 import com.lexia.legalassistant.data.repository.ConsultationHistoryRepository
 import com.lexia.legalassistant.data.repository.LawSyncRepository
+import com.lexia.legalassistant.data.repository.AiModelRepository
+import com.lexia.legalassistant.ui.components.AiProviderSettingsCard
 import com.lexia.legalassistant.ui.theme.*
 
 @Composable
@@ -40,8 +42,11 @@ fun ProfileScreen(
     LaunchedEffect(Unit) {
         LawSyncRepository.init(context)
         com.lexia.legalassistant.data.repository.AuthRepository.init(context)
+        AiModelRepository.init(context)
         ConsultationHistoryRepository.init(context)
     }
+
+    val currentAiModel by AiModelRepository.currentModel.collectAsState()
 
     val currentUser by com.lexia.legalassistant.data.repository.AuthRepository.currentUser.collectAsState()
     val activeUserId = currentUser?.id ?: "guest"
@@ -287,6 +292,11 @@ fun ProfileScreen(
                         }
                     }
                 }
+            }
+
+            // AI PROVIDERS & API KEYS SETTINGS
+            item {
+                AiProviderSettingsCard(currentModel = currentAiModel)
             }
 
             // SECTION HEADER: LEGAL REPOSITORY SYNC

@@ -253,6 +253,35 @@ Puedes consultar el texto oficial en el **${concept.properLawTitle}**, publicado
                 Pair(text, grounds)
             }
 
+            AiEngineType.GROQ_LPU -> {
+                val text = """
+${scopePrefix}⚡ [LexIA UltraFast · Groq LPU]
+
+Según el **artículo ${concept.properArticleNumber} del ${concept.properLawTitle}**, la figura de **${concept.name}** corresponde a ${concept.legalBranch}.
+
+⚠️ **Competencia y Deslinde en ${activeLaw.shortName}:**
+$reasonNotHere
+
+**Artículo ${concept.properArticleNumber}. ${concept.name}**
+Texto normativo oficial:
+«${concept.definition}»
+
+**Elementos normativos clave:**
+${concept.elements.mapIndexed { idx, elem -> "${idx + 1}. $elem" }.joinToString("\n")}
+${if (concept.sanctionsOrRemedies.isNotBlank()) "${concept.elements.size + 1}. Penalidad: ${concept.sanctionsOrRemedies}" else ""}
+
+**Importante:**
+La tipificación requiere la concurrencia exacta de los elementos típicos en estricto apego al principio de legalidad penal (Art. 14 CPEUM).
+""".trimIndent()
+
+                val grounds = listOf(
+                    "• Inferencia Ultra Rápida: Procesamiento LPU de ${concept.properLawShortName} Art. ${concept.properArticleNumber}.",
+                    "• Tipicidad Penal: Verificación estricta de elementos comisivos.",
+                    "• Deslinde Competencial: Ámbito material aplicable."
+                )
+                Pair(text, grounds)
+            }
+
             AiEngineType.OFFLINE_FAISS -> {
                 val text = """
 ${scopePrefix}🔒 [LexIA Soberano Offline · FAISS Local]
@@ -410,6 +439,33 @@ Para su correcta hermenéutica, debe atenderse tanto a la letra de la ley como a
                     "• Dogmática Jurídica: Ratio legis de $lawName $artNum.",
                     "• Interpretación Sistemática: Coherencia normativa.",
                     "• Seguridad Jurídica: Plena validez y eficacia positiva."
+                )
+                Pair(text, grounds)
+            }
+
+            AiEngineType.GROQ_LPU -> {
+                val text = """
+${scopePrefix}⚡ [LexIA UltraFast · Groq LPU]
+
+Según el **$artNum del ${activeLaw.title} ($lawName)**, la disposición **$artTitle** pertenece a $category.
+
+**$artNum. $artTitle**
+Texto legal oficial:
+«$artSummary»
+
+**Puntos Ejecutivos (LPU):**
+1. Vigencia Oficial: ${article?.dofStatus ?: "Vigente"} en el Diario Oficial de la Federación.
+2. Materia: $category aplicable de forma preferente.
+3. Eficacia Procesal: Aplicación inmediata en juicios y audiencias.
+
+**Importante:**
+Procesado con tecnología LPU para consulta instantánea y cotejo en tiempo real.
+""".trimIndent()
+
+                val grounds = listOf(
+                    "• Velocidad LPU: Extracción ejecutiva de $lawName $artNum.",
+                    "• Marco Positivo: ${article?.dofStatus ?: "Vigente"}.",
+                    "• Validez Jurídica: Texto cotejado DOF."
                 )
                 Pair(text, grounds)
             }

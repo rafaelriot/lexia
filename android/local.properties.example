@@ -1,0 +1,9 @@
+## LexIA Legal Assistant - Local Properties Template
+# Copy this file to local.properties and fill in your Android SDK path and optional API keys.
+# local.properties is ignored by Git and will NEVER be committed.
+
+sdk.dir=C\:\\Users\\USER\\AppData\\Local\\Android\\Sdk
+
+# LLM Providers API Keys (Optional; if empty, user can configure them in the Profile screen in-app)
+GEMINI_API_KEY=
+GROQ_API_KEY=

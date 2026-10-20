@@ -17,8 +17,13 @@ object AiModelRepository {
     private const val KEY_GEMINI_API_KEY = "key_gemini_api_key"
     private const val KEY_API_KEY_PREFIX = "key_api_key_"
     private const val KEY_REMOTE_MODEL_PREFIX = "key_remote_model_"
-
     private var prefs: SharedPreferences? = null
+
+    val defaultGeminiApiKey: String
+        get() = com.lexia.legalassistant.BuildConfig.DEFAULT_GEMINI_KEY
+
+    val defaultGroqApiKey: String
+        get() = com.lexia.legalassistant.BuildConfig.DEFAULT_GROQ_KEY
 
     val availableModels: List<AiModel> = listOf(
         AiModel(
@@ -32,7 +37,7 @@ object AiModelRepository {
             isOfflineCapable = false,
             iconEmoji = "🌟",
             provider = LlmProvider.GEMINI,
-            defaultRemoteModelId = "gemini-2.5-pro"
+            defaultRemoteModelId = "gemini-3.8-flash"
         ),
         AiModel(
             id = "gemini-flash-speed",
@@ -45,7 +50,20 @@ object AiModelRepository {
             isOfflineCapable = false,
             iconEmoji = "⚡",
             provider = LlmProvider.GEMINI,
-            defaultRemoteModelId = "gemini-2.5-flash"
+            defaultRemoteModelId = "gemini-3.8-flash"
+        ),
+        AiModel(
+            id = "groq-lpu-ultra",
+            name = "LexIA UltraFast (Groq LPU)",
+            shortBadge = "GROQ LPU",
+            specialty = "Inferencia Instantánea & Respuestas en Vivo",
+            description = "Velocidad de procesamiento extrema en microsegundos utilizando hardware LPU de Groq con modelos abiertos de vanguardia.",
+            speedIndicator = "🚀 Ultra Rápido (LPU)",
+            engineType = AiEngineType.GROQ_LPU,
+            isOfflineCapable = false,
+            iconEmoji = "⚡",
+            provider = LlmProvider.GROQ,
+            defaultRemoteModelId = "openai/gpt-oss-120b"
         ),
         AiModel(
             id = "claude-litigation",
@@ -88,7 +106,12 @@ object AiModelRepository {
     )
 
     /** Remote providers that require an API key. */
-    val remoteProviders: List<LlmProvider> = listOf(LlmProvider.GEMINI, LlmProvider.ANTHROPIC, LlmProvider.OPENAI)
+    val remoteProviders: List<LlmProvider> = listOf(
+        LlmProvider.GEMINI,
+        LlmProvider.GROQ,
+        LlmProvider.ANTHROPIC,
+        LlmProvider.OPENAI
+    )
 
     private val _currentModel = MutableStateFlow(availableModels[0])
     val currentModel: StateFlow<AiModel> = _currentModel.asStateFlow()
@@ -115,14 +138,20 @@ object AiModelRepository {
 
     fun getApiKey(provider: LlmProvider): String? {
         if (provider == LlmProvider.LOCAL) return null
-        return prefs?.getString(apiKeyPrefName(provider), null)?.takeIf { it.isNotBlank() }
+        val name = apiKeyPrefName(provider)
+        if (prefs?.contains(name) == true) {
+            return prefs?.getString(name, null)?.takeIf { it.isNotBlank() }
+        }
+        if (provider == LlmProvider.GEMINI) return defaultGeminiApiKey.takeIf { it.isNotBlank() }
+        if (provider == LlmProvider.GROQ) return defaultGroqApiKey.takeIf { it.isNotBlank() }
+        return null
     }
 
     fun setApiKey(provider: LlmProvider, key: String?) {
         if (provider == LlmProvider.LOCAL) return
         val name = apiKeyPrefName(provider)
         if (key.isNullOrBlank()) {
-            prefs?.edit()?.remove(name)?.apply()
+            prefs?.edit()?.putString(name, "")?.apply()
         } else {
             prefs?.edit()?.putString(name, key.trim())?.apply()
         }
@@ -131,6 +160,10 @@ object AiModelRepository {
     fun getGeminiApiKey(): String? = getApiKey(LlmProvider.GEMINI)
 
     fun setGeminiApiKey(key: String?) = setApiKey(LlmProvider.GEMINI, key)
+
+    fun getGroqApiKey(): String? = getApiKey(LlmProvider.GROQ)
+
+    fun setGroqApiKey(key: String?) = setApiKey(LlmProvider.GROQ, key)
 
     // ---------------- Remote model id (overridable per AiModel) ----------------
 

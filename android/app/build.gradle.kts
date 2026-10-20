@@ -1,7 +1,18 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
+
+val localProps = Properties().apply {
+    val localPropFile = rootProject.file("local.properties")
+    if (localPropFile.exists()) {
+        localPropFile.inputStream().use { load(it) }
+    }
+}
+val defaultGeminiKey: String = localProps.getProperty("GEMINI_API_KEY", "")
+val defaultGroqKey: String = localProps.getProperty("GROQ_API_KEY", "")
 
 android {
     namespace = "com.lexia.legalassistant"
@@ -19,6 +30,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "DEFAULT_GEMINI_KEY", "\"$defaultGeminiKey\"")
+        buildConfigField("String", "DEFAULT_GROQ_KEY", "\"$defaultGroqKey\"")
     }
 
     buildTypes {
@@ -39,6 +53,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.11"

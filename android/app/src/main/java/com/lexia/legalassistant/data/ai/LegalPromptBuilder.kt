@@ -99,6 +99,8 @@ $userQuery
             "Enfoque: estrategia de litigio, agravios, conceptos de violación, excepciones procesales y carga probatoria."
         AiEngineType.GPT4O_JURIS ->
             "Enfoque: análisis dogmático y doctrinal, ratio legis e interpretación sistemática."
+        AiEngineType.GROQ_LPU ->
+            "Enfoque: análisis jurídico ultra rápido, ejecutivo y fundamentado directamente en la ley aplicable con síntesis procesal de alta velocidad."
         AiEngineType.OFFLINE_FAISS ->
             "Enfoque: extracción literal del texto normativo."
     }

@@ -5,6 +5,7 @@ enum class AiEngineType {
     GEMINI_FLASH,
     CLAUDE_LITIGATION,
     GPT4O_JURIS,
+    GROQ_LPU,
     OFFLINE_FAISS
 }
 
@@ -14,6 +15,7 @@ enum class AiEngineType {
  */
 enum class LlmProvider(val displayName: String, val apiKeyHint: String, val consoleUrl: String) {
     GEMINI("Google Gemini", "AIza...", "https://aistudio.google.com/apikey"),
+    GROQ("Groq LPU", "gsk_...", "https://console.groq.com/keys"),
     ANTHROPIC("Anthropic Claude", "sk-ant-...", "https://console.anthropic.com/settings/keys"),
     OPENAI("OpenAI GPT", "sk-...", "https://platform.openai.com/api-keys"),
     LOCAL("Motor local", "", "")
