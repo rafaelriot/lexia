@@ -66,32 +66,6 @@ object AiModelRepository {
             defaultRemoteModelId = "openai/gpt-oss-120b"
         ),
         AiModel(
-            id = "claude-litigation",
-            name = "LexIA Litigante (Claude Sonnet)",
-            shortBadge = "LITIGIO",
-            specialty = "Técnica Procesal, Amparo & Penal",
-            description = "Especialista en estructuración de agravios, excepciones procesales, conceptos de violación y petitorios formales.",
-            speedIndicator = "Argumentación avanzada",
-            engineType = AiEngineType.CLAUDE_LITIGATION,
-            isOfflineCapable = false,
-            iconEmoji = "⚖️",
-            provider = LlmProvider.ANTHROPIC,
-            defaultRemoteModelId = "claude-sonnet-4-5"
-        ),
-        AiModel(
-            id = "gpt4o-jurisconsult",
-            name = "JurisConsulto (GPT)",
-            shortBadge = "JURIS",
-            specialty = "Corporativo, Civil & Dogmática",
-            description = "Análisis comparativo, dictamen doctrinal, contratos mercantiles y jurisprudencia dogmática.",
-            speedIndicator = "Integral",
-            engineType = AiEngineType.GPT4O_JURIS,
-            isOfflineCapable = false,
-            iconEmoji = "🏛️",
-            provider = LlmProvider.OPENAI,
-            defaultRemoteModelId = "gpt-4o"
-        ),
-        AiModel(
             id = "lexia-offline-faiss",
             name = "LexIA Soberano Offline (FAISS)",
             shortBadge = "OFFLINE",
@@ -105,12 +79,10 @@ object AiModelRepository {
         )
     )
 
-    /** Remote providers that require an API key. */
+    /** Remote providers that have configured API keys and are active in the catalog. */
     val remoteProviders: List<LlmProvider> = listOf(
         LlmProvider.GEMINI,
-        LlmProvider.GROQ,
-        LlmProvider.ANTHROPIC,
-        LlmProvider.OPENAI
+        LlmProvider.GROQ
     )
 
     private val _currentModel = MutableStateFlow(availableModels[0])

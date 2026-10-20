@@ -26,7 +26,7 @@ class AiGatewayIntegrationTest {
     @Test
     fun testProviderMappingForEveryAvailableModel() {
         val models = AiModelRepository.availableModels
-        assertEquals(6, models.size)
+        assertEquals(4, models.size)
 
         val geminiPro = models.find { it.id == "gemini-pro-scjn" }!!
         assertEquals(LlmProvider.GEMINI, geminiPro.provider)
@@ -40,19 +40,12 @@ class AiGatewayIntegrationTest {
         assertEquals(LlmProvider.GROQ, groq.provider)
         assertEquals("openai/gpt-oss-120b", groq.defaultRemoteModelId)
 
-        val claude = models.find { it.id == "claude-litigation" }!!
-        assertEquals(LlmProvider.ANTHROPIC, claude.provider)
-        assertEquals("claude-sonnet-4-5", claude.defaultRemoteModelId)
-
-        val gpt = models.find { it.id == "gpt4o-jurisconsult" }!!
-        assertEquals(LlmProvider.OPENAI, gpt.provider)
-        assertEquals("gpt-4o", gpt.defaultRemoteModelId)
-
         val offline = models.find { it.id == "lexia-offline-faiss" }!!
         assertEquals(LlmProvider.LOCAL, offline.provider)
         assertTrue(offline.isOfflineCapable)
 
         assertEquals(AiModelRepository.defaultGroqApiKey, AiModelRepository.getApiKey(LlmProvider.GROQ))
+        assertEquals(AiModelRepository.defaultGeminiApiKey, AiModelRepository.getApiKey(LlmProvider.GEMINI))
     }
 
     @Test
@@ -113,11 +106,11 @@ class AiGatewayIntegrationTest {
             matchedArticle = dummyArticle,
             crossConcept = null,
             isOutOfScope = false,
-            engineType = AiEngineType.CLAUDE_LITIGATION
+            engineType = AiEngineType.GROQ_LPU
         )
 
         assertTrue(sysPrompt.contains("LexIA"))
-        assertTrue(sysPrompt.contains("estrategia de litigio")) // Persona de Claude Litigante
+        assertTrue(sysPrompt.contains("ultra rápido")) // Persona de Groq LPU
         assertTrue(userPrompt.contains("Artículo 16"))
         assertTrue(userPrompt.contains("Garantía de Legalidad"))
         assertTrue(userPrompt.contains("Texto íntegro del primer párrafo"))

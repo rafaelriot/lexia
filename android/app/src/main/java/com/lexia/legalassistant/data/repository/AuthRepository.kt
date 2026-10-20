@@ -73,8 +73,7 @@ object AuthRepository {
                     planName = "Convenio Institucional SCJN / Poder Judicial",
                     contractedEngines = listOf(
                         com.lexia.legalassistant.data.model.AiEngineType.GEMINI_PRO,
-                        com.lexia.legalassistant.data.model.AiEngineType.CLAUDE_LITIGATION,
-                        com.lexia.legalassistant.data.model.AiEngineType.GPT4O_JURIS,
+                        com.lexia.legalassistant.data.model.AiEngineType.GROQ_LPU,
                         com.lexia.legalassistant.data.model.AiEngineType.GEMINI_FLASH,
                         com.lexia.legalassistant.data.model.AiEngineType.OFFLINE_FAISS
                     ),
@@ -91,6 +90,7 @@ object AuthRepository {
                     planName = "Convenio Académico Universitario",
                     contractedEngines = listOf(
                         com.lexia.legalassistant.data.model.AiEngineType.GEMINI_FLASH,
+                        com.lexia.legalassistant.data.model.AiEngineType.GROQ_LPU,
                         com.lexia.legalassistant.data.model.AiEngineType.OFFLINE_FAISS,
                         com.lexia.legalassistant.data.model.AiEngineType.GEMINI_PRO
                     ),
@@ -104,16 +104,17 @@ object AuthRepository {
                 com.lexia.legalassistant.data.model.UserAiContract(
                     email = email,
                     fullName = "Licenciado Postulante Certificado",
-                    planName = "Contrato Despacho Litigante Claude 3.5",
+                    planName = "Contrato Despacho Litigante Groq & Gemini",
                     contractedEngines = listOf(
-                        com.lexia.legalassistant.data.model.AiEngineType.CLAUDE_LITIGATION,
+                        com.lexia.legalassistant.data.model.AiEngineType.GROQ_LPU,
+                        com.lexia.legalassistant.data.model.AiEngineType.GEMINI_PRO,
                         com.lexia.legalassistant.data.model.AiEngineType.GEMINI_FLASH,
                         com.lexia.legalassistant.data.model.AiEngineType.OFFLINE_FAISS
                     ),
-                    licenseBadge = "⚖️ LITIGIO PRO (CLAUDE & FAISS)",
+                    licenseBadge = "⚡ LITIGIO ULTRA (GROQ & GEMINI)",
                     institution = "Barra y Colegio de Abogados",
                     isValidContract = true,
-                    licenseToken = "BARRA-LITIGIO-CLAUDE"
+                    licenseToken = "BARRA-LITIGIO-GROQ"
                 )
             }
             cleanEmail.isNotEmpty() && cleanEmail.contains("@") -> {
@@ -124,6 +125,7 @@ object AuthRepository {
                     planName = "Membresía Profesional Colegiada",
                     contractedEngines = listOf(
                         com.lexia.legalassistant.data.model.AiEngineType.GEMINI_FLASH,
+                        com.lexia.legalassistant.data.model.AiEngineType.GROQ_LPU,
                         com.lexia.legalassistant.data.model.AiEngineType.OFFLINE_FAISS,
                         com.lexia.legalassistant.data.model.AiEngineType.GEMINI_PRO
                     ),
@@ -202,7 +204,8 @@ object AuthRepository {
             token = licenseToken,
             contractedAiEngines = listOf(
                 com.lexia.legalassistant.data.model.AiEngineType.GEMINI_PRO,
-                com.lexia.legalassistant.data.model.AiEngineType.CLAUDE_LITIGATION,
+                com.lexia.legalassistant.data.model.AiEngineType.GROQ_LPU,
+                com.lexia.legalassistant.data.model.AiEngineType.GEMINI_FLASH,
                 com.lexia.legalassistant.data.model.AiEngineType.OFFLINE_FAISS
             )
         )
